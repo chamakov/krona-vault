@@ -9,12 +9,54 @@
 
 > 🌐 **Idiomas / Languages**: [ 🇲🇽 Español ](./README.es.md) · [ 🇺🇸 English ](./README.md)
 
-**KRONA VAULT™** es un ecosistema auto-hospedado (*Self-Hosted*, listo para **Proxmox VE + Docker Compose** o **Edge Serverless**) de grado institucional para la gestión contable, operativa y criptográfica de **crédito en tienda (*Store Credit*)**, emisión de vouchers físicos de caja con sellos anti-falsificación, dispersión de premios de torneos, control de resguardos/escrow de artículos coleccionables y autenticación 2FA offline.
+**KRONA VAULT™** es una plataforma fintech auto-hospedada (*Self-Hosted*, lista para **Proxmox VE + Docker Compose** o **Edge Serverless**) de grado institucional para la gestión contable, operativa y criptográfica de **crédito en tienda (*Store Credit*)**, emisión de vouchers físicos de caja con sellos anti-falsificación, dispersión de premios de torneos, control de resguardos/escrow de artículos coleccionables y autenticación 2FA offline.
+
+---
+
+## 📸 Recorrido Visual y Portales en Acción
+
+| **Nexus Command Hub** (`/`) | **Terminal Punto de Venta (POS)** (`/pos`) |
+| :---: | :---: |
+| [![Nexus Command Hub](./docs/assets/screenshots/nexus-hub.png)](./docs/assets/screenshots/nexus-hub.png) | [![POS Terminal](./docs/assets/screenshots/pos-terminal.png)](./docs/assets/screenshots/pos-terminal.png) |
+| *Centro de mando operativo con enrutamiento rápido según rol* | *Terminal de mostrador con cobros mixtos e impresión térmica* |
+
+| **KRONA Pass™ PWA Jugador** (`/wallet`) | **Auditoría Forense Citadel** (`/audit`) |
+| :---: | :---: |
+| [![Player Wallet](./docs/assets/screenshots/wallet-pass.png)](./docs/assets/screenshots/wallet-pass.png) | [![Citadel Audit](./docs/assets/screenshots/citadel-audit.png)](./docs/assets/screenshots/citadel-audit.png) |
+| *Saldo en tiempo real, consumo FEFO y PIN 2FA offline* | *Cadena hash inmutable del libro diario y arqueo Corte Z* |
+
+| **Bóveda de Resguardo & Escrow** (`/custody`) | **Arena de Torneos** (`/tournaments`) |
+| :---: | :---: |
+| [![Vault Custody](./docs/assets/screenshots/custody-vault.png)](./docs/assets/screenshots/custody-vault.png) | [![Tournament Arena](./docs/assets/screenshots/tournaments-arena.png)](./docs/assets/screenshots/tournaments-arena.png) |
+| *Custodia dual, asignación de casilleros y sellos de precinto* | *Cálculo de pozos de suma cero y dispersión por divisiones* |
+
+---
+
+## ⚡ ¿Por qué KRONA VAULT™?
+
+Los sistemas de punto de venta tradicionales (Shopify, Square, Lightspeed, Clover) fueron diseñados para comercio minorista genérico (cafeterías, tiendas de ropa). Al implementarse en **tiendas de pasatiempos, cómics y juegos de cartas coleccionables (TCG)**, generan fugas operativas graves, discrepancias contables y costos por comisiones innecesarios:
+
+| Capacidad | POS Genérico (Square / Shopify / Lightspeed) | KRONA VAULT™ |
+| :--- | :--- | :--- |
+| **Comisiones en Crédito de Tienda** | 2.6% – 3.5% + $0.30 por transacción de "tarjeta de regalo" | **0.0% comisiones** (100% auto-hospedado y compensación propia) |
+| **Integridad Contable** | Saldos de partida simple (propensos a desincronización y robo) | **Libro Mayor por Partida Doble Estricto** ($\sum \text{Debe} = \sum \text{Haber}$) |
+| **Vouchers Térmicos Anti-Fraude** | Tickets simples fácilmente fotocopiables o reimpresos | **Sellos Criptográficos (`XXXX-XXXX-XXXX-XXXX`)** y marcas de agua de copia |
+| **Prevención de Empleados Desleales** | Cajeros pueden alterar saldos manualmente sin fricción | **2FA Transaccional (TOTP + PIN Búnker)** y **Principio de Cuatro Ojos** |
+| **Dispersión de Premios de Torneo** | Cálculos manuales en Excel y abonos manuales lentos | **Motor de Dispersión de Suma Cero** con redondeo exacto al centavo |
+| **Resguardo de Cartas de Alto Valor** | Registro informal en carpetas sin trazabilidad legal | **Bóveda de Custodia™** con evidencia fotográfica SHA-256 y firma dual |
+| **Resiliencia Fuera de Línea** | Se bloquea el cobro ante caídas de internet local | **PWA Offline-First** + PIN TOTP criptográfico de 6 dígitos (Modo Búnker) |
+
+### 🎯 Casos de Uso del Mundo Real
+1. **Tiendas Locales de TCG / Pasatiempos (LGS)**: Elimina la merma y fuga en crédito de tienda, bloquea alteraciones internas de saldos e imprime vouchers verificables en cada cobro.
+2. **Torneos Regionales y Convenciones**: Calcula y dispersa pozos de premios a más de 100 jugadores en múltiples divisiones (Master, Senior, Junior) en segundos, con cero descuadres contables.
+3. **Consignación y Custodia de Cartas Graduadas**: Administra intercambios y resguardos seguros de piezas de alto valor (cartas de $1,000+ USD) con casilleros digitales y validación bilateral.
 
 ---
 
 ## 📑 Tabla de Contenidos
 
+- [Recorrido Visual y Portales en Acción](#-recorrido-visual-y-portales-en-acción)
+- [¿Por qué KRONA VAULT™?](#-por-qué-krona-vault)
 - [Características Principales](#-características-principales)
 - [Arquitectura del Sistema](#-arquitectura-del-sistema)
 - [Portales Web Incluidos (PWA)](#-portales-web-incluidos-pwa)
@@ -108,12 +150,12 @@ La aplicación incluye 11 portales listos para operar desde cualquier navegador 
 | **Torneos** | `/tournaments` | Creación de torneos, inscripción, cálculo de pozo y dispersión de premios. |
 | **Trade-In** | `/trade-in` | Recepción de singles/cartas a cambio de saldo de crédito en tienda. |
 | **Bóveda de Resguardo** | `/custody` | Control de custodia, asignación de casilleros, precintos fotográficos y entrega 4-ojos. |
-| **Auditoría Forense** | `/audit` | Consulta de cadena hash inmutable, reimpresiones de voucher y eventos de seguridad. |
-| **Gestión de Sucursales** | `/stores` | Alta, configuración de políticas y administración multi-tienda. |
-| **Usuarios y Roles** | `/users` | Control de acceso basado en roles (RBAC) y gestión de personal. |
-| **Mi Perfil** | `/profile` | Cambio de contraseña, actualización de PIN y enrolamiento de 2FA. |
-| **Inicio de Sesión** | `/login` | Autenticación con credenciales protegidas por scrypt. |
-| **Panel Central** | `/` | Vista de inicio con accesos rápidos según el rol autenticado. |
+| **Auditoría Citadel** | `/audit` | Inspección de cadena hash inmutable, log de reimpresiones y arqueos de caja (Corte Z). |
+| **Gestión de Tiendas** | `/stores` | Alta de sucursales, personalización de catálogos y políticas contables. |
+| **Usuarios e IAM** | `/users` | Control de accesos RBAC y personal en 6 niveles jerárquicos. |
+| **Mi Perfil** | `/profile` | Cambio de contraseña, PIN transaccional y enrolamiento RFC 6238 Authenticator. |
+| **Login** | `/login` | Acceso con credenciales seguras protegidas por hashing scrypt. |
+| **Nexus Hub** | `/` | Portada central de navegación y accesos rápidos según rol de usuario. |
 
 ---
 
@@ -121,7 +163,7 @@ La aplicación incluye 11 portales listos para operar desde cualquier navegador 
 
 ### Opción A: Docker Compose (Recomendado)
 
-Ideal para servidores de producción, VPS o pruebas completas con PostgreSQL y Valkey:
+Ideal para VPS de producción, Proxmox VE o pruebas locales completas:
 
 1. **Clonar el repositorio**:
    ```bash
@@ -129,18 +171,18 @@ Ideal para servidores de producción, VPS o pruebas completas con PostgreSQL y V
    cd krona-vault
    ```
 
-2. **Crear archivo de configuración de entorno**:
+2. **Configurar variables de entorno**:
    ```bash
    cp .env.example .env
    ```
-   *(Revisa [docs/ENVIRONMENT_VARIABLES.md](./docs/ENVIRONMENT_VARIABLES.md) para generar claves seguras).*
+   *(Consulta [docs/ENVIRONMENT_VARIABLES.es.md](./docs/ENVIRONMENT_VARIABLES.es.md) para generar claves seguras).*
 
-3. **Iniciar los servicios**:
+3. **Iniciar servicios**:
    ```bash
    docker compose up -d --build
    ```
 
-4. **Acceder a la plataforma**:
+4. **Acceder a la aplicación**:
    Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 ---
@@ -154,7 +196,7 @@ Requisitos: **Node.js >= 22.23.4** y **npm >= 10.9.9**.
    npm ci
    ```
 
-2. **Ejecutar pruebas unitarias e integrales**:
+2. **Ejecutar pruebas automatizadas**:
    ```bash
    npm test
    ```
@@ -163,7 +205,7 @@ Requisitos: **Node.js >= 22.23.4** y **npm >= 10.9.9**.
    ```bash
    npm run dev:api
    ```
-   El servidor estará escuchando en `http://localhost:3000`.
+   El servidor responderá en `http://localhost:3000`.
 
 ---
 
@@ -172,34 +214,34 @@ Requisitos: **Node.js >= 22.23.4** y **npm >= 10.9.9**.
 ```
 krona-vault/
 ├── apps/
-│   ├── api/             # Servidor HTTP, motor contable y endpoints REST
-│   └── web-pwa/         # 11 portales PWA responsivos offline-first
+│   ├── api/             # Servidor HTTP, motor contable, API REST y Cloudflare Worker
+│   └── web-pwa/         # 11 portales PWA bilingües y offline-first (Vanilla JS + CSS)
 ├── packages/
-│   ├── crypto-totp/     # Algoritmos TOTP, HMAC-SHA256, Base32 y scrypt
-│   └── shared-types/    # Contratos y tipos TypeScript compartidos
+│   ├── crypto-totp/     # TOTP, HMAC-SHA256, Base32 RFC 4648, scrypt y encadenamiento audit
+│   └── shared-types/    # Contratos TypeScript compartidos e interfaces del libro contable
 ├── infra/
-│   ├── caddy/           # Configuración de proxy inverso Caddyfile
-│   └── postgres/        # Script init.sql con triggers contables
-├── docs/                # Arquitectura técnica y guías de despliegue
-├── e2e/                 # Suites de pruebas con Playwright
-├── scripts/             # Utilidades de respaldo y mantenimiento
-└── docker-compose.yml   # Orquestación de contenedores
+│   ├── caddy/           # Reverse proxy Caddy con TLS automatizado por DNS-01
+│   └── postgres/        # init.sql con triggers inmutables de partida doble
+├── docs/                # Arquitectura, capturas de pantalla y guías de despliegue (EN/ES)
+├── e2e/                 # Suites de pruebas E2E en navegador con Playwright
+├── scripts/             # Automatización de respaldos y mantenimiento
+└── docker-compose.yml   # Orquestación de contenedores y servicios
 ```
 
 ---
 
 ## 🧪 Pruebas Automatizadas y Calidad
 
-El proyecto cuenta con una cobertura integral de pruebas unitarias, de integración y end-to-end:
+KRONA VAULT cuenta con cobertura integral en todas las capas del sistema:
 
 ```bash
-# Comprobación de tipos estricta en todo el monorepo
+# Verificación estricta de TypeScript en todos los workspaces
 npm run typecheck
 
-# Pruebas unitarias de criptografía, contabilidad y API REST (59 pruebas)
+# Pruebas unitarias y de integración (invariantes contables, criptografía, API REST)
 npm test
 
-# Pruebas End-to-End con Playwright en Chromium
+# Suite completa End-to-End en navegador con Playwright (Chromium)
 npm run test:e2e
 ```
 
@@ -207,24 +249,24 @@ npm run test:e2e
 
 ## 📚 Documentación Técnica
 
-- 📖 [Arquitectura y Diseño del Sistema](./docs/ARCHITECTURE.md)
-- 🚀 [Guía de Despliegue en Entornos (Docker / Proxmox / VPS)](./docs/DEPLOYMENT.md)
-- ⚙️ [Referencia de Variables de Entorno](./docs/ENVIRONMENT_VARIABLES.md)
+- 📖 [Arquitectura del Sistema y Diseño Criptográfico](./docs/ARCHITECTURE.es.md) (or [English Version](./docs/ARCHITECTURE.md))
+- 🚀 [Guía de Despliegue (Docker, Proxmox VE, Cloudflare)](./docs/DEPLOYMENT.es.md) (or [English Version](./docs/DEPLOYMENT.md))
+- ⚙️ [Referencia de Variables de Entorno](./docs/ENVIRONMENT_VARIABLES.es.md) (or [English Version](./docs/ENVIRONMENT_VARIABLES.md))
 
 ---
 
 ## 🤝 Cómo Contribuir
 
-¡Las contribuciones de la comunidad son bienvenidas! Si deseas reportar un error, sugerir mejoras o enviar código, consulta nuestra [Guía de Contribución](./CONTRIBUTING.md) y el [Código de Conducta](./CODE_OF_CONDUCT.md).
+¡Agradecemos las contribuciones de la comunidad! Consulta nuestra [Guía de Contribución](./CONTRIBUTING.es.md) (or [English Guide](./CONTRIBUTING.md)) y el [Código de Conducta](./CODE_OF_CONDUCT.md).
 
 ---
 
 ## 🛡️ Seguridad
 
-Para informar sobre vulnerabilidades de seguridad de manera responsable, por favor consulta nuestra [Política de Seguridad](./SECURITY.md).
+Para reportar vulnerabilidades de forma responsable, revisa nuestra [Política de Seguridad](./SECURITY.es.md) (or [English Version](./SECURITY.md)).
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia **MIT**. Consulta el archivo [LICENSE](./LICENSE) para más detalles.
+Este proyecto está licenciado bajo la **Licencia MIT**. Consulta el archivo [LICENSE](./LICENSE) para más información.

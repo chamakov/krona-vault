@@ -9,12 +9,54 @@
 
 > 🌐 **Languages / Idiomas**: [ 🇺🇸 English ](./README.md) · [ 🇲🇽 Español ](./README.es.md)
 
-**KRONA VAULT™** is an institutional-grade, self-hosted platform (ready for **Proxmox VE + Docker Compose** or **Edge Serverless**) designed for the accounting, operational, and cryptographic tracking of **store credit**, thermal POS receipt printing with anti-counterfeiting seals, tournament prize pool distribution, collectible card custody/escrow, and offline 2FA authorization.
+**KRONA VAULT™** is an institutional-grade, self-hosted fintech platform (ready for **Proxmox VE + Docker Compose** or **Edge Serverless**) designed for the accounting, operational, and cryptographic tracking of **store credit**, thermal POS receipt printing with anti-counterfeiting seals, tournament prize pool distribution, collectible card custody/escrow, and offline 2FA authorization.
+
+---
+
+## 📸 Visual Tour & Portals in Action
+
+| **Nexus Command Hub** (`/`) | **POS Checkout Terminal** (`/pos`) |
+| :---: | :---: |
+| [![Nexus Command Hub](./docs/assets/screenshots/nexus-hub.png)](./docs/assets/screenshots/nexus-hub.png) | [![POS Terminal](./docs/assets/screenshots/pos-terminal.png)](./docs/assets/screenshots/pos-terminal.png) |
+| *Central operations command center with quick role routing* | *Counter checkout terminal with mixed-tender & thermal printing* |
+
+| **Player KRONA Pass™ PWA** (`/wallet`) | **Citadel Forensic Audit** (`/audit`) |
+| :---: | :---: |
+| [![Player Wallet](./docs/assets/screenshots/wallet-pass.png)](./docs/assets/screenshots/wallet-pass.png) | [![Citadel Audit](./docs/assets/screenshots/citadel-audit.png)](./docs/assets/screenshots/citadel-audit.png) |
+| *Real-time player balance, FEFO credits & offline 2FA PIN* | *Cryptographic ledger hash-chain & Corte Z register closure* |
+
+| **Vault Custody™ & Escrow** (`/custody`) | **Tournament Arena** (`/tournaments`) |
+| :---: | :---: |
+| [![Vault Custody](./docs/assets/screenshots/custody-vault.png)](./docs/assets/screenshots/custody-vault.png) | [![Tournament Arena](./docs/assets/screenshots/tournaments-arena.png)](./docs/assets/screenshots/tournaments-arena.png) |
+| *Dual-custody escrow, locker assignment & tamper seals* | *Zero-sum prize pool calculations & division payouts* |
+
+---
+
+## ⚡ Why KRONA VAULT™?
+
+Traditional Point of Sale platforms (Shopify, Square, Lightspeed, Clover) were architected for generic retail selling coffee or apparel. When deployed in modern **Hobby & Trading Card Game (TCG) Stores**, they create massive operational blind spots, balance discrepancies, and unnecessary fee drag:
+
+| Capability | Generic POS (Square / Shopify / Lightspeed) | KRONA VAULT™ |
+| :--- | :--- | :--- |
+| **Store Credit Transaction Fees** | 2.6% – 3.5% + $0.30 per "gift card" transaction | **0.0% processing fees** (100% self-hosted & self-cleared) |
+| **Accounting Integrity** | Single-entry balances (susceptible to desync & corruption) | **Strict Double-Entry Ledger** ($\sum \text{Debit} = \sum \text{Credit}$) |
+| **Tamper-Evident Receipts** | Plain thermal receipts easily reprinted or forged | **Cryptographic Verification Seals (`XXXX-XXXX-XXXX-XXXX`)** & reprint watermarking |
+| **Fraud & Rogue Employee Prevention** | Cashier can manually edit balances with zero friction | **Offline 2FA (TOTP + Bunker PIN)** & **Four-Eyes Maker-Checker** |
+| **Tournament Prize Dispersion** | Manual spreadsheet calculations & tedious line-by-line crediting | **Automated Zero-Sum Dispersion Engine** with penny-perfect rounding |
+| **High-End Card Escrow** | Informal binder holding with zero audit trail | **Vault Custody™** with SHA-256 photo evidence & dual-party signoff |
+| **Offline Reliability** | Fails or blocks redemptions during local network outages | **Offline-First PWA** + 6-digit cryptographic TOTP Bunker Mode |
+
+### 🎯 Real-World Use Cases
+1. **Local Game Stores (LGS)**: Stop store credit shrinkage, eliminate internal staff balance tampering, and print verifiable receipts for every transaction.
+2. **Regional Tournaments & Conventions**: Calculate and disperse prize pools to 100+ players across multiple divisions (Master, Senior, Junior) in seconds, without accounting discrepancies.
+3. **High-Value Collectibles & Trade-Ins**: Safely manage trades and consignments of high-end items ($1,000+ graded cards) with digital lockboxes and dual-custody verification.
 
 ---
 
 ## 📑 Table of Contents
 
+- [Visual Tour & Portals in Action](#-visual-tour--portals-in-action)
+- [Why KRONA VAULT™?](#-why-krona-vault)
 - [Key Features](#-key-features)
 - [System Architecture](#-system-architecture)
 - [Included Web Portals (PWA)](#-included-web-portals-pwa)
@@ -180,7 +222,7 @@ krona-vault/
 ├── infra/
 │   ├── caddy/           # Caddyfile reverse proxy with automated DNS-01 TLS
 │   └── postgres/        # init.sql with immutable double-entry triggers
-├── docs/                # Architecture design specs and deployment guides (EN/ES)
+├── docs/                # Architecture design specs, assets, and deployment guides (EN/ES)
 ├── e2e/                 # End-to-end browser test suites with Playwright
 ├── scripts/             # Backup automation and maintenance scripts
 └── docker-compose.yml   # Multi-container service orchestration

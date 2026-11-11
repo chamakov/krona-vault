@@ -18,17 +18,110 @@ window.KronaCore = (function () {
   let onStateChangeCallback = null;
   let currentActiveRoute = '/';
 
+  const I18N_DICTIONARY = {
+    es: {
+      brandSub: 'KRONA VAULT™ · Cada Jugada, Auditada y Respaldada',
+      menu: 'Menú',
+      store: 'Sede',
+      player: 'Jugador',
+      noSession: 'Sin sesión activa',
+      restrictedNoSession: 'Acceso Restringido · Sin sesión',
+      logout: 'Cerrar Sesión',
+      offlineBanner: '⚠️ MODO SÓTANO ACTIVO: Sin conexión a internet. Mostrando saldos y PINs en caché local inmutable.',
+      langToggleText: 'EN',
+      langTitle: 'Cambiar idioma a Inglés / Switch to English',
+      auditorBanner: 'MODO AUDITOR FISCAL (SOLO LECTURA)',
+      auditorDesc: 'Tienes acceso de inspección forense total; las operaciones de escritura están deshabilitadas.',
+      nav: {
+        nexus: 'Nexus Hub',
+        wallet: 'KRONA Pass',
+        pos: 'Terminal POS',
+        tradeIn: 'Trade-In & Bonos',
+        custody: 'Resguardo Bóveda',
+        tournaments: 'Premios Torneos',
+        stores: 'Sedes & Categorías',
+        users: 'Usuarios & Roles',
+        profile: 'Mi Perfil',
+        audit: 'Citadel Audit'
+      }
+    },
+    en: {
+      brandSub: 'KRONA VAULT™ · Every Play, Audited and Vaulted',
+      menu: 'Menu',
+      store: 'Store',
+      player: 'Player',
+      noSession: 'No active session',
+      restrictedNoSession: 'Access Restricted · No session',
+      logout: 'Log Out',
+      offlineBanner: '⚠️ BUNKER MODE ACTIVE: No internet connection. Showing immutable cached balances & PINs.',
+      langToggleText: 'ES',
+      langTitle: 'Cambiar idioma a Español / Switch to Spanish',
+      auditorBanner: 'AUDITOR FISCAL MODE (READ-ONLY)',
+      auditorDesc: 'You have full forensic inspection access; write mutations are disabled.',
+      nav: {
+        nexus: 'Nexus Hub',
+        wallet: 'KRONA Pass',
+        pos: 'POS Terminal',
+        tradeIn: 'Trade-In & Bonuses',
+        custody: 'Vault Custody',
+        tournaments: 'Tournament Prizes',
+        stores: 'Stores & Categories',
+        users: 'Users & Roles',
+        profile: 'My Profile',
+        audit: 'Citadel Audit'
+      }
+    }
+  };
+
+  function getLang() {
+    return (typeof localStorage !== 'undefined' && localStorage.getItem('krona_lang')) || 'es';
+  }
+
+  function t(path, fallback = '') {
+    const lang = getLang();
+    const parts = path.split('.');
+    let cur = I18N_DICTIONARY[lang] || I18N_DICTIONARY.es;
+    for (const p of parts) {
+      if (cur && cur[p] !== undefined) {
+        cur = cur[p];
+      } else {
+        return fallback || path;
+      }
+    }
+    return cur;
+  }
+
+  function setLanguage(lang) {
+    if (lang !== 'es' && lang !== 'en') lang = 'es';
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('krona_lang', lang);
+    }
+    document.documentElement.lang = lang;
+    if (currentActiveRoute) {
+      mountShellHeader(currentActiveRoute);
+      if (latestState) {
+        syncHeaderControls(latestState);
+        if (onStateChangeCallback) onStateChangeCallback(latestState);
+      }
+    }
+  }
+
+  function toggleLanguage() {
+    const cur = getLang();
+    setLanguage(cur === 'es' ? 'en' : 'es');
+  }
+
   const SYSTEM_PORTAL_ROUTES = [
-    { path: '/', label: 'Nexus Hub', tag: 'Alt+0', iconName: 'grid' },
-    { path: '/wallet', label: 'KRONA Pass', tag: 'Alt+1', iconName: 'qr' },
-    { path: '/pos', label: 'Terminal POS', tag: 'Alt+2', iconName: 'terminal' },
-    { path: '/trade-in', label: 'Trade-In & Bonos', tag: 'Alt+8', iconName: 'cards' },
-    { path: '/custody', label: 'Resguardo Bóveda', tag: 'Alt+C', iconName: 'box' },
-    { path: '/tournaments', label: 'Premios Torneos', tag: 'Alt+3', iconName: 'trophy' },
-    { path: '/stores', label: 'Sedes & Categorías', tag: 'Alt+7', iconName: 'store' },
-    { path: '/users', label: 'Usuarios & Roles', tag: 'Alt+5', iconName: 'users' },
-    { path: '/profile', label: 'Mi Perfil', tag: 'Alt+6', iconName: 'user' },
-    { path: '/audit', label: 'Citadel Audit', tag: 'Alt+4', iconName: 'shield' },
+    { path: '/', key: 'nexus', label: 'Nexus Hub', tag: 'Alt+0', iconName: 'grid' },
+    { path: '/wallet', key: 'wallet', label: 'KRONA Pass', tag: 'Alt+1', iconName: 'qr' },
+    { path: '/pos', key: 'pos', label: 'Terminal POS', tag: 'Alt+2', iconName: 'terminal' },
+    { path: '/trade-in', key: 'tradeIn', label: 'Trade-In & Bonos', tag: 'Alt+8', iconName: 'cards' },
+    { path: '/custody', key: 'custody', label: 'Resguardo Bóveda', tag: 'Alt+C', iconName: 'box' },
+    { path: '/tournaments', key: 'tournaments', label: 'Premios Torneos', tag: 'Alt+3', iconName: 'trophy' },
+    { path: '/stores', key: 'stores', label: 'Sedes & Categorías', tag: 'Alt+7', iconName: 'store' },
+    { path: '/users', key: 'users', label: 'Usuarios & Roles', tag: 'Alt+5', iconName: 'users' },
+    { path: '/profile', key: 'profile', label: 'Mi Perfil', tag: 'Alt+6', iconName: 'user' },
+    { path: '/audit', key: 'audit', label: 'Citadel Audit', tag: 'Alt+4', iconName: 'shield' },
   ];
 
   const SVG_ICONS = {
@@ -316,7 +409,7 @@ window.KronaCore = (function () {
         (r) => `
         <a href="${r.path}" data-route="${r.path}" class="krona-nav-item" style="display:none;" ${r.path === activeRoute ? 'aria-current="page"' : ''}>
           ${icon(r.iconName)}
-          <span>${r.label}</span>
+          <span>${t('nav.' + r.key, r.label)}</span>
           <span class="krona-nav-tag">${r.tag}</span>
         </a>
       `
@@ -333,12 +426,12 @@ window.KronaCore = (function () {
                 <div class="krona-brand-title">
                   KRONA VAULT™ <span class="krona-brand-badge">IAM + LEDGER</span>
                 </div>
-                <span class="krona-brand-sub">KRONA VAULT™ · Cada Jugada, Auditada y Respaldada</span>
+                <span class="krona-brand-sub">${t('brandSub')}</span>
               </div>
             </a>
 
             <button type="button" id="kronaMobileMenuBtn" class="krona-mobile-toggle" aria-expanded="false" aria-controls="kronaHeaderCollapsible" aria-label="Alternar menú de navegación">
-              ${icon('menu')} <span>Menú</span>
+              ${icon('menu')} <span>${t('menu')}</span>
             </button>
           </div>
 
@@ -349,24 +442,27 @@ window.KronaCore = (function () {
 
             <div class="krona-context-bar">
               <div id="contextStorePill" class="context-pill" style="display:none;">
-                <label for="globalStoreSelect">Sede</label>
+                <label for="globalStoreSelect">${t('store')}</label>
                 <select id="globalStoreSelect" aria-label="Sucursal Activa"></select>
               </div>
               <div id="contextPlayerPill" class="context-pill" style="display:none;">
-                <label for="globalPlayerSelect">Jugador</label>
+                <label for="globalPlayerSelect">${t('player')}</label>
                 <select id="globalPlayerSelect" aria-label="Jugador Activo"></select>
               </div>
+              <button type="button" id="kronaLangToggleBtn" class="context-pill" style="cursor:pointer;border:1px solid var(--border-gold);background:var(--bg-card);color:var(--accent-gold-hover);font-size:0.75rem;font-weight:700;padding:0.35rem 0.65rem;" title="${t('langTitle')}" onclick="KronaCore.toggleLanguage()">
+                <span>🌐 ${getLang().toUpperCase()}</span>
+              </button>
               <div id="globalSessionBadge" class="integrity-pill" style="border-color:var(--border-gold);color:var(--accent-gold-hover);">
-                ${icon('lock')} <span>Sin sesión activa</span>
+                ${icon('lock')} <span>${t('noSession')}</span>
               </div>
               <button type="button" id="headerLogoutBtn" class="btn btn-crimson" style="display:none;" onclick="KronaCore.logoutSession()">
-                ${icon('logout')} <span>Cerrar Sesión</span>
+                ${icon('logout')} <span>${t('logout')}</span>
               </button>
             </div>
           </div>
         </div>
         <div id="krona-offline-banner">
-          ⚠️ MODO SÓTANO ACTIVO: Sin conexión a internet. Mostrando saldos y PINs en caché local inmutable.
+          ${t('offlineBanner')}
         </div>
         <div id="rbacGuardBanner" style="display:none;background:var(--status-crimson-soft);border-top:1px solid var(--status-crimson-border);padding:0.6rem 1.5rem;font-size:0.82rem;color:#FCA5A5;text-align:center;"></div>
       </header>
@@ -1168,5 +1264,9 @@ window.KronaCore = (function () {
     getSelectedPlayerId,
     setSelectedPlayerId,
     getState: () => latestState,
+    t,
+    getLang,
+    setLanguage,
+    toggleLanguage,
   };
 })();

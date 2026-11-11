@@ -1,86 +1,86 @@
-# Guía Completa de Despliegue en Entornos — KRONA VAULT™
+# Multi-Environment Deployment Guide — KRONA VAULT™
 
-Esta guía describe cómo desplegar **KRONA VAULT™** en diferentes entornos, desde desarrollo local rápido hasta entornos productivos auto-hospedados de alta disponibilidad en **Proxmox VE**, **VPS Linux**, **Docker Compose** y **Cloudflare Workers**.
+> 🌐 **Languages / Idiomas**: [ 🇺🇸 English ](./DEPLOYMENT.md) · [ 🇲🇽 Español ](./DEPLOYMENT.es.md)
 
----
-
-## Índice
-
-1. [Requisitos de Infraestructura](#1-requisitos-de-infraestructura)
-2. [Despliegue Rápido con Docker Compose (Recomendado)](#2-despliegue-rápido-con-docker-compose-recomendado)
-3. [Despliegue en Producción (Proxmox VE / Linux VPS)](#3-despliegue-en-producción-proxmox-ve--linux-vps)
-4. [Generación Segura de Claves Criptográficas](#4-generación-segura-de-claves-criptográficas)
-5. [Configuración de Proxy Inverso y Certificados TLS (Caddy + Cloudflare)](#5-configuración-de-proxy-inverso-y-certificados-tls-caddy--cloudflare)
-6. [Respaldo y Restauración de Base de Datos](#6-respaldo-y-restauración-de-base-de-datos)
-7. [Despliegue Serverless en Cloudflare Workers & D1](#7-despliegue-serverless-en-cloudflare-workers--d1)
-8. [Verificación de Salud y Monitoreo](#8-verificación-de-salud-y-monitoreo)
+This guide describes how to deploy **KRONA VAULT™** across various environments, from fast local development to production-grade, highly available self-hosted setups on **Proxmox VE**, **Linux VPS**, **Docker Compose**, and **Cloudflare Workers**.
 
 ---
 
-## 1. Requisitos de Infraestructura
+## Table of Contents
 
-### Mínimos (1 sucursal, hasta 2,000 jugadores)
-- **CPU**: 1 vCPU (x86_64 o ARM64)
+1. [Hardware & Infrastructure Requirements](#1-hardware--infrastructure-requirements)
+2. [Quick Deployment with Docker Compose (Recommended)](#2-quick-deployment-with-docker-compose-recommended)
+3. [Production Deployment on Proxmox VE / Linux VPS](#3-production-deployment-on-proxmox-ve--linux-vps)
+4. [Secure Cryptographic Key Generation](#4-secure-cryptographic-key-generation)
+5. [Reverse Proxy & TLS Configuration (Caddy + Cloudflare)](#5-reverse-proxy--tls-configuration-caddy--cloudflare)
+6. [Database Backup & Restoration](#6-database-backup--restoration)
+7. [Serverless Edge Deployment (Cloudflare Workers & D1)](#7-serverless-edge-deployment-cloudflare-workers--d1)
+8. [Health Checks & Observability](#8-health-checks--observability)
+
+---
+
+## 1. Hardware & Infrastructure Requirements
+
+### Minimum (1 store, up to 2,000 players)
+- **CPU**: 1 vCPU (x86_64 or ARM64)
 - **RAM**: 1.5 GB
-- **Almacenamiento**: 20 GB SSD
-- **SO**: Debian 12 / Ubuntu 22.04 LTS o Proxmox VE Container (LXC) / VM
+- **Storage**: 20 GB SSD
+- **OS**: Debian 12 / Ubuntu 22.04 LTS or Proxmox VE LXC Container / VM
 
-### Recomendados (Multi-tienda, torneos de 100+ jugadores simultáneos)
+### Recommended (Multi-store consorcia, 100+ concurrent tournament players)
 - **CPU**: 2 vCPU
 - **RAM**: 4 GB
-- **Almacenamiento**: 50 GB NVMe con respaldo externo
-- **SO**: Ubuntu 24.04 LTS / Debian 12
+- **Storage**: 50 GB NVMe with off-site backups
+- **OS**: Ubuntu 24.04 LTS / Debian 12
 
 ---
 
-## 2. Despliegue Rápido con Docker Compose (Recomendado)
+## 2. Quick Deployment with Docker Compose (Recommended)
 
-El archivo [`docker-compose.yml`](../docker-compose.yml) orquesta la arquitectura completa en contenedores aislados:
-- **`cc-app`**: Servidor Node.js 22 LTS (API REST + PWA).
-- **`cc-postgres`**: PostgreSQL 16 con checksums, WAL archiving y triggers de partida doble.
-- **`cc-valkey`**: Valkey 8 en memoria para invalidación anti-replay y pub/sub en tiempo real.
-- **`cc-caddy`**: Proxy inverso con módulo DNS Cloudflare para TLS automático sin puertos abiertos.
-- **`cc-db-backup`**: Contenedor cron que genera respaldos comprimidos de PostgreSQL cada 15 minutos.
+The [`docker-compose.yml`](../docker-compose.yml) orchestrates the complete production stack in isolated containers:
+- **`krona-app`**: Node.js 22 LTS (Bilingual PWA + REST API + Ledger Engine).
+- **`krona-postgres`**: PostgreSQL 16 with checksums, WAL archiving, and double-entry triggers.
+- **`krona-valkey`**: In-memory Valkey 8 for anti-replay nonce tracking and real-time pub/sub.
+- **`krona-caddy`**: Reverse proxy with Cloudflare DNS-01 ACME challenge for automated TLS.
+- **`krona-db-backup`**: Scheduled cron container making compressed PostgreSQL dumps every 15 minutes.
 
-### Pasos:
+### Steps:
 
-1. **Clonar el repositorio en el servidor**:
+1. **Clone the repository on the target host**:
    ```bash
    git clone https://github.com/chamakov/krona-vault.git /opt/krona-vault
    cd /opt/krona-vault
    ```
 
-2. **Copiar y configurar variables de entorno**:
+2. **Copy and configure environment variables**:
    ```bash
    cp .env.example .env
    nano .env
    ```
-   *(Ver [Generación Segura de Claves](#4-generación-segura-de-claves-criptográficas))*.
+   *(See [Secure Cryptographic Key Generation](#4-secure-cryptographic-key-generation))*.
 
-3. **Compilar y levantar los servicios en segundo plano**:
+3. **Build and launch services in background**:
    ```bash
    docker compose up -d --build
    ```
 
-4. **Verificar que todos los contenedores estén saludables**:
+4. **Verify container health**:
    ```bash
    docker compose ps
    ```
 
-5. **Acceder a la aplicación**:
-   Navega a `http://localhost:3000` (o a tu FQDN configurado con Caddy).
+5. **Access the application**:
+   Navigate to `http://localhost:3000` (or your configured FQDN via Caddy).
 
 ---
 
-## 3. Despliegue en Producción (Proxmox VE / Linux VPS)
+## 3. Production Deployment on Proxmox VE / Linux VPS
 
-### En Proxmox VE (LXC Container vs VM):
-- Se recomienda una **VM con Debian 12 o Ubuntu Server 24.04** si requieres aislamiento estricto de virtualización de red y disco NVMe.
-- Si utilizas un contenedor **LXC Unprivileged**, asegúrate de habilitar las opciones de `nesting=1` y `keyctl=1` para Docker.
+### Proxmox VE (LXC vs VM):
+- A **KVM Virtual Machine** with Debian 12 or Ubuntu 24.04 is recommended for full disk and kernel virtualization.
+- For an **Unprivileged LXC Container**, ensure `nesting=1` and `keyctl=1` are enabled in the container configuration.
 
-### Configuración con Systemd para Reinicio Automático
-Docker Compose con `restart: unless-stopped` se encarga de iniciar automáticamente con el sistema. Para supervisión externa con systemd:
-
+### Systemd Service for Automated Boot
 ```ini
 # /etc/systemd/system/krona-vault.service
 [Unit]
@@ -100,7 +100,7 @@ TimeoutStartSec=0
 WantedBy=multi-user.target
 ```
 
-Habilitar el servicio:
+Enable the service:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now krona-vault.service
@@ -108,102 +108,101 @@ sudo systemctl enable --now krona-vault.service
 
 ---
 
-## 4. Generación Segura de Claves Criptográficas
+## 4. Secure Cryptographic Key Generation
 
-Antes de desplegar en producción, **NUNCA** utilices las contraseñas predeterminadas de `.env.example`. Genera claves de alta entropía con `openssl`:
+Before deploying to production, **NEVER** use default passwords from `.env.example`. Generate high-entropy keys using `openssl`:
 
 ```bash
-# JWT Secret (para sesiones y tokens de autenticación)
+# JWT Secret (for session token signing)
 openssl rand -hex 32
 
-# QR HMAC Secret (para firma de QR dinámicos y validez temporal)
+# QR HMAC Secret (for dynamic TOTP QR code validation)
 openssl rand -hex 32
 
-# Audit HSM Secret (para encadenamiento criptográfico forense)
+# Audit HSM Secret (for forensic hash-chain sealing)
 openssl rand -hex 32
 
-# Contraseña de PostgreSQL
+# PostgreSQL Password
 openssl rand -base64 24
 
-# Contraseña de Valkey
+# Valkey Password
 openssl rand -base64 24
 ```
 
-Guarda estos valores en tu archivo `.env` del servidor y mantén copias seguras en tu gestor de contraseñas de infraestructura.
+Store these values safely in your production `.env` and keep offline backups in a password manager.
 
 ---
 
-## 5. Configuración de Proxy Inverso y Certificados TLS (Caddy + Cloudflare)
+## 5. Reverse Proxy & TLS Configuration (Caddy + Cloudflare)
 
-El stack incluye una imagen personalizada de Caddy (`ghcr.io/caddybuilds/caddy-cloudflare`) que resuelve el desafío **ACME DNS-01**. Esto permite emitir certificados SSL/TLS legítimos de Let's Encrypt para dominios que operan tanto en internet como en redes privadas locales (LAN / VPN):
+The stack includes a custom Caddy image (`ghcr.io/caddybuilds/caddy-cloudflare`) capable of solving **ACME DNS-01 challenges**. This allows Let's Encrypt SSL certificates to be automatically provisioned even on internal LAN IP addresses without opening router ports:
 
-1. Crea un API Token en Cloudflare con permisos: `Zone.DNS (Edit)`.
-2. En tu archivo `.env`, define:
+1. Create a Cloudflare API Token with `Zone.DNS (Edit)` permission.
+2. In your `.env` file, define:
    ```env
-   APP_DOMAIN=credito.tutienda.com
-   CF_DNS_API_TOKEN=tu_token_de_cloudflare
+   APP_DOMAIN=vault.yourstore.com
+   CF_DNS_API_TOKEN=your_cloudflare_token_here
    ```
-3. Caddy obtendrá y renovará automáticamente los certificados SSL.
+3. Caddy will automatically issue and renew valid SSL certificates.
 
 ---
 
-## 6. Respaldo y Restauración de Base de Datos
+## 6. Database Backup & Restoration
 
-### Respaldos Automáticos
-El contenedor `krona-db-backup` genera automáticamente respaldos en el volumen `pg_backups_local` cada 15 minutos con retención configurable:
-- Mantener minutos: 1440 min (24 hrs)
-- Mantener diarios: 30 días
-- Mantener semanales: 12 semanas
-- Mantener mensuales: 24 meses
+### Scheduled Automated Dumps
+The `krona-db-backup` container creates snapshots in the `pg_backups_local` Docker volume every 15 minutes with rolling retention:
+- Keep minutes: 1440 min (24 hours)
+- Keep daily: 30 days
+- Keep weekly: 12 weeks
+- Keep monthly: 24 months
 
-### Respaldo Manual Inmediato
+### Manual Instant Backup
 ```bash
-# Mediante el contenedor
+# Trigger via Docker container
 docker compose exec db-backup /backup.sh
 
-# O mediante script local de Node
+# Or run Node utility script
 npm run db:backup
 ```
 
-### Restauración de Base de Datos
+### Database Restoration
 ```bash
-# Descomprimir y restaurar en PostgreSQL
-gunzip < /ruta/al/respaldo.sql.gz | docker compose exec -T postgres psql -U kv_admin -d krona_vault
+gunzip < /path/to/backup.sql.gz | docker compose exec -T postgres psql -U kv_admin -d krona_vault
 ```
 
 ---
 
-## 7. Despliegue Serverless en Cloudflare Workers & D1
+## 7. Serverless Edge Deployment (Cloudflare Workers & D1)
 
-El proyecto está preparado para ejecutarse en el Edge utilizando **Cloudflare Workers** y **Cloudflare D1** (SQLite distribuido):
+The platform is fully portable to Cloudflare's serverless edge:
 
-1. Iniciar sesión en Cloudflare Wrangler:
+1. Log in with Wrangler:
    ```bash
    npx wrangler login
    ```
-2. Crear la base de datos D1:
+2. Create your D1 database:
    ```bash
    npx wrangler d1 create krona-vault-db
    ```
-3. Aplicar las migraciones SQL:
+3. Execute SQL migrations:
    ```bash
    npx wrangler d1 execute krona-vault-db --file=apps/api/migrations/0001_init_d1.sql
    ```
-4. Desplegar el Worker:
+4. Deploy the Worker:
    ```bash
    npm run cf:deploy
    ```
 
 ---
 
-## 8. Verificación de Salud y Monitoreo
+## 8. Health Checks & Observability
 
-Endpoint de diagnóstico y salud del sistema:
+Diagnostic endpoint:
 ```bash
 curl -f http://localhost:3000/api/health
 ```
 
-Respuesta esperada:
+Expected JSON response:
 ```json
 {
   "status": "ok",
@@ -213,4 +212,4 @@ Respuesta esperada:
   "database": "connected"
 }
 ```
-Si el balance del libro mayor reporta inconsistencias o el hash de auditoría no coincide, `/api/health` devolverá código HTTP `503 Service Unavailable`.
+If the ledger equation fails or the cryptographic audit chain reports tampering, `/api/health` returns HTTP status `503 Service Unavailable`.

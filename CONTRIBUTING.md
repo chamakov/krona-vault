@@ -1,118 +1,120 @@
-# Guía de Contribución a KRONA VAULT™
+# Contributing to KRONA VAULT™
 
-¡Gracias por tu interés en contribuir a **KRONA VAULT™**! Este proyecto es de código abierto con el objetivo de ofrecer un sistema seguro, confiable y auto-hospedado para el control de crédito en tienda, punto de venta y contabilidad por partida doble.
+> 🌐 **Languages / Idiomas**: [ 🇺🇸 English ](./CONTRIBUTING.md) · [ 🇲🇽 Español ](./CONTRIBUTING.es.md)
 
----
-
-## 🏛️ Filosofía y Principios Críticos
-
-1. **Integridad Contable Innegociable**: Toda operación financiera debe respetar la regla de partida doble: $\sum \text{Debe} = \sum \text{Haber}$. Los balances nunca se alteran directamente; solo se crean nuevos asientos inmutables.
-2. **Seguridad y Cero Fuga de Secretos**: Nunca almacenes contraseñas, semillas TOTP o llaves HMAC en texto plano ni en logs.
-3. **Mecanismos Anti-Fraude**: Todo cobro o redención debe soportar validación con segundo factor (QR dinámico o PIN offline) y los vouchers físicos deben incluir sello criptográfico único.
-4. **Calidad y Cobertura de Pruebas**: Cualquier cambio en el motor contable o criptográfico debe acompañarse de pruebas automatizadas que cubran casos borde.
+Thank you for your interest in contributing to **KRONA VAULT™**! This open-source project provides a secure, reliable, and self-hosted ecosystem for store credit control, point-of-sale checkout, and double-entry accounting.
 
 ---
 
-## 🛠️ Requisitos Previos
+## 🏛️ Philosophy & Invariant Rules
 
-- **Node.js**: `>= 22.23.4` (recomendado usar `nvm` o `fnm`, el repo incluye `.nvmrc` y `.node-version`).
+1. **Non-Negotiable Accounting Invariant**: Every financial operation must respect double-entry bookkeeping: $\sum \text{Debit} = \sum \text{Credit}$. Account balances are never directly updated; state changes are recorded strictly through immutable entries.
+2. **Zero Secret Leaks**: Never store or log plain-text passwords, TOTP seeds, or cryptographic HMAC keys.
+3. **Anti-Fraud Standards**: All redemptions must support second-factor authentication (dynamic QR or offline PIN), and physical vouchers must contain tamper-evident cryptographic seals.
+4. **Test-Driven Rigor**: Any change to accounting or cryptography engines must be accompanied by automated tests covering edge cases.
+
+---
+
+## 🛠️ Prerequisites
+
+- **Node.js**: `>= 22.23.4` (recommended: `nvm` or `fnm`; repository includes `.nvmrc` and `.node-version`).
 - **npm**: `>= 10.9.9`.
-- **Docker & Docker Compose**: Opcional para desarrollo local de base de datos y entorno completo.
+- **Docker & Docker Compose**: Optional for local full-stack database and container staging.
 - **Git**: `>= 2.30`.
 
 ---
 
-## 🚀 Configuración del Entorno Local
+## 🚀 Local Development Setup
 
-1. **Clonar el repositorio**:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/chamakov/krona-vault.git
    cd krona-vault
    ```
 
-2. **Instalar dependencias del monorepo**:
+2. **Install monorepo dependencies**:
    ```bash
    npm ci
    ```
 
-3. **Verificar tipos de TypeScript**:
+3. **Verify TypeScript types**:
    ```bash
    npm run typecheck
    ```
 
-4. **Ejecutar la suite de pruebas unitarias y de integración**:
+4. **Run unit and integration test suites**:
    ```bash
    npm test
    ```
 
-5. **Ejecutar pruebas End-to-End con Playwright (opcional)**:
+5. **Run End-to-End browser tests with Playwright (optional)**:
    ```bash
-   # Instalar navegadores de Playwright si es la primera vez
+   # Install Playwright browsers on first run
    npx playwright install --with-deps chromium
 
-   # Ejecutar pruebas E2E
+   # Run test suite
    npm run test:e2e
    ```
 
-6. **Iniciar el servidor en modo desarrollo**:
+6. **Start development API server**:
    ```bash
    npm run dev:api
-   # La API y la PWA estarán disponibles en http://localhost:3000
+   # API and bilingual PWA will be available at http://localhost:3000
    ```
 
 ---
 
-## 📁 Estructura del Monorepo
+## 📁 Monorepo Layout
 
 ```
 krona-vault/
 ├── apps/
-│   ├── api/             # Servidor HTTP, motor contable, endpoints REST y Cloudflare Worker
-│   └── web-pwa/         # Interfaz PWA vanilla offline-first (11 portales)
+│   ├── api/             # HTTP server, double-entry engine, REST endpoints & Cloudflare Worker
+│   └── web-pwa/         # Bilingual offline-first PWA frontend (11 portals)
 ├── packages/
-│   ├── crypto-totp/     # Generador/validador de QR TOTP, PIN offline, HMAC y hash-chain
-│   └── shared-types/    # Definiciones TypeScript compartidas en todo el sistema
+│   ├── crypto-totp/     # Dynamic TOTP QR, offline PIN, HMAC-SHA256 & hash-chain
+│   └── shared-types/    # Shared TypeScript contracts and interfaces
 ├── infra/
-│   ├── caddy/           # Configuración de proxy inverso y TLS automático
-│   └── postgres/        # Esquema SQL con triggers de inmutabilidad contable
-├── docs/                # Documentación técnica, diseño de arquitectura y despliegues
-├── e2e/                 # Suites de pruebas funcionales y de seguridad con Playwright
-├── scripts/             # Herramientas de respaldo y utilidades administrativas
-└── docker-compose.yml   # Orquestación de contenedores para producción y staging
+│   ├── caddy/           # Reverse proxy configuration with automated TLS
+│   └── postgres/        # PostgreSQL schema with double-entry triggers
+├── docs/                # Architecture specifications & deployment guides (EN/ES)
+├── e2e/                 # Playwright functional and security test suites
+├── scripts/             # Backup utilities and maintenance tooling
+└── docker-compose.yml   # Multi-container orchestration
 ```
 
 ---
 
-## 📐 Convenciones de Código y Commits
+## 📐 Code & Commit Conventions
 
-- Usamos **Conventional Commits**:
-  - `feat: agregar nuevo catálogo de categorías por sucursal`
-  - `fix: corregir redondeo de centavos en liquidación de torneos`
-  - `docs: actualizar guía de despliegue en Proxmox`
-  - `test: añadir pruebas para consumo FEFO con saldo mixto`
-  - `refactor: optimizar verificación de sellos de auditoría`
-- TypeScript estricto en todos los paquetes.
-- Nombres de funciones y variables claros y descriptivos en español o inglés técnico coherente con el módulo.
+- We follow **Conventional Commits**:
+  - `feat: add multi-currency exchange rate calculation`
+  - `fix: resolve residual penny allocation in top cut split`
+  - `docs: update Proxmox VE deployment instructions`
+  - `test: add test case for FEFO credit burn priority`
+  - `refactor: optimize audit hash-chain verification`
+- Strict TypeScript everywhere (no unvetted `any`).
+- Clear, readable function names and documentation comments.
 
 ---
 
-## 🔄 Proceso de Pull Requests
+## 🔄 Pull Request Process
 
-1. Crea una rama desde `main`:
+1. Create a feature branch from `main`:
    ```bash
-   git checkout -b feature/nombre-de-tu-mejora
+   git checkout -b feature/your-feature-name
    ```
-2. Realiza tus cambios asegurando que:
-   - `npm run typecheck` pasa sin advertencias ni errores.
-   - `npm test` pasa al 100%.
-   - No se incluyan archivos `.env` o credenciales.
-3. Haz push a tu fork o rama y abre un Pull Request contra `main`.
-4. Completa la plantilla de PR detallando el contexto y las pruebas realizadas.
-5. El equipo revisará el código y se ejecutarán los flujos de GitHub Actions.
+2. Verify all quality gates pass locally:
+   - `npm run typecheck` passes with zero errors.
+   - `npm test` passes 100%.
+   - No `.env` files or secret keys are committed.
+3. Push to your branch and submit a Pull Request against `main`.
+4. Fill out the PR template describing the context and testing performed.
+5. GitHub Actions CI will automatically run verification checks on your PR.
 
 ---
 
-## 💬 Canales de Comunicación
+## 💬 Community Channels
 
-- **Preguntas o Ideas**: Abre un hilo en [GitHub Discussions](https://github.com/chamakov/krona-vault/discussions) o un [Issue](https://github.com/chamakov/krona-vault/issues).
-- **Vulnerabilidades de Seguridad**: Por favor revisa [`SECURITY.md`](./SECURITY.md) antes de reportar problemas de seguridad públicamente.
+- **Discussions & Ideas**: Open a thread in [GitHub Discussions](https://github.com/chamakov/krona-vault/discussions) or submit an [Issue](https://github.com/chamakov/krona-vault/issues).
+- **Security Inquiries**: Please review [`SECURITY.md`](./SECURITY.md) before reporting security issues publicly.

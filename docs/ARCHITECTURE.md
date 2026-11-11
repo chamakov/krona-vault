@@ -1,32 +1,34 @@
-# Arquitectura Técnica — KRONA VAULT™
+# Technical Architecture & Cryptographic Design — KRONA VAULT™
 
-Este documento detalla los componentes de software, el diseño de seguridad criptográfica, las invariantes contables y los flujos operativos de **KRONA VAULT™**.
+> 🌐 **Languages / Idiomas**: [ 🇺🇸 English ](./ARCHITECTURE.md) · [ 🇲🇽 Español ](./ARCHITECTURE.es.md)
+
+This document provides a comprehensive overview of the software components, cryptographic primitives, accounting invariants, and operational workflows of **KRONA VAULT™**.
 
 ---
 
-## 🏗️ Diagrama General del Sistema
+## 🏗️ High-Level System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph Clientes ["📱 Clientes & Periféricos"]
-        PlayerApp["PWA Móvil Jugador (KRONA Pass™)<br/>(QR Dinámico / PIN Offline)"]
-        PosTerminal["Terminal POS Mostrador<br/>(Cajero)"]
-        ThermalPrinter["Impresora Térmica<br/>(58mm / 80mm)"]
+    subgraph Clients ["📱 Clients & Peripherals"]
+        PlayerApp["Bilingual PWA Player App (KRONA Pass™)<br/>(Dynamic Pulse QR / Offline PIN)"]
+        PosTerminal["Counter POS Terminal<br/>(Cashier)"]
+        ThermalPrinter["Thermal Printer<br/>(58mm / 80mm)"]
     end
 
-    subgraph Proxy ["🛡️ Perímetro & Red"]
+    subgraph Proxy ["🛡️ Perimeter & Network"]
         Caddy["Caddy Reverse Proxy<br/>(TLS DNS-01 / HTTPS)"]
     end
 
     subgraph Backend ["⚙️ Core Backend (Node.js 22 LTS)"]
-        API["API REST Fastify / Node Server"]
+        API["REST API Server (Fastify / Node)"]
         CryptoEngine["@krona-vault/crypto-totp<br/>(HMAC, TOTP, SHA-256 Chain)"]
-        LedgerEngine["Ledger Engine Contable<br/>(Partida Doble Inmutable)"]
-        CustodyEngine["Módulo Vault Custody™<br/>(Resguardo Escrow de Cartas)"]
-        TournamentEngine["Motor de Torneos & Pozos<br/>(Split Zero-Sum)"]
+        LedgerEngine["Ledger Engine<br/>(Immutable Double-Entry)"]
+        CustodyEngine["Vault Custody™ Module<br/>(Collectible Escrow & Lockbox)"]
+        TournamentEngine["Tournament Prize Engine<br/>(Zero-Sum Splits)"]
     end
 
-    subgraph Storage ["💾 Persistencia & Caché"]
+    subgraph Storage ["💾 Persistence & Cache"]
         Postgres[("PostgreSQL 16<br/>(ACID + Checksums + Triggers)")]
         Valkey[("Valkey / Redis<br/>(Anti-Replay Nonce + PubSub)")]
     end
@@ -40,65 +42,65 @@ flowchart TD
     API --> TournamentEngine
     LedgerEngine --> Postgres
     CryptoEngine --> Valkey
-    PosTerminal -.->|Imprime Voucher| ThermalPrinter
+    PosTerminal -.->|Prints Receipt| ThermalPrinter
 ```
 
 ---
 
-## 📦 Paquetes y Módulos del Monorepo
+## 📦 Monorepo Packages
 
-| Paquete / Carpeta | Tipo | Responsabilidad |
+| Package / Directory | Type | Responsibility |
 | :--- | :--- | :--- |
-| `packages/crypto-totp` | Librería TS | Generación y verificación de QR dinámico TOTP, PIN offline, Base32 RFC 4648, hashing scrypt y encadenamiento de auditoría forense SHA-256. |
-| `packages/shared-types` | Librería TS | Interfaces y tipos compartidos para transacciones, cuentas contables, vouchers, pólizas y roles RBAC. |
-| `apps/api` | Servicio | Endpoints REST, orquestación de transacciones contables, integración con PostgreSQL / D1 y validación de reglas de negocio. |
-| `apps/web-pwa` | PWA Vanilla | 11 portales web responsivos con soporte offline y diseño corporativo de alta densidad para mostradores POS. |
-| `infra/` | Infraestructura | Archivos Caddyfile y scripts SQL de inicialización con triggers contables. |
+| `packages/crypto-totp` | TS Library | Dynamic TOTP QR generation, 6-digit offline PIN, Base32 RFC 4648, scrypt hashing, and SHA-256 forensic audit chaining. |
+| `packages/shared-types` | TS Library | Common TypeScript types and interfaces for transactions, accounts, vouchers, policies, and RBAC roles. |
+| `apps/api` | Service | REST endpoints, double-entry transaction coordination, PostgreSQL / Cloudflare D1 integration, and domain rule validation. |
+| `apps/web-pwa` | PWA Frontend | 11 bilingual, offline-first responsive web portals with high-density layouts for POS stations. |
+| `infra/` | Infrastructure | Caddy reverse proxy Caddyfile and PostgreSQL init scripts with database-level triggers. |
 
 ---
 
-## ⚖️ Motor Contable por Partida Doble (Double-Entry Ledger)
+## ⚖️ Double-Entry Ledger Principles
 
-El sistema opera bajo los estándares de contabilidad financiera:
+The platform follows rigorous financial accounting standards:
 
-### Invariante Fundamental
-En todo evento económico registrado en el sistema, la suma de los débitos debe ser exactamente igual a la suma de los créditos:
-$$\sum \text{Debe} = \sum \text{Haber}$$
+### Fundamental Invariant
+For every financial event recorded by the system, total debits must equal total credits:
+$$\sum \text{Debit} = \sum \text{Credit}$$
 
-### Plan de Cuentas Preconfigurado
-- **Activo**:
-  - `1101` Caja y Efectivo en Mostrador
-  - `1201` Cuentas por Cobrar Inter-Sucursal
-- **Pasivo**:
-  - `2101` Saldo de Crédito a Favor de Jugadores (Pasivo Exigible)
-  - `2102` Crédito Promocional / Preventas en Escrow
-  - `2201` Cuentas por Pagar Inter-Sucursal
-- **Capital y Resultados**:
-  - `4101` Ingresos por Cuotas de Torneos
-  - `5101` Costo de Premiación y Descuentos Otorgados
+### Chart of Accounts
+- **Assets (1000s)**:
+  - `1101` Cash on Hand (Counter Register)
+  - `1201` Accounts Receivable (Inter-Branch Clearing)
+- **Liabilities (2000s)**:
+  - `2101` Customer Store Credit Balances (Current Liability)
+  - `2102` Promotional Credit / Pre-Order Escrow
+  - `2201` Accounts Payable (Inter-Branch Clearing)
+- **Equity & Income (4000s / 5000s)**:
+  - `4101` Tournament Entry Fee Revenues
+  - `5101` Prize Dispersion Costs & Promotional Discounts
 
-### Inmutabilidad a Nivel Base de Datos
-La tabla de asientos contables prohíbe operaciones `UPDATE` y `DELETE` mediante *triggers* de PostgreSQL. Si un asiento debe corregirse o cancelarse, el sistema emite un asiento de contrapartida o ajuste auditado.
-
----
-
-## 🧾 Vouchers Físicos Térmicos y Control Anti-Fraude
-
-Cada operación de cobro o redención emite una póliza física para impresora térmica (58mm o 80mm):
-1. **Folio Único Secuencial**: Formato `VCH-{STORE}-{YYYYMMDD}-{FOLIO}`.
-2. **Sello Criptográfico**: Hash de 16 caracteres (`XXXX-XXXX-XXXX-XXXX`) generado a partir de los datos de la transacción y la clave secreta del servidor.
-3. **Control de Reimpresión**:
-   - Primera impresión: Marcada como `[ ORIGINAL - POLIZA DE CAJA ]`.
-   - Reimpresiones subsecuentes: Incrementan el contador `printCount`, quedan registradas en la auditoría forense e imprimen la leyenda `*** COPIA REIMPRESA #N - NO VALIDA ARQUEO ***`.
+### Database-Level Immutability
+The transaction journal prohibits direct `UPDATE` and `DELETE` operations via PostgreSQL triggers. Corrections require explicit, audited counter-entries.
 
 ---
 
-## 🔐 Autorización de Dos Pasos (2FA Transaccional Dual)
+## 🧾 Thermal Physical Receipts & Anti-Fraud Seals
 
-1. **Escaner QR Dinámico TOTP**:
-   - Rota cada 30 segundos.
-   - Incluye un *nonce* criptográfico único para evitar ataques de captura de pantalla (*screenshot replay*).
-2. **PIN Offline de 6 Dígitos ("Modo Sótano")**:
-   - Si la tienda o el local no tiene cobertura celular o WiFi, la PWA del jugador genera un PIN TOTP offline válido de un solo uso.
-3. **Principio de Cuatro Ojos (Four-Eyes / Maker-Checker)**:
-   - Acciones que superan los límites de política (ajustes manuales de saldo, desprecinto de cartas de alto valor en custodia) exigen la co-autorización y PIN de un segundo supervisor, impidiendo la auto-aprobación (`actorUserId !== approverUserId`).
+Every checkout redemption prints an auditable physical slip (58mm or 80mm):
+1. **Sequential Unique Folio**: Format `VCH-{STORE}-{YYYYMMDD}-{FOLIO}`.
+2. **Cryptographic Seal**: 16-character HMAC token (`XXXX-XXXX-XXXX-XXXX`) derived from transaction details and server secret.
+3. **Reprint Detection**:
+   - Initial print: Marked as `[ ORIGINAL - POLIZA DE CAJA ]`.
+   - Subsequent prints: Increments `printCount`, emits an audit log event, and prints `*** COPIA REIMPRESA #N - NO VALIDA ARQUEO ***`.
+
+---
+
+## 🔐 Dual-Layer 2FA & Four-Eyes Principle
+
+1. **Dynamic TOTP QR (KRONA Pulse™)**:
+   - Rotates every 30 seconds.
+   - Embeds a single-use cryptographic nonce to prevent screenshot replay attacks.
+2. **6-Digit Offline PIN ("Bunker Mode")**:
+   - Computes deterministic RFC 6238 TOTP codes locally on the player's smartphone, valid even when local cellular signals fail.
+3. **Four-Eyes Verification (Maker-Checker)**:
+   - Actions exceeding risk thresholds (high-value adjustments, lockbox card release) require secondary supervisor co-signature and PIN, preventing self-approval (`actorUserId !== approverUserId`).

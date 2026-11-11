@@ -1,51 +1,53 @@
-# Política de Seguridad — KRONA VAULT™
+# Security Policy — KRONA VAULT™
 
-La seguridad e integridad de los datos financieros, libros contables y mecanismos de autorización de dos factores son la máxima prioridad de este proyecto.
+> 🌐 **Languages / Idiomas**: [ 🇺🇸 English ](./SECURITY.md) · [ 🇲🇽 Español ](./SECURITY.es.md)
+
+Security, ledger integrity, and zero-trust authentication are top priorities for **KRONA VAULT™**.
 
 ---
 
-## 🛡️ Versiones Soportadas
+## 🛡️ Supported Versions
 
-Actualmente, solo la rama principal (`main`) y las versiones etiquetadas más recientes reciben parches de seguridad activos:
+Only the latest release on the `main` branch receives active security patches:
 
-| Versión | Soporte Activo |
+| Version | Supported |
 | :--- | :--- |
-| `1.0.x` / `main` | ✅ Sí |
-| Versiones anteriores | ❌ No |
+| `1.0.x` / `main` | ✅ Yes |
+| Previous versions | ❌ No |
 
 ---
 
-## 🔒 Reporte Responsable de Vulnerabilidades
+## 🔒 Reporting a Vulnerability
 
-**Por favor NO abras un Issue público para reportar una vulnerabilidad de seguridad crítica o un fallo en el motor contable/criptográfico.**
+**Please DO NOT open a public GitHub Issue for security vulnerabilities, ledger integrity flaws, or authentication bypasses.**
 
-Para reportar una vulnerabilidad de manera confidencial y coordinada:
+To report a vulnerability responsibly:
 
-1. Utiliza la funcionalidad de **Private Vulnerability Reporting** de GitHub directamente en el repositorio:
-   - Ve a la pestaña **Security** del repositorio en GitHub.
-   - Selecciona **Advisories** y haz clic en **New draft security advisory**.
-2. O bien, envía un correo privado al mantenedor a través de los datos de contacto publicados en el perfil del autor.
+1. Use GitHub's **Private Vulnerability Reporting**:
+   - Navigate to the **Security** tab of this repository on GitHub.
+   - Click **Advisories** and select **New draft security advisory**.
+2. Or contact the maintainers directly via contact details on the author's GitHub profile.
 
-### Información Útil para Incluir en el Reporte
-- Descripción detallada de la vulnerabilidad y vector de ataque.
-- Pasos reproducibles o prueba de concepto (PoC).
-- Componente afectado (`packages/crypto-totp`, `apps/api/src/ledger-engine.ts`, endpoints POS, etc.).
-- Impacto potencial en la integridad contable, saldos de jugadores o autenticación.
-- Sugerencia de remediación si cuentas con una.
-
----
-
-## ⏳ Compromiso de Respuesta
-
-- **Recepción y confirmación inicial**: dentro de las primeras 48 horas.
-- **Evaluación y prueba de concepto**: dentro de los primeros 5 días hábiles.
-- **Desarrollo y liberación del parche**: según la severidad, coordinando una fecha de divulgación responsable con el investigador.
+### Helpful Information to Include
+- Detailed description of the vulnerability and attack vector.
+- Step-by-step reproduction instructions or a minimal Proof of Concept (PoC).
+- Affected module (`packages/crypto-totp`, `apps/api/src/ledger-engine.ts`, POS endpoints, etc.).
+- Potential impact on accounting balances, user data, or credentials.
+- Suggested remediation or patch if available.
 
 ---
 
-## 🎯 Modelo de Amenazas Clave en este Proyecto
+## ⏳ Response Timeline
 
-Al colaborar o auditar la plataforma, ten en cuenta las siguientes defensas arquitectónicas:
-1. **Partida Doble Inmutable**: Ningún asiento puede destruirse o actualizarse; solo se neutralizan mediante contra-asientos autorizados.
-2. **Anti-Replay en QR y Vouchers**: Los códigos QR rotan cada 30 segundos con nonce único; los vouchers físicos térmicos registran contador de impresiones y sello criptográfico único.
-3. **Principio de Cuatro Ojos (Four-Eyes / Maker-Checker)**: Operaciones críticas (ajustes de saldo mayores al umbral, entregas de resguardos) exigen co-firma de un segundo supervisor y bloquean la auto-atención.
+- **Initial acknowledgment**: Within 48 hours.
+- **Triage & PoC validation**: Within 5 business days.
+- **Patch release & disclosure coordination**: Handled with urgency according to severity, agreeing on a responsible disclosure date.
+
+---
+
+## 🎯 Threat Model & Architectural Guarantees
+
+When assessing or auditing this codebase, consider our core security assumptions:
+1. **Double-Entry Invariant**: Ledger entries cannot be updated or deleted; corrections require auditable counter-entries.
+2. **Anti-Replay Protections**: Dynamic QR codes rotate every 30 seconds with single-use nonces; physical receipts feature sequential folios, cryptographic seals, and audited reprint counters.
+3. **Four-Eyes Principle (Maker-Checker)**: Critical operations (balance write-offs above threshold, custody releases) strictly require dual authorization, blocking self-approval.

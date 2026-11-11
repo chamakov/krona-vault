@@ -1,0 +1,183 @@
+name: control-credito-prod
+
+services:
+  # =========================================================================
+  # 1. REVERSE PROXY & TLS AUTOMÁTICO (DNS-01 Challenge para LAN + WAN)
+  # =========================================================================
+  caddy:
+    image: ghcr.io/caddybuilds/caddy-cloudflare:2.8-alpine
+    container_name: cc-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      - TZ=${TZ:-America/Mexico_City}
+      - CF_API_TOKEN=${CF_DNS_API_TOKEN:-}
+      - APP_DOMAIN=${APP_DOMAIN:-credito.local}
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - frontend_net
+    depends_on:
+      app:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+  # =========================================================================
+  # 2. APLICACIÓN PRINCIPAL (PWA + API + Motor Ledger + Vouchers)
+  # =========================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cc-app
+    restart: unless-stopped
+    expose:
+      - "3000"
+    volumes:
+      - app_data:/app/apps/api/data
+    environment:
+      - NODE_ENV=production
+      - TZ=${TZ:-America/Mexico_City}
+      - PORT=3000
+      - PUBLIC_ORIGIN=https://${APP_DOMAIN:-credito.local}
+      - WEBAUTHN_RP_ID=${APP_DOMAIN:-credito.local}
+      - WEBAUTHN_RP_NAME=Control Credito Tienda
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-cc_admin}:${POSTGRES_PASSWORD:-cc_secret}@postgres:5432/${POSTGRES_DB:-control_credito}
+      - REDIS_URL=redis://:${VALKEY_PASSWORD:-valkey_secret}@valkey:6379/0
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_change_in_prod}
+      - QR_HMAC_SECRET=${QR_HMAC_SECRET:-dev_qr_hmac_secret_change_in_prod}
+      - AUDIT_HSM_SECRET=${AUDIT_HSM_SECRET:-dev_audit_hsm_secret_change_in_prod}
+    networks:
+      - frontend_net
+      - backend_net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
+
+  # =========================================================================
+  # 3. BASE DE DATOS TRANSACCIONAL (PostgreSQL 16 con Durabilidad ACID Estricta)
+  # =========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: cc-postgres
+    restart: unless-stopped
+    command: >
+      postgres
+      -c shared_buffers=512MB
+      -c effective_cache_size=1536MB
+      -c synchronous_commit=on
+      -c fsync=on
+      -c full_page_writes=on
+      -c wal_level=replica
+      -c archive_mode=on
+      -c archive_command='cp %p /var/lib/postgresql/wal_archive/%f'
+      -c archive_timeout=60
+    environment:
+      - TZ=${TZ:-America/Mexico_City}
+      - POSTGRES_USER=${POSTGRES_USER:-cc_admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cc_secret}
+      - POSTGRES_DB=${POSTGRES_DB:-control_credito}
+      - POSTGRES_INITDB_ARGS=--data-checksums
+    volumes:
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - pg_data:/var/lib/postgresql/data
+      - pg_wal_archive:/var/lib/postgresql/wal_archive
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cc_admin} -d ${POSTGRES_DB:-control_credito}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    stop_grace_period: 60s
+    security_opt:
+      - no-new-privileges:true
+
+  # =========================================================================
+  # 4. CACHÉ, ANTI-REPLAY NONCE Y PUB/SUB TIEMPO REAL (Valkey 8)
+  # =========================================================================
+  valkey:
+    image: valkey/valkey:8.0-alpine
+    container_name: cc-valkey
+    restart: unless-stopped
+    command: >
+      valkey-server
+      --requirepass ${VALKEY_PASSWORD:-valkey_secret}
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 256mb
+      --maxmemory-policy volatile-lru
+    volumes:
+      - valkey_data:/data
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli -a ${VALKEY_PASSWORD:-valkey_secret} ping | grep PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+
+  # =========================================================================
+  # 5. MOTOR DE RESPALDOS AUTOMÁTICOS (Cada 15 min)
+  # =========================================================================
+  db-backup:
+    image: prodrigestivill/postgres-backup-local:16-alpine
+    container_name: cc-db-backup
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-America/Mexico_City}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=${POSTGRES_DB:-control_credito}
+      - POSTGRES_USER=${POSTGRES_USER:-cc_admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cc_secret}
+      - POSTGRES_EXTRA_OPTS=-Z6 --schema=public --blobs
+      - SCHEDULE=*/15 * * * *
+      - BACKUP_KEEP_MINS=1440
+      - BACKUP_KEEP_DAYS=30
+      - BACKUP_KEEP_WEEKS=12
+      - BACKUP_KEEP_MONTHS=24
+    volumes:
+      - pg_backups_local:/backups
+    networks:
+      - backend_net
+    depends_on:
+      postgres:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge
+    internal: true
+
+volumes:
+  caddy_data:
+  caddy_config:
+  app_data:
+  pg_data:
+  pg_wal_archive:
+  pg_backups_local:
+  valkey_data:

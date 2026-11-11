@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Arena™ — Gestión de Torneos, Pozos por Ocupación y Multi-Juego | KRONA VAULT™</title>
+  <meta name="description" content="Organización y premiación de torneos TCG: cálculo dinámico de pozos por ocupación, importación Pokémon TOM/RK9 y dispersión contable de suma cero." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/tournaments" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/tournaments" />
+  <meta property="og:title" content="KRONA Arena™ — Torneos, Pozos y Premiación Multi-Juego | KRONA VAULT™" />
+  <meta property="og:description" content="Motor oficial de cálculo y liquidación de torneos de cartas coleccionables con partida doble automática." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA Arena™ — Gestión de Torneos" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Arena™ — Torneos, Pozos y Premiación Multi-Juego" />
+  <meta name="twitter:description" content="Cálculo de pozos por ocupación y liquidación automática de premios TCG." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <!-- Datos Estructurados Schema.org (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "KRONA Arena™ — Gestión de Torneos y Pozos TCG",
+    "operatingSystem": "Web (PWA)",
+    "applicationCategory": "SportsApplication, BusinessApplication",
+    "description": "Motor de cálculo de pozos por ocupación, importación de standings Pokémon TOM/RK9 y liquidación automática de premios con partida doble.",
+    "url": "https://vault.kronatcg.com/tournaments"
+  }
+  </script>
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+  <style>
+    .poke-upload-box {
+      border: 2px dashed var(--border-default);
+      background: rgba(14, 20, 31, 0.6);
+      border-radius: var(--radius-sm);
+      padding: 1.15rem;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      margin-bottom: 0.85rem;
+    }
+    .poke-upload-box:hover, .poke-upload-box.dragover {
+      border-color: var(--accent-gold);
+      background: rgba(212, 160, 23, 0.08);
+    }
+    .kpi-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.65rem;
+      margin-bottom: 0.95rem;
+    }
+    .kpi-card-mini {
+      background: var(--bg-slate);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.85rem;
+    }
+    .kpi-card-mini .kpi-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+    .kpi-card-mini .kpi-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .cat-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+    .cat-card-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      position: relative;
+    }
+    .cat-card-box.master-edge { border-top: 3px solid var(--accent-gold); }
+    .cat-card-box.senior-edge { border-top: 3px solid var(--accent-emerald); }
+    .cat-card-box.junior-edge { border-top: 3px solid #9D4EDD; }
+    .cat-card-box.unified-edge { border-top: 3px solid var(--accent-escrow); }
+    .cat-pos-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+      padding: 0.25rem 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+    .cat-pos-row:last-child {
+      border-bottom: none;
+    }
+    .cat-pos-input {
+      width: 68px;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.4rem;
+      font-family: var(--font-mono);
+      text-align: right;
+      background: var(--bg-abyss);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xs);
+      color: var(--text-primary);
+    }
+    .cat-pos-input:focus {
+      border-color: var(--accent-gold);
+      outline: none;
+    }
+    /* Expansión a pantalla completa cuando no hay más elementos dentro de la columna/tabla */
+    .arena-grid:has(> :only-child),
+    .cat-cards-grid:has(> :only-child) {
+      grid-template-columns: 1fr !important;
+    }
+    .arena-grid > :only-child,
+    .cat-cards-grid > :only-child {
+      grid-column: 1 / -1 !important;
+      width: 100% !important;
+    }
+    .arena-sidebar:has(> :only-child) > :only-child {
+      height: 100% !important;
+      flex: 1 1 100% !important;
+    }
+    .table-scroll,
+    .table-scroll-fixed-height {
+      width: 100% !important;
+    }
+    table.krona-table {
+      width: 100% !important;
+      min-width: 100% !important;
+    }
+    table.krona-table td[colspan],
+    table.krona-table tr:only-child td:only-child {
+      width: 100% !important;
+      text-align: center !important;
+    }
+    table.krona-table td > div:only-child,
+    table.krona-table th > div:only-child {
+      width: 100% !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip">
+      <div>
+        <div class="page-eyebrow">CONTROL INTEGRAL DE TORNEOS · POZOS POR OCUPACIÓN & DIVISIÓN · /tournaments</div>
+        <h1 class="page-title">KRONA Arena™ — Pozos por Ocupación, Subida TOM Poké y Multi-Juego</h1>
+        <p class="page-subtitle">
+          Calcula el pozo de premios dinámico según la ocupación real por categoría (Master, Senior, Junior), unifica divisiones con baja participación, procesa archivos oficiales de Pokémon (TOM HTML / RK9) y dispersa premios en otros juegos con pactos Zero-Sum de partida doble.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+        <a href="/custody" data-require-portal="/custody" class="btn btn-slate">Resguardo en Bóveda (/custody)</a>
+        <a href="/trade-in" data-require-portal="/trade-in" class="btn btn-slate">Trade-In Singles (/trade-in)</a>
+        <a href="/users" data-require-portal="/users" class="btn btn-slate">Padrón de Jugadores (/users)</a>
+        <a href="/audit" data-require-portal="/audit" class="btn btn-gold">Auditar Torneos en Citadel (/audit)</a>
+      </div>
+    </section>
+
+    <div class="arena-grid" style="margin-bottom:1.35rem;">
+      <!-- COLUMNA IZQUIERDA: GESTIÓN COMPLETA DE TORNEOS -->
+      <section class="vault-card gold-edge">
+        <div class="card-header">
+          <div class="card-title">Consola de Control de Torneos (TO / Judge)</div>
+          <span id="arenaJudgeBadge" class="badge badge-gold">FOUR-EYES CO-AUTH</span>
+        </div>
+
+        <div class="tactical-tabs">
+          <button type="button" id="trnTabPoke" class="tactical-tab active" onclick="switchTrnTab('POKE')">
+            ⚡ 1. Liquidación Pokémon (TOM HTML / RK9)
+          </button>
+          <button type="button" id="trnTabQuick" class="tactical-tab" onclick="switchTrnTab('QUICK')">
+            🎯 2. Calculadora Multi-Juego (MTG, YGO, One Piece, Lorcana)
+          </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- VISTA 1: IMPORTADOR POKÉMON (TOM / RK9)    -->
+        <!-- ========================================== -->
+        <div id="trnViewPoke">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="pokeStoreSelect">Sede Anfitriona</label>
+              <select id="pokeStoreSelect"></select>
+            </div>
+            <div class="form-group">
+              <label for="pokeGameFormat">Modalidad / Formato</label>
+              <select id="pokeGameFormat">
+                <option value="Pokémon TCG">Pokémon TCG (Trading Card Game)</option>
+                <option value="Pokémon VGC">Pokémon VGC (Video Game Championships)</option>
+                <option value="Pokémon GO">Pokémon GO PvP (Great / Ultra League)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ARRASTRE / PEGAR ARCHIVO TOM -->
+          <div class="poke-upload-box" id="pokeDropZone" tabindex="0" role="button" aria-label="Seleccionar archivo exportado de TOM o arrastrar aquí" onclick="document.getElementById('pokeFileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('pokeFileInput').click();}">
+            <input type="file" id="pokeFileInput" accept=".html,.htm,.txt" style="display:none;" onchange="handlePokeFileUpload(event)" />
+            <div style="font-size:1.4rem;margin-bottom:0.35rem;">📂</div>
+            <div style="font-weight:700;color:var(--text-primary);font-size:0.88rem;">
+              Haz clic para seleccionar el archivo exportado de TOM (HTML) o arrástralo aquí
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">
+              Compatible con Play! Pokémon TOM (Clasificación Final / Standings) y RK9
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pokeRawHtml">O pega directamente el código HTML de clasificaciones de TOM / RK9</label>
+            <textarea id="pokeRawHtml" rows="3" placeholder="Pega aquí el HTML exportado de TOM..." style="font-family:var(--font-mono);font-size:0.75rem;resize:vertical;"></textarea>
+          </div>
+
+          <!-- PARÁMETROS ECONÓMICOS DEL EVENTO -->
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label for="pokeEntryMxn">Cuota Inscripción (MXN)</label>
+              <input id="pokeEntryMxn" type="number" value="150" min="0" step="10" />
+            </div>
+            <div class="form-group">
+              <label for="pokeContribMxn">Aporte Pozo / Jugador (MXN)</label>
+              <input id="pokeContribMxn" type="number" value="100" min="0" step="10" />
+            </div>
+            <div class="form-group">
+              <label for="pokeGuaranteedMxn">Pozo Mínimo Garantizado (MXN)</label>
+              <input id="pokeGuaranteedMxn" type="number" value="0" min="0" step="100" />
+            </div>
+          </div>
+
+          <!-- POLÍTICA DE OCUPACIÓN Y UNIFICACIÓN DE CATEGORÍAS -->
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:0.85rem 1rem;margin-bottom:1rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.65rem;">
+              <div style="font-size:0.76rem;font-weight:700;color:var(--accent-gold-hover);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:0.45rem;">
+                <svg class="krona-icon" style="width:14px;height:14px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span>Política de Ocupación y Unificación de Categorías</span>
+              </div>
+              <span class="badge badge-gold" style="font-size:0.65rem;padding:0.15rem 0.45rem;">TOM / RK9 Rules</span>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr;gap:0.55rem;">
+              <!-- Opción 1: Unificar todo -->
+              <label class="toggle-card" style="display:flex;align-items:flex-start;gap:0.65rem;background:var(--bg-slate);border:1px solid var(--border-default);border-radius:var(--radius-xs);padding:0.6rem 0.75rem;cursor:pointer;transition:border-color 0.2s, background 0.2s;">
+                <input id="pokeUnifyAll" type="checkbox" onchange="onPokeUnifyChange()" style="margin-top:2px;" />
+                <div style="flex:1;">
+                  <div style="font-size:0.82rem;font-weight:600;color:var(--text-primary);line-height:1.3;">Unificar Todo en un Único Pozo Global</div>
+                  <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">Consolida Master, Senior y Junior en una sola bolsa de premios general.</div>
+                </div>
+              </label>
+
+              <!-- Opción 2: Senior + Junior por baja ocupación -->
+              <label class="toggle-card" style="display:flex;align-items:flex-start;gap:0.65rem;background:var(--bg-slate);border:1px solid var(--border-default);border-radius:var(--radius-xs);padding:0.6rem 0.75rem;cursor:pointer;transition:border-color 0.2s, background 0.2s;">
+                <input id="pokeUnifySeniorJunior" type="checkbox" onchange="onPokeUnifyChange()" style="margin-top:2px;" />
+                <div style="flex:1;">
+                  <div style="font-size:0.82rem;font-weight:600;color:var(--text-primary);line-height:1.3;">Unificar Senior + Junior por Baja Ocupación</div>
+                  <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">Combina Senior y Junior en un solo pozo; Master se mantiene como categoría independiente.</div>
+                </div>
+              </label>
+
+              <!-- Opción 3: Pacto equitativo Top Cut -->
+              <label class="toggle-card" style="display:flex;align-items:flex-start;gap:0.65rem;background:var(--bg-slate);border:1px solid var(--border-default);border-radius:var(--radius-xs);padding:0.6rem 0.75rem;cursor:pointer;transition:border-color 0.2s, background 0.2s;">
+                <input id="pokeEqualSplit" type="checkbox" onchange="recalculatePokePayouts()" style="margin-top:2px;" />
+                <div style="flex:1;">
+                  <div style="font-size:0.82rem;font-weight:600;color:var(--text-primary);line-height:1.3;">Pacto de División Equitativa en Top Cut (Split)</div>
+                  <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">Distribución en partes iguales entre los finalistas clasificados sin exceder el pozo total.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-slate btn-block" style="margin-bottom:1rem;" onclick="parsePokeStandingsAction()">
+            🔍 Analizar Archivo TOM y Calcular Pozos por Categoría
+          </button>
+
+          <!-- SECCIÓN DE RESULTADOS PARSEADOS POKÉMON -->
+          <div id="pokeResultsSection" style="display:none;">
+            <div class="kpi-cards-grid">
+              <div class="kpi-card-mini">
+                <div class="kpi-label">Torneo Detectado</div>
+                <div id="pokeMetaName" class="kpi-val" style="font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Torneo Pokémon</div>
+              </div>
+              <div class="kpi-card-mini">
+                <div class="kpi-label">Rondas</div>
+                <div id="pokeMetaRounds" class="kpi-val mono">--</div>
+              </div>
+              <div class="kpi-card-mini">
+                <div class="kpi-label">Ocupación Total</div>
+                <div id="pokeMetaOccupancy" class="kpi-val mono" style="color:var(--accent-gold-hover);">0 Jugadores</div>
+              </div>
+              <div class="kpi-card-mini">
+                <div class="kpi-label">Pozo Total Calculado</div>
+                <div id="pokeMetaPool" class="kpi-val num-tabular" style="color:var(--accent-emerald-hover);">$0.00 MXN</div>
+              </div>
+            </div>
+
+            <div style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;">
+              DESGLOSE DE CATEGORÍAS & PERSONALIZACIÓN DE POZOS
+            </div>
+            <div id="pokeCategoryCardsGrid" class="cat-cards-grid"></div>
+
+            <!-- BARRA DE BALANCE DE POZOS POR CATEGORÍA -->
+            <div id="pokeCategoriesSummaryBar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.6rem;background:var(--bg-slate);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.65rem 0.85rem;margin-bottom:1rem;">
+              <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+                <span style="font-size:0.8rem;color:var(--text-secondary);font-weight:600;">Balance de Pozos por Categoría:</span>
+                <span id="pokeCatPoolBalanceBadge" class="badge badge-emerald">Σ = $0.00 MXN (100.0%)</span>
+              </div>
+              <div style="display:flex;gap:0.5rem;align-items:center;">
+                <button type="button" class="btn btn-slate" style="font-size:0.72rem;padding:0.25rem 0.55rem;" onclick="balanceCategoryPoolsTo100()">
+                  ⚖️ Auto-Equilibrar 100%
+                </button>
+                <button type="button" class="btn btn-slate" style="font-size:0.72rem;padding:0.25rem 0.55rem;" onclick="resetAllCategoryPoolsToOccupancy()">
+                  ↺ Restablecer a Ocupación
+                </button>
+              </div>
+            </div>
+
+            <div style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;">
+              JUGADORES CLASIFICADOS & ASIGNACIÓN DE CRÉDITO
+            </div>
+            <div class="table-scroll table-scroll-fixed-height" style="margin-bottom:0.9rem;">
+              <table class="krona-table">
+                <thead>
+                  <tr>
+                    <th># Pos</th>
+                    <th>Jugador</th>
+                    <th>Cartera KRONA</th>
+                    <th>Récord</th>
+                    <th>Pts / OMW%</th>
+                    <th>Categoría</th>
+                    <th>Premio Crédito</th>
+                  </tr>
+                </thead>
+                <tbody id="pokeStandingsTableBody"></tbody>
+              </table>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.9rem;font-size:0.8rem;">
+              <span style="color:var(--text-secondary);">Verificación Matemática Zero-Sum:</span>
+              <span id="pokeZeroSumCheck" class="num-tabular badge badge-emerald">Σ = $0.00 MXN (100.00% Cuadrado)</span>
+            </div>
+
+            <button type="button" class="btn btn-gold btn-block" onclick="dispersePokeTournamentAction()">
+              🏆 Liquidar Torneo Poké y Acreditar Billeteras (Partida Doble)
+            </button>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- VISTA 2: CALCULADORA RÁPIDA MULTI-JUEGO    -->
+        <!-- ========================================== -->
+        <div id="trnViewQuick" style="display:none;">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="quickTrnName">Nombre del Torneo</label>
+              <input id="quickTrnName" type="text" value="Torneo Semanal TCG" placeholder="Ej. Store Championship" />
+            </div>
+            <div class="form-group">
+              <label for="quickGameFormat">Juego / Formato</label>
+              <select id="quickGameFormat" onchange="updateQuickCalcPreview()">
+                <option value="Magic: The Gathering">Magic: The Gathering (Modern / Standard / Pioneer)</option>
+                <option value="Yu-Gi-Oh! OTS">Yu-Gi-Oh! — OTS Oficial</option>
+                <option value="One Piece TCG">One Piece Card Game</option>
+                <option value="Disney Lorcana">Disney Lorcana TCG</option>
+                <option value="Star Wars Unlimited">Star Wars: Unlimited</option>
+                <option value="Digimon TCG">Digimon Card Game</option>
+                <option value="Battle Spirits Saga">Battle Spirits Saga</option>
+                <option value="Otro Juego">Otro Juego de Cartas / Miniaturas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="quickStoreSelect">Sede Anfitriona</label>
+              <select id="quickStoreSelect"></select>
+            </div>
+            <div class="form-group">
+              <label for="quickTotalPlayers">Total de Jugadores (Ocupación Real)</label>
+              <input id="quickTotalPlayers" type="number" value="12" min="2" max="256" step="1" oninput="updateQuickCalcPreview()" />
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label for="quickEntryMxn">Costo por Jugador (MXN)</label>
+              <input id="quickEntryMxn" type="number" value="150" min="0" step="10" oninput="updateQuickCalcPreview()" />
+            </div>
+            <div class="form-group">
+              <label for="quickContribMxn">Aporte al Pozo (MXN)</label>
+              <input id="quickContribMxn" type="number" value="100" min="0" step="10" oninput="updateQuickCalcPreview()" />
+            </div>
+            <div class="form-group">
+              <label for="quickGuaranteedMxn">Pozo Mínimo Garantizado (MXN)</label>
+              <input id="quickGuaranteedMxn" type="number" value="0" min="0" step="100" oninput="updateQuickCalcPreview()" />
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="align-items:flex-end;">
+            <div class="form-group">
+              <label for="quickTopCutSize">Número de Ganadores a Premiar</label>
+              <select id="quickTopCutSize" onchange="onQuickTopCutChange()">
+                <option value="1">Top 1 (Solo Campeón)</option>
+                <option value="2">Top 2 (Finalistas)</option>
+                <option value="3">Top 3 (Podio)</option>
+                <option value="4" selected>Top 4 (Semifinales)</option>
+                <option value="6">Top 6</option>
+                <option value="8">Top 8 (Cuartos de final)</option>
+                <option value="12">Top 12</option>
+                <option value="16">Top 16 (Eventos Mayores)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="quickPayoutScheme">Esquema de Premiación</label>
+              <select id="quickPayoutScheme" onchange="onQuickSchemeChange()">
+                <option value="STANDARD" selected>Curva Oficial Decreciente</option>
+                <option value="EQUAL_SPLIT">Pacto de División Equitativa (Split)</option>
+                <option value="CUSTOM">Porcentajes Personalizados por Posición</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- KPI BANNER EN VIVO -->
+          <div class="kpi-cards-grid">
+            <div class="kpi-card-mini">
+              <div class="kpi-label">Recaudación en Caja</div>
+              <div id="quickKpiCollected" class="kpi-val num-tabular" style="color:var(--text-primary);">$1,800.00 MXN</div>
+            </div>
+            <div class="kpi-card-mini">
+              <div class="kpi-label">Margen Tienda</div>
+              <div id="quickKpiMargin" class="kpi-val num-tabular" style="color:var(--accent-gold-hover);">$600.00 MXN</div>
+            </div>
+            <div class="kpi-card-mini">
+              <div class="kpi-label">Pozo a Dispersar</div>
+              <div id="quickKpiPool" class="kpi-val num-tabular" style="color:var(--accent-emerald-hover);">$1,200.00 MXN</div>
+            </div>
+          </div>
+
+          <div style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;">
+            ASIGNACIÓN DE PREMIOS A FINALISTAS (TOP CUT)
+          </div>
+          <div class="table-scroll" style="margin-bottom:0.9rem;">
+            <table class="krona-table">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Esquema / %</th>
+                  <th>Premio (MXN)</th>
+                  <th>Asignar Jugador Ganador</th>
+                </tr>
+              </thead>
+              <tbody id="quickPayoutsTableBody"></tbody>
+            </table>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.9rem;font-size:0.8rem;flex-wrap:wrap;gap:0.5rem;">
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <span style="color:var(--text-secondary);">Verificación Matemática Zero-Sum:</span>
+              <span id="quickZeroSumCheck" class="num-tabular badge badge-emerald">Σ = $1,200.00 MXN (100.00% Cuadrado)</span>
+            </div>
+            <button type="button" id="quickAutoBalanceBtn" class="btn btn-slate" style="display:none;font-size:0.72rem;padding:0.25rem 0.55rem;" onclick="autoBalanceQuickPositions()">
+              ⚖️ Auto-Ajustar al 100%
+            </button>
+          </div>
+
+          <button type="button" class="btn btn-gold btn-block" onclick="disperseQuickMultiGameAction()">
+            🏆 Liquidar Torneo Rápido y Dispersar Crédito en Partida Doble
+          </button>
+        </div>
+
+        </div>
+      </section>
+
+      <!-- COLUMNA DERECHA: ACCIONES COMPLEMENTARIAS & REGISTRO EXPRESS -->
+      <div class="arena-sidebar" style="display:flex;flex-direction:column;gap:1.25rem;width:100%;">
+        <!-- REGISTRO EXPRESS DE JUGADOR EN MESA -->
+        <section class="vault-card">
+          <div class="card-header">
+            <div class="card-title">Registro Express de Competidor en Mesa</div>
+            <span class="badge badge-gold">INSTANT KRONA PASS</span>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.75rem;">
+            ¿Un jugador en el Top Cut no tiene cuenta? Regístralo en 5 segundos para dispersarle su crédito de inmediato.
+          </p>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="regFullName">Nombre Completo del Jugador</label>
+              <input id="regFullName" type="text" placeholder="Ej. Valeria Orozco" />
+            </div>
+            <div class="form-group">
+              <label for="regAlias">Handle / Alias Competitivo</label>
+              <input id="regAlias" type="text" placeholder="Ej. @ValeriaOnePiece" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="regStore">Sucursal Base del Jugador</label>
+            <select id="regStore"></select>
+          </div>
+          <button type="button" class="btn btn-slate btn-block" onclick="executePlayerRegister()">
+            ➕ Dar de Alta Jugador y Generar Semilla TOTP
+          </button>
+        </section>
+
+        <!-- REGLAS DE OPERACIÓN TÁCTICA -->
+        <section class="vault-card slate-edge">
+          <div class="card-header">
+            <div class="card-title">Reglas de Operación de Torneos</div>
+            <span class="badge badge-slate">MANUAL + POOL ZERO-SUM</span>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.45;">
+            <p style="margin-bottom:0.55rem;">
+              <strong>Emparejamientos y Rondas:</strong> Se gestionan de forma externa o manual en tu software habitual (Play! Pokémon TOM, MTG EventLink, Melee, Challonge o papel).
+            </p>
+            <p style="margin-bottom:0.55rem;">
+              <strong>Cálculo de Pozo & Premios:</strong> Sube el archivo HTML de TOM/RK9 para cálculo por ocupación y categoría (Master, Senior, Junior) o utiliza la calculadora multi-juego indicando total de jugadores, cuota por inscrito y Top Cut.
+            </p>
+            <p style="margin:0;color:var(--accent-gold-hover);">
+              <strong>Suma Cero Garantizada:</strong> La liquidación abona crédito digital exacto a las billeteras de los ganadores con estricto cuadre contable (Cta 5101 vs Cta 2101).
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- SECCIÓN INFERIOR: BITÁCORA Y TRAZABILIDAD DE TORNEOS GENERADOS -->
+    <section class="vault-card" id="trnHistorySection">
+      <div class="card-header">
+        <div class="card-title">Catálogo y Auditoría de Torneos Liquidados (Trazabilidad Completa)</div>
+        <span id="trnHistoryCount" class="badge badge-gold">0 Torneos</span>
+      </div>
+      <div class="table-scroll table-scroll-fixed-height">
+        <table class="krona-table">
+          <thead>
+            <tr>
+              <th>Folio / Torneo</th>
+              <th>Juego / Sede</th>
+              <th>Estado</th>
+              <th>Inscritos / Ocupación</th>
+              <th>Pozo Calculado</th>
+              <th>Creado Por (Juez/Admin)</th>
+              <th>Liquidado y Co-Autorizado Por</th>
+            </tr>
+          </thead>
+          <tbody id="trnHistoryTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    let selectedTournamentId = null;
+    let parsedPokeData = null;
+    let quickCalcData = null;
+    let pokeCategorySettings = [];
+    let quickCustomPercentages = [];
+
+    const FALLBACK_TOP4 = [
+      { pos: 1, name: 'Alejandro Gómez (CC-8492)', record: '5-0-1', pct: 0.45 },
+      { pos: 2, name: 'Daniela Ríos (CC-1042)', record: '5-0-1', pct: 0.25 },
+      { pos: 3, name: 'Fernando Silva (CC-3319)', record: '4-1-1', pct: 0.15 },
+      { pos: 4, name: 'Luis Morales (CC-9910)', record: '4-1-1', pct: 0.15 },
+    ];
+
+    function getStandardPercentages(count) {
+      const presets = {
+        1: [100],
+        2: [65, 35],
+        3: [50, 30, 20],
+        4: [45, 25, 15, 15],
+        6: [40, 24, 14, 10, 6, 6],
+        8: [30, 20, 12.5, 12.5, 6.25, 6.25, 6.25, 6.25],
+        12: [25, 17, 12, 10, 6, 6, 4, 4, 4, 4, 4, 4],
+        16: [25, 15, 10, 10, 5, 5, 5, 5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5],
+      };
+      if (presets[count]) return [...presets[count]];
+      const weights = [];
+      for (let i = 0; i < count; i++) {
+        weights.push(Math.pow(0.72, i));
+      }
+      const sumW = weights.reduce((a, b) => a + b, 0);
+      let allocated = 0;
+      return weights.map((w, i) => {
+        if (i === count - 1) return Math.round((100 - allocated) * 10) / 10;
+        const v = Math.round((w / sumW) * 1000) / 10;
+        allocated += v;
+        return v;
+      });
+    }
+
+    function getEqualPercentages(count) {
+      if (count <= 0) return [];
+      const base = Math.floor((100 / count) * 10) / 10;
+      const arr = new Array(count).fill(base);
+      const diff = Math.round((100 - (base * count)) * 10) / 10;
+      arr[0] = Math.round((arr[0] + diff) * 10) / 10;
+      return arr;
+    }
+
+    function switchTrnTab(tab) {
+      document.getElementById('trnTabPoke').classList.toggle('active', tab === 'POKE');
+      document.getElementById('trnTabQuick').classList.toggle('active', tab === 'QUICK');
+
+      document.getElementById('trnViewPoke').style.display = tab === 'POKE' ? 'block' : 'none';
+      document.getElementById('trnViewQuick').style.display = tab === 'QUICK' ? 'block' : 'none';
+
+      if (tab === 'QUICK') {
+        updateQuickCalcPreview();
+      }
+    }
+
+    // ========================================================
+    // TAB 1: PARSER Y DISPERSIÓN POKÉMON (TOM / RK9)
+    // ========================================================
+    function handlePokeFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('pokeRawHtml').value = e.target.result;
+        KronaCore.toast(`📄 Archivo "${file.name}" cargado. Analizando...`);
+        parsePokeStandingsAction();
+      };
+      reader.readAsText(file);
+    }
+
+    // Drag and Drop
+    const dropZone = document.getElementById('pokeDropZone');
+    if (dropZone) {
+      ['dragenter', 'dragover'].forEach(name => {
+        dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); }, false);
+      });
+      ['dragleave', 'drop'].forEach(name => {
+        dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); }, false);
+      });
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const file = dt.files && dt.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            document.getElementById('pokeRawHtml').value = ev.target.result;
+            KronaCore.toast(`📄 Archivo "${file.name}" arrastrado con éxito.`);
+            parsePokeStandingsAction();
+          };
+          reader.readAsText(file);
+        }
+      });
+    }
+
+    function onPokeUnifyChange() {
+      const unifyAll = document.getElementById('pokeUnifyAll').checked;
+      if (unifyAll) {
+        document.getElementById('pokeUnifySeniorJunior').checked = false;
+      }
+      if (parsedPokeData) {
+        renderPokeParsedResults(parsedPokeData);
+      }
+    }
+
+    async function parsePokeStandingsAction() {
+      const htmlContent = document.getElementById('pokeRawHtml').value.trim();
+      if (!htmlContent) {
+        KronaCore.toast('Pega o selecciona un archivo HTML de TOM o RK9 para analizar', true);
+        return;
+      }
+
+      const entryFeeMxn = Number(document.getElementById('pokeEntryMxn').value || 150);
+      const contribMxn = Number(document.getElementById('pokeContribMxn').value || 100);
+      const guarMxn = Number(document.getElementById('pokeGuaranteedMxn').value || 0);
+      const isSplit = document.getElementById('pokeEqualSplit').checked;
+
+      try {
+        const res = await KronaCore.post('/api/tournaments/parse-poke-standings', {
+          htmlContent,
+          entryFeeCents: Math.round(entryFeeMxn * 100),
+          prizeContributionCents: Math.round(contribMxn * 100),
+          guaranteedPoolCents: Math.round(guarMxn * 100),
+          applyEqualSplit: isSplit,
+        });
+
+        parsedPokeData = res.standings;
+        const totalUnifiedPool = parsedPokeData.unifiedPoolCents;
+
+        // Inicializar configuraciones reactivas por cada categoría
+        pokeCategorySettings = parsedPokeData.categories.map((cat, idx) => {
+          const cut = cat.suggestedTopCutSize || (cat.occupancy >= 16 ? 8 : cat.occupancy >= 8 ? 4 : cat.occupancy >= 4 ? 2 : 1);
+          const naturalPool = cat.calculatedPoolCents;
+          const poolPct = totalUnifiedPool > 0 ? (naturalPool / totalUnifiedPool) * 100 : (100 / parsedPokeData.categories.length);
+          return {
+            categoryName: cat.category,
+            occupancy: cat.occupancy,
+            naturalPoolCents: naturalPool,
+            currentPoolCents: naturalPool,
+            currentPoolPct: Math.round(poolPct * 10) / 10,
+            isCustomPool: false,
+            topCutSize: cut,
+            payoutScheme: isSplit ? 'EQUAL_SPLIT' : 'STANDARD',
+            customPercentages: isSplit ? getEqualPercentages(cut) : getStandardPercentages(cut),
+          };
+        });
+
+        renderPokeParsedResults(parsedPokeData);
+        document.getElementById('pokeResultsSection').style.display = 'block';
+        KronaCore.toast(`✅ Standings parseados: ${parsedPokeData.totalOccupancy} jugadores en ${parsedPokeData.categories.length} categorías`);
+      } catch (err) {
+        KronaCore.toast('❌ Error al parsear HTML: ' + err.message, true);
+      }
+    }
+
+    function recalculatePokePayouts() {
+      if (parsedPokeData) {
+        renderPokeParsedResults(parsedPokeData);
+      }
+    }
+
+    function renderPokeParsedResults(data) {
+      if (!data) return;
+      document.getElementById('pokeMetaName').textContent = data.tournamentName || 'Torneo Oficial Pokémon';
+      document.getElementById('pokeMetaRounds').textContent = data.totalRounds ? `${data.totalRounds} Rondas` : 'N/A';
+      document.getElementById('pokeMetaOccupancy').textContent = `${data.totalOccupancy} Jugadores`;
+      document.getElementById('pokeMetaPool').textContent = KronaCore.fmt(data.unifiedPoolCents);
+
+      renderPokeCategoryCards();
+      updateCategoryBalanceBar();
+      recalculatePokePayoutsTable();
+    }
+
+    function renderPokeCategoryCards() {
+      if (!parsedPokeData) return;
+      const cardsGrid = document.getElementById('pokeCategoryCardsGrid');
+      cardsGrid.innerHTML = parsedPokeData.categories.map((cat, idx) => {
+        const setting = pokeCategorySettings[idx] || {
+          currentPoolCents: cat.calculatedPoolCents,
+          currentPoolPct: 0,
+          isCustomPool: false,
+          topCutSize: 4,
+          payoutScheme: 'STANDARD',
+          customPercentages: getStandardPercentages(4),
+        };
+
+        const edgeClass = cat.category.toLowerCase().includes('master')
+          ? 'master-edge'
+          : cat.category.toLowerCase().includes('senior')
+            ? 'senior-edge'
+            : 'junior-edge';
+
+        const cut = setting.topCutSize || 4;
+        const poolMxn = (setting.currentPoolCents / 100).toFixed(2);
+        const poolPct = setting.currentPoolPct.toFixed(1);
+
+        return `
+          <div class="cat-card-box ${edgeClass}" id="catCardBox_${idx}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.45rem;">
+              <strong style="color:var(--text-primary);font-size:0.95rem;">Categoría ${cat.category}</strong>
+              <span class="badge ${edgeClass === 'master-edge' ? 'badge-gold' : edgeClass === 'senior-edge' ? 'badge-emerald' : 'badge-escrow'}">
+                ${cat.occupancy} inscritos
+              </span>
+            </div>
+
+            <!-- CONTROLES DE POZO: % Y MXN -->
+            <div style="background:var(--bg-slate);border:1px solid var(--border-default);border-radius:var(--radius-xs);padding:0.5rem 0.65rem;margin-bottom:0.6rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+                <span style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);font-weight:600;">Pozo de la Categoría</span>
+                <span id="pokeCatPoolBadge_${idx}" class="badge ${setting.isCustomPool ? 'badge-gold' : 'badge-emerald'}" style="font-size:0.65rem;padding:0.1rem 0.4rem;">
+                  ${setting.isCustomPool ? 'Personalizado' : 'Por Ocupación'}
+                </span>
+              </div>
+              <div class="form-grid-2" style="gap:0.45rem;margin:0;">
+                <div class="form-group" style="margin:0;">
+                  <label style="font-size:0.65rem;color:var(--text-muted);margin-bottom:0.15rem;">% del Pozo Total:</label>
+                  <div style="display:flex;align-items:center;">
+                    <input type="number" id="pokeCatPoolPct_${idx}" value="${poolPct}" min="0" max="100" step="0.5" 
+                      style="font-size:0.8rem;padding:0.25rem 0.4rem;font-family:var(--font-mono);width:100%;" 
+                      oninput="onPokeCatPoolPctChange(${idx}, this.value)" />
+                    <span style="font-size:0.75rem;margin-left:0.25rem;color:var(--text-muted);">%</span>
+                  </div>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label style="font-size:0.65rem;color:var(--text-muted);margin-bottom:0.15rem;">Monto (MXN):</label>
+                  <div style="display:flex;align-items:center;">
+                    <span style="font-size:0.75rem;margin-right:0.2rem;color:var(--text-muted);">$</span>
+                    <input type="number" id="pokeCatPoolMxn_${idx}" value="${poolMxn}" min="0" step="50" 
+                      style="font-size:0.8rem;padding:0.25rem 0.4rem;font-family:var(--font-mono);font-weight:700;color:var(--accent-emerald-hover);width:100%;" 
+                      oninput="onPokeCatPoolMxnChange(${idx}, this.value)" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONTROLES DE TOP CUT Y ESQUEMA -->
+            <div class="form-grid-2" style="gap:0.45rem;margin-bottom:0.5rem;">
+              <div class="form-group" style="margin:0;">
+                <label style="font-size:0.68rem;color:var(--text-muted);display:block;margin-bottom:0.2rem;">Ganadores (Top Cut):</label>
+                <select id="pokeCatTopCut_${idx}" style="font-size:0.78rem;padding:0.3rem 0.45rem;width:100%;" onchange="onPokeCatTopCutChange(${idx}, this.value)">
+                  <option value="1" ${cut === 1 ? 'selected' : ''}>Top 1 (Solo 1°)</option>
+                  <option value="2" ${cut === 2 ? 'selected' : ''}>Top 2 (Finalistas)</option>
+                  <option value="3" ${cut === 3 ? 'selected' : ''}>Top 3 (Podio)</option>
+                  <option value="4" ${cut === 4 ? 'selected' : ''}>Top 4 (Semifinales)</option>
+                  <option value="6" ${cut === 6 ? 'selected' : ''}>Top 6</option>
+                  <option value="8" ${cut === 8 ? 'selected' : ''}>Top 8 (Cuartos)</option>
+                  <option value="12" ${cut === 12 ? 'selected' : ''}>Top 12</option>
+                  <option value="16" ${cut === 16 ? 'selected' : ''}>Top 16</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label style="font-size:0.68rem;color:var(--text-muted);display:block;margin-bottom:0.2rem;">Esquema de Premios:</label>
+                <select id="pokeCatScheme_${idx}" style="font-size:0.78rem;padding:0.3rem 0.45rem;width:100%;" onchange="onPokeCatSchemeChange(${idx}, this.value)">
+                  <option value="STANDARD" ${setting.payoutScheme === 'STANDARD' ? 'selected' : ''}>Estándar Oficial</option>
+                  <option value="EQUAL_SPLIT" ${setting.payoutScheme === 'EQUAL_SPLIT' ? 'selected' : ''}>Split Equitativo</option>
+                  <option value="CUSTOM" ${setting.payoutScheme === 'CUSTOM' ? 'selected' : ''}>Personalizado %</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- PANEL DE PORCENTAJES POR POSICIÓN SI SCHEME === 'CUSTOM' -->
+            <div id="pokeCatCustomBreakdown_${idx}" style="display:${setting.payoutScheme === 'CUSTOM' ? 'block' : 'none'};background:rgba(0,0,0,0.25);border:1px dashed var(--border-default);border-radius:var(--radius-xs);padding:0.5rem;margin-top:0.4rem;">
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      parsedPokeData.categories.forEach((_, idx) => {
+        if (pokeCategorySettings[idx]?.payoutScheme === 'CUSTOM') {
+          renderCategoryCustomBreakdown(idx);
+        }
+      });
+    }
+
+    function onPokeCatPoolPctChange(catIdx, val) {
+      if (!parsedPokeData || !pokeCategorySettings[catIdx]) return;
+      const totalUnifiedPool = parsedPokeData.unifiedPoolCents;
+      const pct = Math.max(0, Math.min(100, Number(val) || 0));
+      const setting = pokeCategorySettings[catIdx];
+      setting.currentPoolPct = pct;
+      setting.currentPoolCents = Math.round((totalUnifiedPool * pct) / 100);
+      setting.isCustomPool = true;
+
+      const mxnInput = document.getElementById(`pokeCatPoolMxn_${catIdx}`);
+      if (mxnInput) mxnInput.value = (setting.currentPoolCents / 100).toFixed(2);
+      const badge = document.getElementById(`pokeCatPoolBadge_${catIdx}`);
+      if (badge) {
+        badge.className = 'badge badge-gold';
+        badge.textContent = 'Personalizado';
+      }
+
+      updateCategoryBalanceBar();
+      recalculatePokePayoutsTable();
+    }
+
+    function onPokeCatPoolMxnChange(catIdx, val) {
+      if (!parsedPokeData || !pokeCategorySettings[catIdx]) return;
+      const totalUnifiedPool = parsedPokeData.unifiedPoolCents;
+      const mxn = Math.max(0, Number(val) || 0);
+      const cents = Math.round(mxn * 100);
+      const setting = pokeCategorySettings[catIdx];
+      setting.currentPoolCents = cents;
+      setting.currentPoolPct = totalUnifiedPool > 0 ? (cents / totalUnifiedPool) * 100 : 0;
+      setting.isCustomPool = true;
+
+      const pctInput = document.getElementById(`pokeCatPoolPct_${catIdx}`);
+      if (pctInput) pctInput.value = setting.currentPoolPct.toFixed(1);
+      const badge = document.getElementById(`pokeCatPoolBadge_${catIdx}`);
+      if (badge) {
+        badge.className = 'badge badge-gold';
+        badge.textContent = 'Personalizado';
+      }
+
+      updateCategoryBalanceBar();
+      recalculatePokePayoutsTable();
+    }
+
+    function onPokeCatTopCutChange(catIdx, val) {
+      if (!pokeCategorySettings[catIdx]) return;
+      const count = Number(val);
+      const setting = pokeCategorySettings[catIdx];
+      setting.topCutSize = count;
+
+      if (setting.payoutScheme === 'STANDARD') {
+        setting.customPercentages = getStandardPercentages(count);
+      } else if (setting.payoutScheme === 'EQUAL_SPLIT') {
+        setting.customPercentages = getEqualPercentages(count);
+      } else {
+        if (!setting.customPercentages || setting.customPercentages.length !== count) {
+          setting.customPercentages = getStandardPercentages(count);
+        }
+      }
+
+      if (setting.payoutScheme === 'CUSTOM') {
+        renderCategoryCustomBreakdown(catIdx);
+      }
+      recalculatePokePayoutsTable();
+    }
+
+    function onPokeCatSchemeChange(catIdx, val) {
+      if (!pokeCategorySettings[catIdx]) return;
+      const setting = pokeCategorySettings[catIdx];
+      setting.payoutScheme = val;
+      const count = setting.topCutSize;
+
+      if (val === 'STANDARD') {
+        setting.customPercentages = getStandardPercentages(count);
+      } else if (val === 'EQUAL_SPLIT') {
+        setting.customPercentages = getEqualPercentages(count);
+      } else if (val === 'CUSTOM') {
+        if (!setting.customPercentages || setting.customPercentages.length !== count) {
+          setting.customPercentages = getStandardPercentages(count);
+        }
+      }
+
+      const box = document.getElementById(`pokeCatCustomBreakdown_${catIdx}`);
+      if (box) {
+        box.style.display = val === 'CUSTOM' ? 'block' : 'none';
+        if (val === 'CUSTOM') {
+          renderCategoryCustomBreakdown(catIdx);
+        }
+      }
+
+      recalculatePokePayoutsTable();
+    }
+
+    function onPokeCatPosPctChange(catIdx, posIdx, val) {
+      if (!pokeCategorySettings[catIdx]) return;
+      const setting = pokeCategorySettings[catIdx];
+      const num = Math.max(0, Math.min(100, Number(val) || 0));
+      setting.customPercentages[posIdx] = num;
+      updateCategoryPosSumBadge(catIdx);
+      recalculatePokePayoutsTable();
+    }
+
+    function updateCategoryPosSumBadge(catIdx) {
+      const setting = pokeCategorySettings[catIdx];
+      if (!setting) return;
+      const badge = document.getElementById(`pokeCatPosSumBadge_${catIdx}`);
+      if (!badge) return;
+      const sumPct = (setting.customPercentages || []).reduce((a, b) => a + b, 0);
+      const is100 = Math.abs(sumPct - 100) < 0.05;
+      badge.className = `badge ${is100 ? 'badge-emerald' : 'badge-gold'}`;
+      badge.textContent = `Σ = ${sumPct.toFixed(1)}% ${is100 ? '✓' : '⚠️'}`;
+    }
+
+    function renderCategoryCustomBreakdown(catIdx) {
+      const setting = pokeCategorySettings[catIdx];
+      const box = document.getElementById(`pokeCatCustomBreakdown_${catIdx}`);
+      if (!box || !setting) return;
+
+      const count = setting.topCutSize;
+      const pcts = setting.customPercentages || [];
+
+      let rowsHtml = '';
+      for (let i = 0; i < count; i++) {
+        const p = pcts[i] != null ? pcts[i] : 0;
+        rowsHtml += `
+          <div class="cat-pos-row">
+            <span class="mono" style="font-size:0.75rem;color:var(--text-secondary);font-weight:600;">Pos #${i + 1}:</span>
+            <div style="display:flex;align-items:center;gap:0.25rem;">
+              <input type="number" min="0" max="100" step="0.5" class="cat-pos-input" value="${p}" 
+                oninput="onPokeCatPosPctChange(${catIdx}, ${i}, this.value)" />
+              <span style="font-size:0.75rem;color:var(--text-muted);">%</span>
+            </div>
+          </div>
+        `;
+      }
+
+      const sumPct = pcts.reduce((a, b) => a + b, 0);
+      const is100 = Math.abs(sumPct - 100) < 0.05;
+
+      box.innerHTML = `
+        <div style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.35rem;font-weight:600;">
+          Porcentajes por Posición (Top ${count})
+        </div>
+        ${rowsHtml}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.4rem;padding-top:0.3rem;border-top:1px solid var(--border-default);">
+          <span id="pokeCatPosSumBadge_${catIdx}" class="badge ${is100 ? 'badge-emerald' : 'badge-gold'}" style="font-size:0.68rem;">
+            Σ = ${sumPct.toFixed(1)}% ${is100 ? '✓' : '⚠️'}
+          </span>
+          <button type="button" class="btn btn-slate" style="font-size:0.65rem;padding:0.15rem 0.4rem;" onclick="autoBalanceCategoryPositions(${catIdx})">
+            Auto-100%
+          </button>
+        </div>
+      `;
+    }
+
+    function autoBalanceCategoryPositions(catIdx) {
+      const setting = pokeCategorySettings[catIdx];
+      if (!setting) return;
+      const count = setting.topCutSize;
+      const pcts = setting.customPercentages;
+      const sum = pcts.reduce((a, b) => a + b, 0);
+      if (sum === 0) {
+        setting.customPercentages = getEqualPercentages(count);
+      } else {
+        let allocated = 0;
+        setting.customPercentages = pcts.map((p, i) => {
+          if (i === count - 1) return Math.round((100 - allocated) * 10) / 10;
+          const normalized = Math.round(((p / sum) * 100) * 10) / 10;
+          allocated += normalized;
+          return normalized;
+        });
+      }
+      renderCategoryCustomBreakdown(catIdx);
+      recalculatePokePayoutsTable();
+    }
+
+    function balanceCategoryPoolsTo100() {
+      if (!parsedPokeData || pokeCategorySettings.length === 0) return;
+      const totalUnifiedPool = parsedPokeData.unifiedPoolCents;
+      const sumCurrentPct = pokeCategorySettings.reduce((s, c) => s + c.currentPoolPct, 0);
+
+      if (sumCurrentPct === 0) {
+        const equalShare = 100 / pokeCategorySettings.length;
+        pokeCategorySettings.forEach(c => {
+          c.currentPoolPct = Math.round(equalShare * 10) / 10;
+          c.currentPoolCents = Math.round((totalUnifiedPool * equalShare) / 100);
+          c.isCustomPool = true;
+        });
+      } else {
+        let allocatedCents = 0;
+        pokeCategorySettings.forEach((c, idx) => {
+          if (idx === pokeCategorySettings.length - 1) {
+            c.currentPoolCents = Math.max(0, totalUnifiedPool - allocatedCents);
+            c.currentPoolPct = totalUnifiedPool > 0 ? (c.currentPoolCents / totalUnifiedPool) * 100 : 0;
+          } else {
+            const normalizedPct = (c.currentPoolPct / sumCurrentPct) * 100;
+            c.currentPoolPct = Math.round(normalizedPct * 10) / 10;
+            c.currentPoolCents = Math.round((totalUnifiedPool * normalizedPct) / 100);
+            allocatedCents += c.currentPoolCents;
+          }
+          c.isCustomPool = true;
+        });
+      }
+
+      renderPokeCategoryCards();
+      updateCategoryBalanceBar();
+      recalculatePokePayoutsTable();
+      KronaCore.toast('⚖️ Pozos de categorías auto-equilibrados al 100%');
+    }
+
+    function resetAllCategoryPoolsToOccupancy() {
+      if (!parsedPokeData) return;
+      const totalUnifiedPool = parsedPokeData.unifiedPoolCents;
+      pokeCategorySettings.forEach((c, idx) => {
+        const origCat = parsedPokeData.categories[idx];
+        c.currentPoolCents = origCat.calculatedPoolCents;
+        c.currentPoolPct = totalUnifiedPool > 0 ? (origCat.calculatedPoolCents / totalUnifiedPool) * 100 : 0;
+        c.isCustomPool = false;
+        c.topCutSize = origCat.suggestedTopCutSize || 4;
+        c.payoutScheme = 'STANDARD';
+        c.customPercentages = getStandardPercentages(c.topCutSize);
+      });
+
+      renderPokeCategoryCards();
+      updateCategoryBalanceBar();
+      recalculatePokePayoutsTable();
+      KronaCore.toast('↺ Pozos de categorías restablecidos a cálculo natural por ocupación');
+    }
+
+    function updateCategoryBalanceBar() {
+      if (!parsedPokeData) return;
+      const totalUnifiedPool = parsedPokeData.unifiedPoolCents;
+      const sumCatsCents = pokeCategorySettings.reduce((s, c) => s + c.currentPoolCents, 0);
+      const sumCatsPct = pokeCategorySettings.reduce((s, c) => s + c.currentPoolPct, 0);
+
+      const badge = document.getElementById('pokeCatPoolBalanceBadge');
+      if (badge) {
+        const diffCents = sumCatsCents - totalUnifiedPool;
+        if (Math.abs(diffCents) < 50) {
+          badge.className = 'badge badge-emerald';
+          badge.textContent = `Σ = ${KronaCore.fmt(sumCatsCents)} (${sumCatsPct.toFixed(1)}% — Cuadrado Zero-Sum)`;
+        } else {
+          badge.className = 'badge badge-gold';
+          badge.textContent = `Σ = ${KronaCore.fmt(sumCatsCents)} (${sumCatsPct.toFixed(1)}% — Diferencia: ${diffCents > 0 ? '+' : ''}${KronaCore.fmt(diffCents)})`;
+        }
+      }
+    }
+
+    function recalculatePokePayoutsTable() {
+      if (!parsedPokeData) return;
+      const unifyAll = document.getElementById('pokeUnifyAll').checked;
+      const isSplit = document.getElementById('pokeEqualSplit').checked;
+
+      let tableRowsHtml = '';
+      let sumAwardedCents = 0;
+
+      if (unifyAll) {
+        const totalPool = parsedPokeData.unifiedPoolCents;
+        const allEntries = parsedPokeData.categories.flatMap(c => c.entries).sort((a, b) => a.rank - b.rank);
+        const topCut = allEntries.length >= 8 ? 4 : 2;
+        const payouts = calculateClientCategoryPayouts(totalPool, { topCutSize: topCut, payoutScheme: isSplit ? 'EQUAL_SPLIT' : 'STANDARD', customPercentages: getStandardPercentages(topCut) }, allEntries);
+
+        tableRowsHtml = allEntries.map(e => {
+          const payout = payouts.find(p => p.rank === e.rank);
+          const prizeCents = payout ? payout.awardedCents : 0;
+          sumAwardedCents += prizeCents;
+          return renderPokeTableRow(e, prizeCents, 'Unificado (Global)');
+        }).join('');
+      } else {
+        parsedPokeData.categories.forEach((cat, idx) => {
+          const setting = pokeCategorySettings[idx] || {
+            currentPoolCents: cat.calculatedPoolCents,
+            topCutSize: 4,
+            payoutScheme: 'STANDARD',
+            customPercentages: getStandardPercentages(4),
+          };
+
+          const effectiveScheme = isSplit ? 'EQUAL_SPLIT' : setting.payoutScheme;
+          const effectiveSetting = { ...setting, payoutScheme: effectiveScheme };
+
+          const payouts = calculateClientCategoryPayouts(setting.currentPoolCents, effectiveSetting, cat.entries);
+
+          cat.entries.forEach(e => {
+            const payout = payouts.find(p => p.rank === e.rank);
+            const prizeCents = payout ? payout.awardedCents : 0;
+            sumAwardedCents += prizeCents;
+            tableRowsHtml += renderPokeTableRow(e, prizeCents, cat.category);
+          });
+        });
+      }
+
+      if (!tableRowsHtml) {
+        tableRowsHtml = '<tr><td colspan="7" style="text-align:center;padding:1.8rem 1rem;color:var(--text-muted);width:100%;">No se encontraron clasificados en los standings analizados.</td></tr>';
+      }
+
+      document.getElementById('pokeStandingsTableBody').innerHTML = tableRowsHtml;
+      document.getElementById('pokeZeroSumCheck').textContent =
+        `Σ = ${KronaCore.fmt(sumAwardedCents)} (100.00% Cuadrado)`;
+    }
+
+    function calculateClientCategoryPayouts(poolCents, setting, entries) {
+      if (poolCents <= 0 || !entries || entries.length === 0) return [];
+      const topCutSize = setting.topCutSize || 4;
+      const eligible = entries.slice(0, Math.min(topCutSize, entries.length));
+      const count = eligible.length;
+      if (count === 0) return [];
+
+      let bps = [];
+      if (setting.payoutScheme === 'EQUAL_SPLIT') {
+        const share = Math.floor(10_000 / count);
+        bps = new Array(count).fill(share);
+        bps[0] += 10_000 - (share * count);
+      } else if (setting.payoutScheme === 'CUSTOM') {
+        const pcts = (setting.customPercentages || []).slice(0, count);
+        while (pcts.length < count) pcts.push(0);
+        const sumP = pcts.reduce((a, b) => a + b, 0);
+        if (sumP <= 0) {
+          const share = Math.floor(10_000 / count);
+          bps = new Array(count).fill(share);
+          bps[0] += 10_000 - (share * count);
+        } else {
+          let allocatedBps = 0;
+          bps = pcts.map((p, idx) => {
+            if (idx === count - 1) return 10_000 - allocatedBps;
+            const b = Math.floor((p / sumP) * 10_000);
+            allocatedBps += b;
+            return b;
+          });
+        }
+      } else {
+        const stdPcts = getStandardPercentages(count);
+        const sumP = stdPcts.reduce((a, b) => a + b, 0);
+        let allocatedBps = 0;
+        bps = stdPcts.map((p, idx) => {
+          if (idx === count - 1) return 10_000 - allocatedBps;
+          const b = Math.floor((p / sumP) * 10_000);
+          allocatedBps += b;
+          return b;
+        });
+      }
+
+      let allocatedCents = 0;
+      const res = eligible.map((e, idx) => {
+        const c = Math.floor((poolCents * bps[idx]) / 10_000);
+        allocatedCents += c;
+        return { rank: e.rank, awardedCents: c, bps: bps[idx] };
+      });
+
+      const remCents = poolCents - allocatedCents;
+      if (remCents !== 0 && res.length > 0) {
+        res[0].awardedCents += remCents;
+      }
+      return res;
+    }
+
+    function renderPokeTableRow(e, prizeCents, categoryName) {
+      const isExisting = e.matchedWallet && e.matchedWallet.isExisting;
+      const safePlayerName = KronaCore.escapeHtml(e.playerName);
+      const safeCategoryName = KronaCore.escapeHtml(categoryName);
+      const safeWalletName = e.matchedWallet ? KronaCore.escapeHtml(e.matchedWallet.fullName) : '';
+      const safeMemberCode = e.matchedWallet ? KronaCore.escapeHtml(e.matchedWallet.memberCode) : '';
+
+      const walletBadge = isExisting
+        ? `<span class="badge badge-emerald" title="${safeWalletName}">${safeMemberCode}</span>`
+        : `<span class="badge badge-gold" title="Se auto-registrará una cuenta nueva">NUEVO (Auto-Alta)</span>`;
+
+      return `
+        <tr>
+          <td class="mono" style="font-weight:700;color:var(--accent-gold-hover);">#${e.rank}</td>
+          <td><strong>${safePlayerName}</strong></td>
+          <td>${walletBadge}</td>
+          <td class="mono">${e.record || `${e.wins || 0}-${e.losses || 0}-${e.ties || 0}`}</td>
+          <td class="mono" style="font-size:0.75rem;">${e.matchPoints ?? 0} pts · ${(e.opponentWinPercentage || 0).toFixed(1)}%</td>
+          <td><span class="badge badge-escrow">${safeCategoryName}</span></td>
+          <td class="num-tabular" style="font-weight:700;color:${prizeCents > 0 ? 'var(--accent-emerald-hover)' : 'var(--text-muted)'};">
+            ${prizeCents > 0 ? KronaCore.fmt(prizeCents) : '-'}
+          </td>
+        </tr>
+      `;
+    }
+
+    async function dispersePokeTournamentAction() {
+      if (!parsedPokeData) return;
+      const storeId = document.getElementById('pokeStoreSelect')?.value || KronaCore.getSelectedStoreId();
+      const unifyAll = document.getElementById('pokeUnifyAll').checked;
+      const unifySeniorJunior = document.getElementById('pokeUnifySeniorJunior').checked;
+      const isSplit = document.getElementById('pokeEqualSplit').checked;
+      const rawHtml = document.getElementById('pokeRawHtml').value.trim();
+
+      const categoriesPayload = parsedPokeData.categories.map((cat, idx) => {
+        const setting = pokeCategorySettings[idx] || {};
+        const cut = setting.topCutSize || 4;
+        const scheme = isSplit ? 'EQUAL_SPLIT' : (setting.payoutScheme || 'STANDARD');
+
+        let customBps = undefined;
+        if (scheme === 'CUSTOM' && setting.customPercentages) {
+          const pcts = setting.customPercentages.slice(0, cut);
+          const sum = pcts.reduce((a, b) => a + b, 0);
+          if (sum > 0) {
+            let allocated = 0;
+            customBps = pcts.map((p, i) => {
+              if (i === cut - 1) return 10_000 - allocated;
+              const b = Math.floor((p / sum) * 10_000);
+              allocated += b;
+              return b;
+            });
+          }
+        }
+
+        return {
+          name: cat.category,
+          entryFeeCents: Math.round(Number(document.getElementById('pokeEntryMxn').value || 150) * 100),
+          prizeContributionCents: Math.round(Number(document.getElementById('pokeContribMxn').value || 100) * 100),
+          registeredCount: cat.occupancy,
+          topCutSize: cut,
+          applyEqualSplit: scheme === 'EQUAL_SPLIT',
+          payoutScheme: scheme,
+          customPoolCents: setting.isCustomPool ? setting.currentPoolCents : undefined,
+          customPoolPercentage: setting.isCustomPool ? setting.currentPoolPct : undefined,
+          customPercentagesBps: customBps,
+          entries: cat.entries.map(e => ({
+            rank: e.rank,
+            playerName: e.playerName,
+            record: e.record,
+            matchPoints: e.matchPoints,
+          })),
+        };
+      });
+
+      try {
+        const res = await KronaCore.post('/api/tournaments/disperse-poke', {
+          storeId,
+          name: parsedPokeData.tournamentName,
+          gameFormat: document.getElementById('pokeGameFormat').value,
+          unifyCategoriesPool: unifyAll,
+          unifySeniorJunior,
+          categories: categoriesPayload,
+          rawHtmlContent: rawHtml,
+        });
+
+        KronaCore.toast(`🏆 Torneo Poké ${res.tournament.folio} liquidado: ${KronaCore.fmt(res.totalDispersedCents)} dispersados a billeteras`);
+        await KronaCore.refreshState();
+        const historyEl = document.getElementById('trnHistorySection');
+        if (historyEl) historyEl.scrollIntoView({ behavior: 'smooth' });
+        const printConfirmed = await KronaCore.confirm({
+          title: 'Acta Térmica de Premiación',
+          message: '¿Deseas imprimir el Acta Térmica Oficial del Torneo para entrega a Jueces/Caja?',
+          confirmText: 'Imprimir Acta',
+          cancelText: 'Omitir',
+          danger: false,
+        });
+        if (printConfirmed) {
+          printTournamentThermalActa(res.tournament.id);
+        }
+      } catch (err) {
+        KronaCore.toast('❌ Error en dispersión: ' + err.message, true);
+      }
+    }
+
+    // ========================================================
+    // TAB 2: CALCULADORA RÁPIDA MULTI-JUEGO (MTG, YGO, ETC.)
+    // ========================================================
+    function onQuickTopCutChange() {
+      const topCutSize = Number(document.getElementById('quickTopCutSize').value || 4);
+      const scheme = document.getElementById('quickPayoutScheme').value;
+      if (scheme === 'STANDARD') {
+        quickCustomPercentages = getStandardPercentages(topCutSize);
+      } else if (scheme === 'EQUAL_SPLIT') {
+        quickCustomPercentages = getEqualPercentages(topCutSize);
+      } else {
+        if (quickCustomPercentages.length !== topCutSize) {
+          quickCustomPercentages = getStandardPercentages(topCutSize);
+        }
+      }
+      updateQuickCalcPreview();
+    }
+
+    function onQuickSchemeChange() {
+      const topCutSize = Number(document.getElementById('quickTopCutSize').value || 4);
+      const scheme = document.getElementById('quickPayoutScheme').value;
+      if (scheme === 'STANDARD') {
+        quickCustomPercentages = getStandardPercentages(topCutSize);
+      } else if (scheme === 'EQUAL_SPLIT') {
+        quickCustomPercentages = getEqualPercentages(topCutSize);
+      } else {
+        if (!quickCustomPercentages || quickCustomPercentages.length !== topCutSize) {
+          quickCustomPercentages = getStandardPercentages(topCutSize);
+        }
+      }
+      updateQuickCalcPreview();
+    }
+
+    function onQuickPosPctChange(posIdx, val) {
+      const num = Math.max(0, Math.min(100, Number(val) || 0));
+      quickCustomPercentages[posIdx] = num;
+      updateQuickCalcPreview(true);
+    }
+
+    function autoBalanceQuickPositions() {
+      const topCutSize = Number(document.getElementById('quickTopCutSize').value || 4);
+      const sum = quickCustomPercentages.reduce((a, b) => a + b, 0);
+      if (sum === 0) {
+        quickCustomPercentages = getEqualPercentages(topCutSize);
+      } else {
+        let allocated = 0;
+        quickCustomPercentages = quickCustomPercentages.map((p, i) => {
+          if (i === topCutSize - 1) return Math.round((100 - allocated) * 10) / 10;
+          const norm = Math.round(((p / sum) * 100) * 10) / 10;
+          allocated += norm;
+          return norm;
+        });
+      }
+      updateQuickCalcPreview();
+      KronaCore.toast('⚖️ Porcentajes del Top Cut auto-equilibrados al 100%');
+    }
+
+    function updateQuickCalcPreview(preserveInputs = false) {
+      const totalPlayers = Math.max(0, Number(document.getElementById('quickTotalPlayers').value || 0));
+      const entryMxn = Math.max(0, Number(document.getElementById('quickEntryMxn').value || 0));
+      const contribMxn = Math.max(0, Number(document.getElementById('quickContribMxn').value || 0));
+      const guarMxn = Math.max(0, Number(document.getElementById('quickGuaranteedMxn').value || 0));
+      const topCutSize = Number(document.getElementById('quickTopCutSize').value || 4);
+      const scheme = document.getElementById('quickPayoutScheme').value;
+
+      const totalCollectedCents = totalPlayers * entryMxn * 100;
+      const poolFromContribCents = totalPlayers * contribMxn * 100;
+      const effectivePoolCents = Math.max(guarMxn * 100, poolFromContribCents);
+      const marginCents = Math.max(0, totalCollectedCents - effectivePoolCents);
+
+      document.getElementById('quickKpiCollected').textContent = KronaCore.fmt(totalCollectedCents);
+      document.getElementById('quickKpiMargin').textContent = KronaCore.fmt(marginCents);
+      document.getElementById('quickKpiPool').textContent = KronaCore.fmt(effectivePoolCents);
+
+      const count = Math.min(topCutSize, totalPlayers);
+      if (count === 0 || effectivePoolCents === 0) {
+        document.getElementById('quickPayoutsTableBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Ingresa al menos 2 jugadores y costo para calcular premios.</td></tr>';
+        document.getElementById('quickZeroSumCheck').textContent = 'Σ = $0.00 MXN';
+        const autoBtn = document.getElementById('quickAutoBalanceBtn');
+        if (autoBtn) autoBtn.style.display = 'none';
+        return;
+      }
+
+      if (!quickCustomPercentages || quickCustomPercentages.length !== count) {
+        if (scheme === 'EQUAL_SPLIT') {
+          quickCustomPercentages = getEqualPercentages(count);
+        } else {
+          quickCustomPercentages = getStandardPercentages(count);
+        }
+      }
+
+      let bps = [];
+      if (scheme === 'EQUAL_SPLIT') {
+        const share = Math.floor(10_000 / count);
+        bps = new Array(count).fill(share);
+        bps[0] += 10_000 - (share * count);
+      } else if (scheme === 'CUSTOM') {
+        const pcts = quickCustomPercentages.slice(0, count);
+        const sumP = pcts.reduce((a, b) => a + b, 0);
+        if (sumP <= 0) {
+          const share = Math.floor(10_000 / count);
+          bps = new Array(count).fill(share);
+          bps[0] += 10_000 - (share * count);
+        } else {
+          let allocatedBps = 0;
+          bps = pcts.map((p, idx) => {
+            if (idx === count - 1) return 10_000 - allocatedBps;
+            const b = Math.floor((p / sumP) * 10_000);
+            allocatedBps += b;
+            return b;
+          });
+        }
+      } else {
+        const stdPcts = getStandardPercentages(count);
+        const sumP = stdPcts.reduce((a, b) => a + b, 0);
+        let allocatedBps = 0;
+        bps = stdPcts.map((p, idx) => {
+          if (idx === count - 1) return 10_000 - allocatedBps;
+          const b = Math.floor((p / sumP) * 10_000);
+          allocatedBps += b;
+          return b;
+        });
+      }
+
+      let allocatedCents = 0;
+      const rows = bps.map((b, idx) => {
+        const c = Math.floor((effectivePoolCents * b) / 10_000);
+        allocatedCents += c;
+        const currentPct = quickCustomPercentages[idx] != null ? quickCustomPercentages[idx] : (b / 100);
+        return { pos: idx + 1, bps: b, pct: currentPct, cents: c };
+      });
+      const rem = effectivePoolCents - allocatedCents;
+      if (rows[0]) rows[0].cents += rem;
+
+      const st = KronaCore.getState();
+      const players = (st && st.players ? st.players : []).filter(p => p.status === 'ACTIVE');
+
+      const savedSelections = {};
+      for (let i = 1; i <= count; i++) {
+        const sel = document.getElementById(`quickWinnerSelect_${i}`);
+        const inp = document.getElementById(`quickWinnerName_${i}`);
+        if (sel) savedSelections[i] = { sel: sel.value, name: inp ? inp.value : '' };
+      }
+
+      document.getElementById('quickPayoutsTableBody').innerHTML = rows.map((r, idx) => {
+        const saved = savedSelections[r.pos] || { sel: '', name: '' };
+        const playerOpts = players.map(p => `<option value="${p.userId}" ${saved.sel === p.userId ? 'selected' : ''}>${p.fullName} (${p.memberCode})</option>`).join('');
+
+        let schemeCellHtml = '';
+        if (scheme === 'CUSTOM') {
+          schemeCellHtml = `
+            <div style="display:flex;align-items:center;gap:0.25rem;">
+              <input type="number" min="0" max="100" step="0.5" class="cat-pos-input" 
+                id="quickPosPct_${idx}" value="${r.pct}" 
+                oninput="onQuickPosPctChange(${idx}, this.value)" />
+              <span style="font-size:0.75rem;color:var(--text-muted);">%</span>
+            </div>
+          `;
+        } else if (scheme === 'EQUAL_SPLIT') {
+          schemeCellHtml = `<span class="badge badge-escrow">Split Equitativo (${(r.bps/100).toFixed(1)}%)</span>`;
+        } else {
+          schemeCellHtml = `<span class="badge badge-gold">Estándar (${(r.bps/100).toFixed(1)}%)</span>`;
+        }
+
+        return `
+          <tr>
+            <td class="mono" style="font-weight:700;color:var(--accent-gold-hover);">#${r.pos}</td>
+            <td>${schemeCellHtml}</td>
+            <td class="num-tabular" style="font-weight:700;color:var(--accent-emerald-hover);">${KronaCore.fmt(r.cents)}</td>
+            <td>
+              <div style="display:flex;gap:0.4rem;align-items:center;">
+                <select id="quickWinnerSelect_${r.pos}" style="flex:2;font-size:0.8rem;padding:0.35rem 0.5rem;">
+                  <option value="">-- Seleccionar Jugador del Padrón --</option>
+                  ${playerOpts}
+                </select>
+                <input id="quickWinnerName_${r.pos}" type="text" value="${saved.name}" placeholder="O capturar nuevo nombre..." style="flex:2;font-size:0.8rem;padding:0.35rem 0.5rem;" />
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      const sumCustomPct = quickCustomPercentages.reduce((a, b) => a + b, 0);
+      const isCustom100 = Math.abs(sumCustomPct - 100) < 0.05;
+
+      const autoBtn = document.getElementById('quickAutoBalanceBtn');
+      if (autoBtn) {
+        autoBtn.style.display = (scheme === 'CUSTOM' && !isCustom100) ? 'inline-block' : 'none';
+      }
+
+      const zeroSumEl = document.getElementById('quickZeroSumCheck');
+      if (zeroSumEl) {
+        if (scheme === 'CUSTOM' && !isCustom100) {
+          zeroSumEl.className = 'num-tabular badge badge-gold';
+          zeroSumEl.textContent = `Σ = ${KronaCore.fmt(effectivePoolCents)} (Porcentajes: ${sumCustomPct.toFixed(1)}% — Normalizado)`;
+        } else {
+          zeroSumEl.className = 'num-tabular badge badge-emerald';
+          zeroSumEl.textContent = `Σ = ${KronaCore.fmt(effectivePoolCents)} (100.00% Cuadrado)`;
+        }
+      }
+    }
+
+    async function disperseQuickMultiGameAction() {
+      const name = document.getElementById('quickTrnName').value.trim() || 'Torneo Relámpago TCG';
+      const gameFormat = document.getElementById('quickGameFormat').value;
+      const storeId = document.getElementById('quickStoreSelect')?.value || KronaCore.getSelectedStoreId();
+      const totalPlayers = Math.max(2, Number(document.getElementById('quickTotalPlayers').value || 8));
+      const entryFeeCents = Math.round(Number(document.getElementById('quickEntryMxn').value || 150) * 100);
+      const prizeContribCents = Math.round(Number(document.getElementById('quickContribMxn').value || 100) * 100);
+      const guarCents = Math.round(Number(document.getElementById('quickGuaranteedMxn').value || 0) * 100);
+      const topCutSize = Number(document.getElementById('quickTopCutSize').value || 4);
+      const scheme = document.getElementById('quickPayoutScheme').value;
+      const isSplit = scheme === 'EQUAL_SPLIT';
+
+      let customPercentagesBps = undefined;
+      const count = Math.min(topCutSize, totalPlayers);
+      if (scheme === 'CUSTOM' && quickCustomPercentages) {
+        const pcts = quickCustomPercentages.slice(0, count);
+        const sum = pcts.reduce((a, b) => a + b, 0);
+        if (sum > 0) {
+          let allocated = 0;
+          customPercentagesBps = pcts.map((p, i) => {
+            if (i === count - 1) return 10_000 - allocated;
+            const b = Math.floor((p / sum) * 10_000);
+            allocated += b;
+            return b;
+          });
+        }
+      }
+
+      const winners = [];
+      for (let i = 1; i <= count; i++) {
+        const selVal = document.getElementById(`quickWinnerSelect_${i}`)?.value;
+        const nameVal = document.getElementById(`quickWinnerName_${i}`)?.value.trim();
+        winners.push({
+          position: i,
+          playerUserId: selVal || undefined,
+          playerName: nameVal || (selVal ? undefined : `Jugador Top #${i}`),
+        });
+      }
+
+      try {
+        const res = await KronaCore.post('/api/tournaments/quick-calc-disperse', {
+          storeId,
+          name,
+          gameFormat,
+          totalPlayers,
+          entryFeeCents,
+          prizeContributionCents: prizeContribCents,
+          guaranteedPoolCents: guarCents,
+          topCutSize,
+          applyTopCutSplit: isSplit,
+          customPercentagesBps,
+          winners,
+        });
+
+        KronaCore.toast(`🏆 Torneo ${res.tournament.folio} liquidado con éxito (${KronaCore.fmt(res.totalDispersedCents)} dispersados)`);
+        await KronaCore.refreshState();
+        const historyEl = document.getElementById('trnHistorySection');
+        if (historyEl) historyEl.scrollIntoView({ behavior: 'smooth' });
+        const printConfirmed = await KronaCore.confirm({
+          title: 'Acta Térmica de Premiación',
+          message: '¿Deseas imprimir el Acta Térmica Oficial del Torneo para entrega a Jueces/Caja?',
+          confirmText: 'Imprimir Acta',
+          cancelText: 'Omitir',
+          danger: false,
+        });
+        if (printConfirmed) {
+          printTournamentThermalActa(res.tournament.id);
+        }
+      } catch (err) {
+        KronaCore.toast('❌ Error al dispersar: ' + err.message, true);
+      }
+    }
+
+    function printTournamentThermalActa(tournamentId, paperWidth = '80mm') {
+      const st = KronaCore.getState();
+      if (!st || !st.tournaments) return;
+      const trn = st.tournaments.find(t => t.id === tournamentId || t.folio === tournamentId);
+      if (!trn) {
+        KronaCore.toast('⚠️ No se encontró la información del torneo para imprimir acta', true);
+        return;
+      }
+
+      const storeObj = (st.stores || []).find(s => s.id === trn.storeId);
+      const storeDisplay = storeObj ? `${storeObj.name} (${storeObj.code})` : (trn.storeCode || trn.storeId);
+
+      const occupancyCount = trn.participants && trn.participants.length > 0
+        ? `${trn.participants.length} inscritos`
+        : trn.categories && trn.categories.length > 0
+          ? `${trn.categories.reduce((s, c) => s + c.registeredCount, 0)} participantes`
+          : 'N/A';
+
+      const widthNum = paperWidth === '58mm' ? 32 : 42;
+      const divider = '='.repeat(widthNum);
+      const subDivider = '-'.repeat(widthNum);
+
+      let winnersLines = '';
+      if (trn.participants && trn.participants.length > 0) {
+        winnersLines = trn.participants
+          .filter(p => (p.awardedPrizeCents || 0) > 0)
+          .map(p => `• #${p.rank || p.standingPosition || '-'} ${p.playerName}: ${KronaCore.fmt(p.awardedPrizeCents)}`)
+          .join('\n');
+      } else if (trn.categories && trn.categories.length > 0) {
+        const catLines = [];
+        trn.categories.forEach(cat => {
+          catLines.push(`[${cat.name}]:`);
+          (cat.entries || [])
+            .filter(e => (e.awardedPrizeCents || 0) > 0)
+            .forEach(e => {
+              catLines.push(`  #${e.rank} ${e.playerName}: ${KronaCore.fmt(e.awardedPrizeCents)}`);
+            });
+        });
+        winnersLines = catLines.join('\n');
+      }
+
+      if (!winnersLines) {
+        winnersLines = '  (Ver desglose contable en Citadel /audit)';
+      }
+
+      const text = [
+        divider,
+        '  KRONA VAULT — ACTA DE PREMIOS',
+        '  TORNEO OFICIAL COMPETITIVO',
+        divider,
+        `TORNEO:   ${trn.name}`,
+        `FOLIO:    ${trn.folio}`,
+        `JUEGO:    ${trn.gameFormat}`,
+        `SEDE:     ${storeDisplay}`,
+        `ESTADO:   ${trn.status}`,
+        `FECHA:    ${new Date(trn.dispersedAt || trn.updatedAt || Date.now()).toLocaleString('es-MX')}`,
+        subDivider,
+        `OCUPACIÓN:     ${occupancyCount}`,
+        `POZO PREMIOS:  ${KronaCore.fmt(trn.calculatedPrizePoolCents)}`,
+        subDivider,
+        'PREMIOS DISPERSADOS A BILLETERAS:',
+        winnersLines,
+        subDivider,
+        `JUEZ / TO:     ${trn.dispersedByName || trn.createdByName || 'Juez Oficial'}`,
+        `4-OJOS / CO-AUTH: ${trn.coAuthorizedByName || 'KRONA-SYS'}`,
+        '',
+        '[ ] Recibido y validado para gaveta de caja',
+        divider,
+      ].join('\n');
+
+      KronaCore.printThermalText(text, { title: 'Acta Torneo ' + trn.folio, paperWidth });
+    }
+
+    async function executePlayerRegister() {
+      const fullName = document.getElementById('regFullName').value.trim();
+      const alias = document.getElementById('regAlias').value.trim();
+      const storeId = document.getElementById('regStore')?.value || KronaCore.getSelectedStoreId();
+      if (!fullName) {
+        KronaCore.toast('Ingresa el nombre del jugador', true);
+        return;
+      }
+      try {
+        const res = await KronaCore.post('/api/players/register', { fullName, alias, storeId });
+        KronaCore.setSelectedPlayerId(res.player.userId);
+        document.getElementById('regFullName').value = '';
+        document.getElementById('regAlias').value = '';
+        KronaCore.toast(`✅ Jugador ${res.player.fullName} (${res.player.memberCode}) registrado`);
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    KronaCore.initPage('/tournaments', (data) => {
+      if (data.sessionUser) {
+        document.getElementById('arenaJudgeBadge').textContent =
+          `OPERADOR: ${data.sessionUser.fullName} (${data.sessionUser.role})`;
+      }
+
+      // Poblar combos de sucursales dinámicas para liquidación y registro
+      KronaCore.populateStoreSelect('pokeStoreSelect', { filterActiveOnly: true, selectedId: KronaCore.getSelectedStoreId() });
+      KronaCore.populateStoreSelect('quickStoreSelect', { filterActiveOnly: true, selectedId: KronaCore.getSelectedStoreId() });
+      KronaCore.populateStoreSelect('regStore', { includeGlobal: true, globalLabel: 'SIN ASIGNACIÓN FIJA (Todas las Sedes)', selectedId: KronaCore.getSelectedStoreId() });
+
+      updateQuickCalcPreview();
+
+      const trns = data.tournaments || [];
+      document.getElementById('trnHistoryCount').textContent = `${trns.length} Torneos`;
+
+      const storeMap = new Map((data.stores || []).map((s) => [s.id, s]));
+
+      if (trns.length === 0) {
+        document.getElementById('trnHistoryTableBody').innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center;padding:2.5rem 1rem;color:var(--text-muted);width:100%;">
+              <div style="font-size:1.6rem;margin-bottom:0.35rem;opacity:0.6;">📋</div>
+              <div style="font-weight:600;font-size:0.9rem;color:var(--text-secondary);">No hay torneos liquidados registrados en esta sucursal</div>
+              <div style="font-size:0.75rem;margin-top:0.25rem;">Liquida un torneo Poké o Multi-Juego para auditarlo aquí con trazabilidad completa.</div>
+            </td>
+          </tr>
+        `;
+      } else {
+        document.getElementById('trnHistoryTableBody').innerHTML = trns
+          .map(
+            (t) => {
+              const storeObj = storeMap.get(t.storeId);
+              const storeDisplay = storeObj ? `${storeObj.name} (${storeObj.code})` : (t.storeCode || t.storeId);
+              const occupancyCount = t.participants && t.participants.length > 0
+                ? `${t.participants.length} inscritos`
+                : t.categories && t.categories.length > 0
+                  ? `${t.categories.reduce((s, c) => s + c.registeredCount, 0)} jug. (${t.categories.map(c => `${c.name}: ${c.registeredCount}`).join(', ')})`
+                  : '0 inscritos';
+
+              return `
+            <tr>
+              <td>
+                <div class="mono" style="font-weight:700;color:var(--accent-gold-hover);">${t.folio}</div>
+                <div><strong>${t.name}</strong></div>
+              </td>
+              <td>
+                <span class="badge badge-escrow">${t.gameFormat}</span>
+                <div class="mono" style="font-size:0.68rem;color:var(--text-muted);margin-top:0.2rem;" title="${t.storeId}">${storeDisplay}</div>
+              </td>
+              <td>
+                <span class="badge ${t.status === 'DISPERSED_COMPLETED' ? 'badge-emerald' : 'badge-gold'}">${t.status}</span>
+              </td>
+              <td class="mono" style="font-size:0.75rem;">${occupancyCount}</td>
+              <td class="num-tabular" style="font-weight:700;color:var(--accent-emerald-hover);">${KronaCore.fmt(t.calculatedPrizePoolCents)}</td>
+              <td style="font-size:0.75rem;">${t.createdByName}</td>
+              <td style="font-size:0.75rem;">
+                ${
+                  t.status === 'DISPERSED_COMPLETED'
+                    ? `<div>Ejecutor: <strong>${t.dispersedByName}</strong></div><div style="color:var(--accent-emerald-hover);">4-Ojos: ${t.coAuthorizedByName || 'N/A'}</div>
+                       <button type="button" class="btn btn-slate" style="padding:0.2rem 0.55rem;font-size:0.68rem;margin-top:0.35rem;display:inline-flex;align-items:center;gap:0.3rem;" onclick="printTournamentThermalActa('${t.id}')">
+                         🖨️ <span>Acta Térmica</span>
+                       </button>`
+                    : '<span style="color:var(--text-muted);">Pendiente de dispersión</span>'
+                }
+              </td>
+            </tr>
+          `;
+            }
+          )
+          .join('');
+      }
+    });
+  </script>
+</body>
+</html>

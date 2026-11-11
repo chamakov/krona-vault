@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Custody™ — Registro de Cartas en Resguardo, Comprobante y Bóveda | KRONA VAULT™</title>
+  <meta name="description" content="Bóveda de resguardo físico para cartas coleccionables de alto valor: comprobantes térmicos con precinto criptográfico, evidencia fotográfica SHA-256 y entrega Four-Eyes." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/custody" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/custody" />
+  <meta property="og:title" content="KRONA Custody™ — Bóveda de Resguardo de Cartas de Alto Valor | KRONA VAULT™" />
+  <meta property="og:description" content="Guarda física acorazada para singles PSA/BGS/CGC, consignaciones y cuarentena con comprobante térmico inviolable." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA Custody™ — Bóveda de Resguardo" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Custody™ — Bóveda de Resguardo de Cartas de Alto Valor" />
+  <meta name="twitter:description" content="Resguardo acorazado de cartas coleccionables con evidencia SHA-256 y entrega con 4-Ojos." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+  <script src="/js/qrcode.min.js"></script>
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip no-print">
+      <div>
+        <div class="page-eyebrow">RESGUARDO FÍSICO EN BÓVEDA & ESCROW · /custody</div>
+        <h1 class="page-title">KRONA Custody™ — Registro de Cartas, Comprobante de Recepción y Bóveda</h1>
+        <p class="page-subtitle">
+          Guarda física de cartas de alto valor en caja fuerte de tienda: envíos a calificar (<strong>PSA / BGS / CGC</strong>), <strong>consignación / Escrow P2P</strong>, valuación minuciosa y <strong>cuarentena de barajas</strong>. Emisión de <strong>Comprobante Térmico Oficial de 80mm</strong> obligatorio para recoger, evidencia fotográfica con hash SHA-256 y entrega con <strong>Four-Eyes</strong>.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+        <button type="button" class="btn btn-gold" onclick="scrollToIntakeForm()">
+          Registrar Nuevo Resguardo
+        </button>
+        <button type="button" class="btn btn-emerald" onclick="openPurposesCatalogModal()">
+          Modalidades de Resguardo
+        </button>
+        <button type="button" class="btn btn-emerald" onclick="openEvidenceTypesCatalogModal()">
+          Tipos de Evidencia
+        </button>
+        <a href="/pos" data-require-portal="/pos" class="btn btn-slate">Terminal POS (Alt+2)</a>
+        <a href="/trade-in" data-require-portal="/trade-in" class="btn btn-slate">Trade-In & Bonos (Alt+8)</a>
+        <a href="/audit" data-require-portal="/audit" class="btn btn-slate">Citadel Audit (Alt+4)</a>
+        <a href="/" data-require-portal="/" class="btn btn-slate">Nexus Hub (Alt+0)</a>
+      </div>
+    </section>
+
+    <!-- ESTADÍSTICAS RÁPIDAS DE BÓVEDA -->
+    <section class="kpi-grid-4 no-print" style="margin-bottom:1.25rem;">
+      <div class="kpi-card gold-edge">
+        <div class="kpi-title">Paquetes en Bóveda</div>
+        <div id="kpiInVaultCount" class="kpi-value num-tabular">0</div>
+        <div class="kpi-meta">En custodia física activa</div>
+      </div>
+      <div class="kpi-card emerald-edge">
+        <div class="kpi-title">Listos para Retiro</div>
+        <div id="kpiReadyCount" class="kpi-value num-tabular">0</div>
+        <div class="kpi-meta">Esperando al cliente</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Modalidades de Custodia</div>
+        <div id="kpiPurposesCount" class="kpi-value num-tabular">0</div>
+        <div class="kpi-meta">En catálogo activo</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Entregas Concluidas</div>
+        <div id="kpiReleasedCount" class="kpi-value num-tabular">0</div>
+        <div class="kpi-meta">Liberadas con comprobante</div>
+      </div>
+    </section>
+
+    <div class="split-terminal-grid">
+      <!-- PANEL IZQUIERDO: FORMULARIO DE INTAKE Y PADRÓN DE PAQUETES -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+        
+        <!-- FORMULARIO DE REGISTRO DE RECEPCIÓN (INTAKE) -->
+        <section id="intakeSection" class="vault-card gold-edge no-print" data-require-permission="custody:package:intake">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              <span>Recepción de Cartas en Resguardo (Intake a Bóveda)</span>
+            </div>
+            <span class="badge badge-gold">VAULT INTAKE</span>
+          </div>
+
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;font-size:0.78rem;color:var(--text-secondary);line-height:1.5;">
+            Registra el paquete, genera el código criptográfico único de retiro y emite el <strong>Comprobante Térmico de 80mm</strong>. El cliente deberá presentar obligatoriamente este comprobante físico o digital para poder retirar sus cartas.
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="intakeStoreSelect">Sucursal Receptora</label>
+              <select id="intakeStoreSelect" onchange="onIntakeStoreChange()"></select>
+            </div>
+            <div class="form-group">
+              <label for="intakePurposeSelect">Propósito / Modalidad del Resguardo</label>
+              <select id="intakePurposeSelect" onchange="onIntakePurposeChange()"></select>
+            </div>
+          </div>
+
+          <!-- OPCIÓN RESGUARDO A NOMBRE DE OTRA PERSONA (P2P / ESCROW) -->
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;">
+            <label style="display:flex;align-items:center;gap:0.55rem;font-weight:700;color:var(--accent-gold-hover);cursor:pointer;font-size:0.83rem;">
+              <input type="checkbox" id="intakeForThirdPartyChk" onchange="toggleThirdPartyRecipient(this.checked)" style="width:1.15rem;height:1.15rem;accent-color:var(--accent-gold);" />
+              <span>👥 Dejar a nombre de otra persona (Quién deja ≠ Quién recibe)</span>
+            </label>
+            <div style="font-size:0.74rem;color:var(--text-secondary);margin-top:0.35rem;line-height:1.4;">
+              Marca esta casilla para registrar por separado al <strong>Remitente (quién entrega el paquete)</strong> y al <strong>Destinatario (quién tiene derecho a recogerlo)</strong>. Ideal para intercambios P2P entre jugadores, consignación o entregas por encargo.
+            </div>
+          </div>
+
+          <!-- SECCIÓN 1: QUIÉN DEJA LAS CARTAS (REMITENTE / DEPOSITANTE) -->
+          <div style="background:rgba(245,158,11,0.03);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:1rem;">
+            <div style="font-size:0.75rem;font-weight:700;color:var(--accent-gold-hover);margin-bottom:0.65rem;text-transform:uppercase;letter-spacing:0.04em;">
+              1. Datos de Quién Deja las Cartas (Remitente / Depositante)
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="intakeDepositorSelect">Seleccionar del Padrón (KRONA Pass)</label>
+                <select id="intakeDepositorSelect" onchange="onIntakeDepositorSelectChange()"></select>
+              </div>
+              <div class="form-group">
+                <label for="intakeDepositorName">Nombre Completo del Remitente</label>
+                <input id="intakeDepositorName" type="text" placeholder="Ej. Alejandro Morales" required />
+              </div>
+            </div>
+            <div class="form-grid-2" style="margin-bottom:0;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="intakeDepositorPhone">Teléfono Móvil (WhatsApp avisos)</label>
+                <input id="intakeDepositorPhone" type="tel" placeholder="+52 55 1234 5678" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="intakeDepositorEmail">Correo Electrónico (Opcional)</label>
+                <input id="intakeDepositorEmail" type="email" placeholder="remitente@ejemplo.com" />
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: QUIÉN RECIBE / RETIRA (DESTINATARIO TITULAR AUTORIZADO) -->
+          <div id="intakeRecipientContainer" style="display:none;background:rgba(16,185,129,0.04);border:1px solid var(--border-emerald);border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:1rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.65rem;">
+              <span style="font-size:0.75rem;font-weight:700;color:var(--accent-emerald-hover);text-transform:uppercase;letter-spacing:0.04em;">
+                2. Datos de Quién Recibe / Retira (Destinatario Autorizado)
+              </span>
+              <span class="badge badge-emerald">TITULAR DE RETIRO</span>
+            </div>
+            <p style="font-size:0.73rem;color:var(--text-secondary);margin-bottom:0.75rem;line-height:1.4;">
+              El Comprobante Oficial de Recepción y el código de retiro se emitirán a nombre de este destinatario. Solo esta persona (o quien presente el comprobante con validación en 2 pasos) podrá retirar el paquete.
+            </p>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="intakeRecipientSelect">Seleccionar del Padrón (KRONA Pass)</label>
+                <select id="intakeRecipientSelect" onchange="onIntakeRecipientSelectChange()"></select>
+              </div>
+              <div class="form-group">
+                <label for="intakeRecipientName">Nombre Completo del Destinatario</label>
+                <input id="intakeRecipientName" type="text" placeholder="Ej. Carlos Mendoza (Destinatario)" />
+              </div>
+            </div>
+            <div class="form-grid-2" style="margin-bottom:0;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="intakeRecipientPhone">Teléfono del Destinatario</label>
+                <input id="intakeRecipientPhone" type="tel" placeholder="+52 55 9876 5432" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="intakeRecipientEmail">Correo del Destinatario</label>
+                <input id="intakeRecipientEmail" type="email" placeholder="destinatario@ejemplo.com" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="intakeItemsSummary">Resumen Global del Contenido</label>
+            <input id="intakeItemsSummary" type="text" value="Sobre con Cartas TCG en Toploaders" placeholder="Ej. 1x Charizard 1st Ed + 2x Dual Lands" />
+          </div>
+
+          <!-- DESGLOSE DE CARTAS -->
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+              <span style="font-size:0.75rem;font-weight:700;color:var(--accent-gold-hover);text-transform:uppercase;letter-spacing:0.04em;">
+                Desglose de Cartas / Items en el Paquete
+              </span>
+              <button type="button" class="btn btn-slate" style="font-size:0.7rem;padding:0.25rem 0.6rem;" onclick="addIntakeItemRow()">
+                ➕ Agregar Carta
+              </button>
+            </div>
+            <div class="table-scroll">
+              <table class="krona-table" style="font-size:0.78rem;">
+                <thead>
+                  <tr>
+                    <th style="width:70px;">Cant</th>
+                    <th>Nombre / Descripción de la Carta o Item</th>
+                    <th style="width:45px;text-align:center;"></th>
+                  </tr>
+                </thead>
+                <tbody id="intakeItemsTbody">
+                  <tr>
+                    <td><input type="number" class="item-qty" value="1" min="1" style="width:100%;font-size:0.8rem;padding:0.35rem;" /></td>
+                    <td><input type="text" class="item-name" value="Sheoldred, the Apocalypse" placeholder="Nombre de la carta o artículo" style="width:100%;font-size:0.8rem;padding:0.35rem;" /></td>
+                    <td style="text-align:center;"><button type="button" class="table-action-btn" style="color:#F87171;" aria-label="Eliminar carta" onclick="removeIntakeItemRow(this)">✕</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SOPORTE DE FOTOGRAFÍAS DE EVIDENCIA -->
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-emerald);border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:1.15rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.45rem;">
+              <span style="font-size:0.75rem;font-weight:700;color:var(--accent-emerald-hover);text-transform:uppercase;letter-spacing:0.04em;">
+                📸 Evidencia Fotográfica del Paquete (Estado al Recibir)
+              </span>
+              <span id="intakePhotosCountBadge" class="badge badge-emerald">0 Fotos</span>
+            </div>
+            <p style="font-size:0.74rem;color:var(--text-secondary);margin-bottom:0.75rem;line-height:1.4;">
+              Toma o adjunta fotografías del paquete, sobre cerrado y contenido. Se calcula su <strong>hash SHA-256</strong> en el navegador para garantizar que el paquete no sea alterado antes de la devolución.
+            </p>
+
+            <div style="display:flex;gap:0.65rem;flex-wrap:wrap;align-items:center;margin-bottom:0.65rem;">
+              <div style="flex:1;min-width:180px;">
+                <label for="photoTypeSelect" style="font-size:0.72rem;">Tipo de Evidencia</label>
+                <select id="photoTypeSelect" style="font-size:0.8rem;padding:0.4rem 0.6rem;"></select>
+              </div>
+              <div style="flex:1;min-width:180px;">
+                <label for="photoCaptionInput" style="font-size:0.72rem;">Descripción / Nota de la Foto</label>
+                <input id="photoCaptionInput" type="text" placeholder="Ej. Paquete intacto sin marcas de apertura" style="font-size:0.8rem;padding:0.4rem 0.6rem;" />
+              </div>
+              <div style="padding-top:1.25rem;">
+                <label class="custody-camera-btn" for="custodyFileInput">
+                  <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span>Capturar con Cámara / Subir</span>
+                </label>
+                <input id="custodyFileInput" type="file" accept="image/*" capture="environment" multiple style="display:none;" onchange="handlePhotoFileInput(event)" />
+              </div>
+            </div>
+
+            <!-- GRILLA DE FOTOS EN VIVO -->
+            <div id="intakePhotosGrid" class="custody-photos-grid"></div>
+          </div>
+
+          <button type="button" class="btn btn-gold btn-block" onclick="submitCreateCustodyPackage()">
+            📦 Registrar Resguardo y Emitir Comprobante Térmico (80mm)
+          </button>
+        </section>
+
+        <!-- PADRÓN Y GESTIÓN DE PAQUETES EN RESGUARDO -->
+        <section class="vault-card emerald-edge no-print">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Inventario Activo de Bóveda & Escrow</span>
+            </div>
+            <span id="custodyTotalBadge" class="badge badge-emerald">0 Paquetes</span>
+          </div>
+
+          <!-- PESTAÑAS DE FILTRO POR ESTADO -->
+          <div class="tactical-tabs no-print">
+            <button type="button" id="tabFilterAll" class="tactical-tab active" onclick="setCustodyStatusFilter('ALL')">
+              Todos los Paquetes
+            </button>
+            <button type="button" id="tabFilterInVault" class="tactical-tab" onclick="setCustodyStatusFilter('IN_VAULT')">
+              En Bóveda (Activos)
+            </button>
+            <button type="button" id="tabFilterReady" class="tactical-tab" onclick="setCustodyStatusFilter('READY_FOR_PICKUP')">
+              Listos para Retiro
+            </button>
+            <button type="button" id="tabFilterReleased" class="tactical-tab" onclick="setCustodyStatusFilter('RELEASED')">
+              Entregados / Concluidos
+            </button>
+          </div>
+
+          <!-- BUSCADOR RÁPIDO -->
+          <div class="no-print" style="margin-bottom:0.85rem;">
+            <input id="custodySearchInput" type="text" placeholder="🔍 Buscar por Folio (CUST-...), Remitente, Destinatario o Resumen..." oninput="onCustodySearchInput()" />
+          </div>
+
+          <!-- TABLA DE PAQUETES -->
+          <div class="table-scroll table-scroll-fixed-height">
+            <table class="krona-table" style="font-size:0.79rem;">
+              <thead>
+                <tr>
+                  <th>Folio</th>
+                  <th>Remitente & Destinatario</th>
+                  <th>Modalidad & Resumen</th>
+                  <th>Evidencia</th>
+                  <th>Estado</th>
+                  <th style="text-align:right;">Acciones Operativas</th>
+                </tr>
+              </thead>
+              <tbody id="custodyPackagesTbody">
+                <tr>
+                  <td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text-muted);">
+                    Cargando inventario de resguardos...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- PANEL DERECHO: SIMULADOR E IMPRESIÓN DEL COMPROBANTE TÉRMICO (80MM / 58MM) -->
+      <section class="thermal-printer-housing">
+        <div class="card-header no-print" style="margin-bottom:0.75rem;">
+          <div class="card-title">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            <span>Comprobante Térmico de Recepción (80mm)</span>
+          </div>
+          <span class="badge badge-gold">VAULTSEAL™ CUSTODY</span>
+        </div>
+
+        <div class="no-print" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;gap:0.5rem;flex-wrap:wrap;">
+          <div style="font-size:0.73rem;color:var(--text-secondary);flex:1;min-width:140px;">
+            Este ticket se entrega al cliente y el talón se engrapa al precinto.
+          </div>
+          <div style="min-width:120px;">
+            <select id="custodyPaperWidthSelect" onchange="onCustodyPaperWidthChanged(this.value)" style="font-size:0.78rem;padding:0.35rem 0.55rem;">
+              <option value="80mm" selected>80mm (Estándar)</option>
+              <option value="58mm">58mm (Móvil)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- VISTA PREVIA DEL TICKET EN TIEMPO REAL -->
+        <pre id="custodyThermalPreviewBox" class="thermal-receipt-80mm">Selecciona o registra un paquete para previsualizar el Comprobante Oficial de Bóveda...</pre>
+
+        <!-- CONTENEDOR QR EN VISTA PREVIA -->
+        <div id="custodyQrPreviewContainer" class="thermal-qr-container" style="background:#FFF;padding:0.5rem;text-align:center;border-radius:4px;margin-top:0.5rem;display:none;"></div>
+
+        <div class="no-print" style="display:flex;gap:0.65rem;margin-top:0.95rem;flex-wrap:wrap;">
+          <button type="button" class="btn btn-emerald" style="flex:1;" onclick="printActiveCustodyReceipt()">
+            🖨️ Imprimir Comprobante Oficial
+          </button>
+          <button type="button" class="btn btn-slate" style="flex:1;" onclick="openClaimReleaseModal(activeCustodyPackageId)">
+            🤝 Entregar al Cliente (Liberar)
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- MODAL 1: ENTREGA Y LIBERACIÓN DEL PAQUETE (CLAIM & RELEASE) -->
+    <div id="custodyReleaseModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="custodyReleaseModalTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card emerald-edge" style="max-width:680px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.85);">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="custodyReleaseModalTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>Liberación y Entrega de Cartas: <span id="releaseModalFolio" class="mono" style="color:var(--accent-gold-hover);"></span></span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closeReleaseModal()" aria-label="Cerrar modal">✕</button>
+        </div>
+
+        <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.5;">
+          Para entregar las cartas, solicita el <strong>Comprobante Oficial</strong> presentado por el cliente, verifica el precinto contra las fotos originales y autoriza con el <strong>PIN / 2FA</strong> del cliente.
+        </p>
+
+        <!-- COTEJO FOTOGRÁFICO SIDE-BY-SIDE -->
+        <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;">
+          <div style="font-size:0.74rem;font-weight:700;color:var(--accent-gold-hover);margin-bottom:0.35rem;text-transform:uppercase;">
+            1. Cotejo Visual de Evidencia al Ingreso
+          </div>
+          <div id="releaseModalPhotosGrid" class="custody-photos-grid"></div>
+        </div>
+
+        <!-- CHECKLIST DE CONFORMIDAD DEL CAJERO -->
+        <div style="background:var(--bg-abyss);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;font-size:0.78rem;">
+          <div style="font-weight:700;color:var(--text-primary);margin-bottom:0.4rem;">2. Lista de Cotejo de Seguridad & Partes Involucradas</div>
+          <label style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem;cursor:pointer;">
+            <input type="checkbox" id="chkPackageUntampered" checked />
+            <span>Sobre o bolsa inviolable sin signos de corte, perforación o alteración</span>
+          </label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;background:rgba(0,0,0,0.25);padding:0.5rem;border-radius:4px;margin-top:0.35rem;">
+            <div>
+              <span style="font-size:0.7rem;color:var(--text-muted);display:block;">Remitente (Quién dejó):</span>
+              <strong id="releaseModalDepositor" style="color:var(--accent-gold-hover);">---</strong>
+            </div>
+            <div>
+              <span style="font-size:0.7rem;color:var(--text-muted);display:block;">Destinatario Titular (Quién recibe):</span>
+              <strong id="releaseModalRecipient" style="color:var(--accent-emerald-hover);">---</strong>
+            </div>
+          </div>
+          <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.4rem;cursor:pointer;">
+            <input type="checkbox" id="chkClientMatch" checked />
+            <span>Identidad de la persona que retira verificada conforme a registro</span>
+          </label>
+        </div>
+
+        <!-- DATOS DE QUIÉN RETIRA FÍSICAMENTE -->
+        <div class="form-grid-2" style="margin-bottom:0.85rem;">
+          <div class="form-group">
+            <label for="releasePickedUpByName">Nombre de Quién Retira Físicamente</label>
+            <input id="releasePickedUpByName" type="text" placeholder="Nombre completo" required />
+          </div>
+          <div class="form-group">
+            <label for="releasePickedUpByRole">Parentesco / Calidad al Retirar</label>
+            <select id="releasePickedUpByRole">
+              <option value="DESTINATARIO_TITULAR" selected>Destinatario Titular Autorizado</option>
+              <option value="REMITENTE_DEPOSITOR">Remitente Original (Cancelación/Devolución)</option>
+              <option value="REPRESENTANTE_AUTORIZADO">Representante con Comprobante Legítimo</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- CÓDIGO O TOKEN DEL COMPROBANTE -->
+        <div class="form-grid-2" style="margin-bottom:0.85rem;">
+          <div class="form-group">
+            <label for="releaseClaimCodeInput">Código de Comprobante (Del ticket del cliente)</label>
+            <input id="releaseClaimCodeInput" type="text" placeholder="Ej. VC-XXXX-YYYY" class="mono" style="font-size:1rem;letter-spacing:0.06em;font-weight:700;" required />
+          </div>
+          <div class="form-group">
+            <label for="releaseClientPinInput">PIN / 2FA del Cliente (KRONA Pulse / Bunker)</label>
+            <input id="releaseClientPinInput" type="password" placeholder="6 dígitos o PIN de perfil" maxlength="6" class="mono" style="font-size:1rem;letter-spacing:0.12em;" />
+          </div>
+        </div>
+
+        <!-- SECCIÓN 4-OJOS SI > $10,000 MXN -->
+        <div id="releaseFourEyesBox" style="display:none;background:var(--bg-abyss);border:1px dashed var(--accent-gold);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;">
+          <div style="font-size:0.75rem;font-weight:700;color:var(--accent-gold-hover);margin-bottom:0.35rem;">
+            ⚠️ PAQUETE DE ALTO VALOR (> $10,000 MXN) — CO-FIRMA FOUR-EYES REQUERIDA
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group" style="margin-bottom:0;">
+              <label for="releaseSupervisorSelect">Segundo Supervisor Autorizador</label>
+              <select id="releaseSupervisorSelect"></select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label for="releaseSupervisorPin">PIN del Supervisor</label>
+              <input id="releaseSupervisorPin" type="password" placeholder="6 dígitos" maxlength="6" class="mono" />
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-emerald btn-block" onclick="submitExecuteCustodyRelease()">
+          🤝 Validar Comprobante y Liberar Entrega al Cliente
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 2: GALERÍA DE EVIDENCIA E INSPECCIÓN -->
+    <div id="custodyInspectModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="custodyInspectModalTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card gold-edge" style="max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.85);">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="custodyInspectModalTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>Inspección de Bóveda: <span id="inspectModalFolio" class="mono" style="color:var(--accent-gold-hover);"></span></span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closeInspectModal()" aria-label="Cerrar modal">✕</button>
+        </div>
+
+        <div id="inspectModalDetails" style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.5;"></div>
+
+        <!-- CAMBIAR CASILLERO O ESTADO -->
+        <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;">
+          <div style="font-size:0.74rem;font-weight:700;color:var(--accent-gold-hover);margin-bottom:0.4rem;text-transform:uppercase;">
+            Actualizar Ubicación o Estado Operativo
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="inspectLocationInput">Casillero / Ubicación Física</label>
+              <input id="inspectLocationInput" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="inspectStatusSelect">Estado del Paquete</label>
+              <select id="inspectStatusSelect">
+                <option value="IN_VAULT">En Bóveda (IN_VAULT)</option>
+                <option value="READY_FOR_PICKUP">Listo para Retiro (READY_FOR_PICKUP)</option>
+                <option value="RECEIVED">Recibido en Recepción (RECEIVED)</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" class="btn btn-slate btn-block" style="font-size:0.75rem;padding:0.35rem 0.75rem;" onclick="submitUpdateCustodyLocation()">
+            📍 Guardar Nueva Ubicación / Estado
+          </button>
+        </div>
+
+        <!-- AGREGAR FOTO DE INSPECCIÓN ADICIONAL -->
+        <div style="background:var(--bg-abyss);border:1px solid var(--border-emerald);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;">
+          <div style="font-size:0.74rem;font-weight:700;color:var(--accent-emerald-hover);margin-bottom:0.4rem;text-transform:uppercase;">
+            Adjuntar Foto Adicional de Inspección
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <input id="inspectNewCaption" type="text" placeholder="Nota de inspección (ej. Regresó de PSA calificada)" style="flex:1;font-size:0.78rem;" />
+            <label class="btn btn-emerald" for="inspectFileInput" style="cursor:pointer;font-size:0.75rem;padding:0.4rem 0.75rem;">
+              📸 Capturar Foto
+            </label>
+            <input id="inspectFileInput" type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleInspectPhotoUpload(event)" />
+          </div>
+        </div>
+
+        <div style="font-size:0.74rem;font-weight:700;color:var(--text-primary);margin-bottom:0.35rem;">
+          Galería de Fotos del Paquete
+        </div>
+        <div id="inspectModalPhotosGrid" class="custody-photos-grid"></div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: VISOR DE FOTO EN PANTALLA COMPLETA -->
+    <div id="custodyPhotoViewerModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-label="Visor de Fotografía en Alta Resolución" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(10px);z-index:10000;align-items:center;justify-content:center;padding:1rem;" onclick="closePhotoViewerModal()">
+      <div style="max-width:900px;width:100%;text-align:center;" onclick="event.stopPropagation()">
+        <img id="photoViewerImg" src="" style="max-width:100%;max-height:75vh;border-radius:var(--radius-sm);border:2px solid var(--accent-gold);box-shadow:0 0 40px rgba(0,0,0,0.9);" />
+        <div id="photoViewerMeta" style="margin-top:0.75rem;color:#FFF;font-size:0.85rem;line-height:1.4;"></div>
+        <button type="button" class="btn btn-slate" style="margin-top:0.75rem;" onclick="closePhotoViewerModal()">
+          ✕ Cerrar Visor
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 4: CATÁLOGO DE MODALIDADES DE RESGUARDO -->
+    <div id="modalPurposesCatalog" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalPurposesCatalogTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card emerald-edge" style="max-width:680px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.85);">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="modalPurposesCatalogTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Catálogo: Modalidades / Propósitos de Resguardo</span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closePurposesCatalogModal()" aria-label="Cerrar modal">✕</button>
+        </div>
+        <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.5;">
+          Administra las opciones disponibles en el selector de modalidades de custodia de la tienda (ej. Calificación PSA, Consignación P2P, Bóveda, etc.).
+        </p>
+
+        <div style="margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.75rem;font-weight:700;color:var(--accent-gold-hover);">Modalidades Configuradas</span>
+          <button type="button" class="btn btn-slate" style="font-size:0.72rem;padding:0.25rem 0.6rem;" onclick="addPurposeCatalogRow()">
+            ➕ Nueva Modalidad
+          </button>
+        </div>
+
+        <div class="table-scroll" style="margin-bottom:1rem;">
+          <table class="krona-table" style="font-size:0.78rem;">
+            <thead>
+              <tr>
+                <th style="width:130px;">Código (Key)</th>
+                <th>Etiqueta / Nombre</th>
+                <th>Descripción</th>
+                <th style="width:70px;text-align:center;">Activo</th>
+                <th style="width:40px;text-align:center;"></th>
+              </tr>
+            </thead>
+            <tbody id="purposesCatalogTbody"></tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:0.5rem;">
+          <button type="button" class="btn btn-slate" onclick="closePurposesCatalogModal()">Cancelar</button>
+          <button type="button" class="btn btn-emerald" onclick="savePurposesCatalog()">💾 Guardar Catálogo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 5: CATÁLOGO DE TIPOS DE EVIDENCIA -->
+    <div id="modalEvidenceTypesCatalog" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalEvidenceTypesCatalogTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card emerald-edge" style="max-width:680px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.85);">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="modalEvidenceTypesCatalogTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Catálogo: Tipos de Evidencia Fotográfica</span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closeEvidenceTypesCatalogModal()" aria-label="Cerrar modal">✕</button>
+        </div>
+        <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.5;">
+          Administra los tipos de tomas fotográficas requeridas o sugeridas para documentar paquetes en resguardo.
+        </p>
+
+        <div style="margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.75rem;font-weight:700;color:var(--accent-emerald-hover);">Tipos de Evidencia Configurados</span>
+          <button type="button" class="btn btn-slate" style="font-size:0.72rem;padding:0.25rem 0.6rem;" onclick="addEvidenceTypeCatalogRow()">
+            ➕ Nuevo Tipo
+          </button>
+        </div>
+
+        <div class="table-scroll" style="margin-bottom:1rem;">
+          <table class="krona-table" style="font-size:0.78rem;">
+            <thead>
+              <tr>
+                <th style="width:130px;">Código (Key)</th>
+                <th>Etiqueta / Nombre</th>
+                <th>Descripción</th>
+                <th style="width:70px;text-align:center;">Activo</th>
+                <th style="width:40px;text-align:center;"></th>
+              </tr>
+            </thead>
+            <tbody id="evidenceTypesCatalogTbody"></tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:0.5rem;">
+          <button type="button" class="btn btn-slate" onclick="closeEvidenceTypesCatalogModal()">Cancelar</button>
+          <button type="button" class="btn btn-emerald" onclick="saveEvidenceTypesCatalog()">💾 Guardar Catálogo</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    let custodyPackages = [];
+    let custodyPurposesCatalog = [];
+    let custodyEvidenceTypesCatalog = [];
+    let activeCustodyPackageId = null;
+    let activeStatusFilter = 'ALL';
+    let intakePhotosList = [];
+    let currentPaperWidth = '80mm';
+
+    function scrollToIntakeForm() {
+      const el = document.getElementById('intakeSection');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function onIntakeStoreChange() {
+      const storeId = document.getElementById('intakeStoreSelect').value;
+      KronaCore.setSelectedStoreId(storeId);
+      loadCustodyPackages();
+    }
+
+    function onIntakePurposeChange() {
+      // Callback al cambiar modalidad
+    }
+
+    function toggleThirdPartyRecipient(checked) {
+      const container = document.getElementById('intakeRecipientContainer');
+      if (container) {
+        container.style.display = checked ? 'block' : 'none';
+      }
+      if (!checked) {
+        // Auto-sincronizar destinatario con remitente si es la misma persona
+        const depName = document.getElementById('intakeDepositorName')?.value || '';
+        const depPhone = document.getElementById('intakeDepositorPhone')?.value || '';
+        const depEmail = document.getElementById('intakeDepositorEmail')?.value || '';
+        const recNameEl = document.getElementById('intakeRecipientName');
+        const recPhoneEl = document.getElementById('intakeRecipientPhone');
+        const recEmailEl = document.getElementById('intakeRecipientEmail');
+        if (recNameEl) recNameEl.value = depName;
+        if (recPhoneEl) recPhoneEl.value = depPhone;
+        if (recEmailEl) recEmailEl.value = depEmail;
+      }
+    }
+
+    function onIntakeDepositorSelectChange() {
+      const select = document.getElementById('intakeDepositorSelect');
+      const userId = select.value;
+      const state = KronaCore.getState();
+      if (!state || !state.players) return;
+      const player = state.players.find(p => p.userId === userId);
+      if (player) {
+        document.getElementById('intakeDepositorName').value = player.fullName;
+        document.getElementById('intakeDepositorPhone').value = player.phone || '';
+        document.getElementById('intakeDepositorEmail').value = player.email || '';
+
+        // Sincronizar destinatario si no es tercero
+        const isThird = document.getElementById('intakeForThirdPartyChk')?.checked;
+        if (!isThird) {
+          const recNameEl = document.getElementById('intakeRecipientName');
+          const recPhoneEl = document.getElementById('intakeRecipientPhone');
+          const recEmailEl = document.getElementById('intakeRecipientEmail');
+          if (recNameEl) recNameEl.value = player.fullName;
+          if (recPhoneEl) recPhoneEl.value = player.phone || '';
+          if (recEmailEl) recEmailEl.value = player.email || '';
+        }
+      }
+    }
+
+    function onIntakeRecipientSelectChange() {
+      const select = document.getElementById('intakeRecipientSelect');
+      const userId = select.value;
+      const state = KronaCore.getState();
+      if (!state || !state.players) return;
+      const player = state.players.find(p => p.userId === userId);
+      if (player) {
+        document.getElementById('intakeRecipientName').value = player.fullName;
+        document.getElementById('intakeRecipientPhone').value = player.phone || '';
+        document.getElementById('intakeRecipientEmail').value = player.email || '';
+      }
+    }
+
+    function addIntakeItemRow() {
+      const tbody = document.getElementById('intakeItemsTbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="number" class="item-qty" value="1" min="1" style="width:100%;font-size:0.8rem;padding:0.35rem;" /></td>
+        <td><input type="text" class="item-name" placeholder="Nombre de la carta o artículo" style="width:100%;font-size:0.8rem;padding:0.35rem;" /></td>
+        <td style="text-align:center;"><button type="button" style="background:none;border:none;color:#F87171;cursor:pointer;font-weight:700;font-size:0.9rem;" onclick="removeIntakeItemRow(this)">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function removeIntakeItemRow(btn) {
+      const row = btn.closest('tr');
+      if (row) row.remove();
+    }
+
+    /* GESTIÓN DE CATÁLOGOS DINÁMICOS */
+    async function loadCustodyCatalogs() {
+      try {
+        const resP = await KronaCore.get('/api/custody/catalog/purposes');
+        if (resP && resP.purposes) {
+          custodyPurposesCatalog = resP.purposes;
+          renderCustodyPurposesOptions();
+        }
+        const resE = await KronaCore.get('/api/custody/catalog/evidence-types');
+        if (resE && resE.evidenceTypes) {
+          custodyEvidenceTypesCatalog = resE.evidenceTypes;
+          renderCustodyEvidenceTypesOptions();
+        }
+        updateKpis();
+      } catch (err) {
+        console.warn('Error cargando catálogos de custodia:', err);
+      }
+    }
+
+    function renderCustodyPurposesOptions() {
+      const sel = document.getElementById('intakePurposeSelect');
+      if (!sel) return;
+      const currentVal = sel.value;
+      const activeItems = custodyPurposesCatalog.filter(p => p.active);
+      sel.innerHTML = activeItems.map(p => 
+        `<option value="${p.id}" ${p.id === currentVal ? 'selected' : ''}>${p.label}</option>`
+      ).join('');
+      if (!sel.value && activeItems.length > 0) {
+        sel.value = activeItems[0].id;
+      }
+      updateKpis();
+    }
+
+    function renderCustodyEvidenceTypesOptions() {
+      const sel = document.getElementById('photoTypeSelect');
+      if (!sel) return;
+      const currentVal = sel.value;
+      const activeItems = custodyEvidenceTypesCatalog.filter(e => e.active);
+      sel.innerHTML = activeItems.map(e => 
+        `<option value="${e.id}" ${e.id === currentVal ? 'selected' : ''}>${e.label}</option>`
+      ).join('');
+      if (!sel.value && activeItems.length > 0) {
+        sel.value = activeItems[0].id;
+      }
+    }
+
+    // Modal de Modalidades de Custodia
+    function openPurposesCatalogModal() {
+      renderPurposesCatalogTable();
+      KronaCore.openModal('modalPurposesCatalog');
+    }
+
+    function closePurposesCatalogModal() {
+      KronaCore.closeModal('modalPurposesCatalog');
+    }
+
+    function renderPurposesCatalogTable() {
+      const tbody = document.getElementById('purposesCatalogTbody');
+      if (!tbody) return;
+      tbody.innerHTML = custodyPurposesCatalog.map((item, idx) => `
+        <tr data-idx="${idx}">
+          <td><input type="text" class="cat-id mono" value="${item.id}" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+          <td><input type="text" class="cat-label" value="${item.label}" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+          <td><input type="text" class="cat-desc" value="${item.description || ''}" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+          <td style="text-align:center;"><input type="checkbox" class="cat-active" ${item.active ? 'checked' : ''} /></td>
+          <td style="text-align:center;"><button type="button" class="table-action-btn" style="color:#F87171;" aria-label="Eliminar fila" onclick="removePurposeCatalogRow(this)">✕</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function addPurposeCatalogRow() {
+      const tbody = document.getElementById('purposesCatalogTbody');
+      if (!tbody) return;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" class="cat-id mono" placeholder="NUEVO_ID" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+        <td><input type="text" class="cat-label" placeholder="Nombre visible" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+        <td><input type="text" class="cat-desc" placeholder="Descripción breve" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+        <td style="text-align:center;"><input type="checkbox" class="cat-active" checked /></td>
+        <td style="text-align:center;"><button type="button" class="table-action-btn" style="color:#F87171;" aria-label="Eliminar fila" onclick="removePurposeCatalogRow(this)">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function removePurposeCatalogRow(btn) {
+      const tr = btn.closest('tr');
+      if (tr) tr.remove();
+    }
+
+    async function savePurposesCatalog() {
+      const rows = Array.from(document.querySelectorAll('#purposesCatalogTbody tr'));
+      const purposes = rows.map((r, i) => {
+        const id = r.querySelector('.cat-id')?.value.trim().toUpperCase() || `PURPOSE_${i+1}`;
+        const label = r.querySelector('.cat-label')?.value.trim() || id;
+        const description = r.querySelector('.cat-desc')?.value.trim() || '';
+        const active = !!r.querySelector('.cat-active')?.checked;
+        return { id, label, description, active };
+      }).filter(p => p.id);
+
+      if (purposes.length === 0) {
+        KronaCore.toast('Debe haber al menos una modalidad configurada.', true);
+        return;
+      }
+
+      try {
+        const res = await KronaCore.post('/api/custody/catalog/purposes', { purposes });
+        custodyPurposesCatalog = res.purposes || purposes;
+        renderCustodyPurposesOptions();
+        closePurposesCatalogModal();
+        KronaCore.toast('✅ Catálogo de modalidades actualizado.');
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    // Modal de Tipos de Evidencia
+    function openEvidenceTypesCatalogModal() {
+      renderEvidenceTypesCatalogTable();
+      KronaCore.openModal('modalEvidenceTypesCatalog');
+    }
+
+    function closeEvidenceTypesCatalogModal() {
+      KronaCore.closeModal('modalEvidenceTypesCatalog');
+    }
+
+    function renderEvidenceTypesCatalogTable() {
+      const tbody = document.getElementById('evidenceTypesCatalogTbody');
+      if (!tbody) return;
+      tbody.innerHTML = custodyEvidenceTypesCatalog.map((item, idx) => `
+        <tr data-idx="${idx}">
+          <td><input type="text" class="cat-id mono" value="${item.id}" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+          <td><input type="text" class="cat-label" value="${item.label}" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+          <td><input type="text" class="cat-desc" value="${item.description || ''}" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+          <td style="text-align:center;"><input type="checkbox" class="cat-active" ${item.active ? 'checked' : ''} /></td>
+          <td style="text-align:center;"><button type="button" class="table-action-btn" style="color:#F87171;" aria-label="Eliminar fila" onclick="removeEvidenceTypeCatalogRow(this)">✕</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function addEvidenceTypeCatalogRow() {
+      const tbody = document.getElementById('evidenceTypesCatalogTbody');
+      if (!tbody) return;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" class="cat-id mono" placeholder="NUEVO_TIPO" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+        <td><input type="text" class="cat-label" placeholder="Nombre visible" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+        <td><input type="text" class="cat-desc" placeholder="Descripción breve" style="width:100%;font-size:0.75rem;padding:0.25rem;" /></td>
+        <td style="text-align:center;"><input type="checkbox" class="cat-active" checked /></td>
+        <td style="text-align:center;"><button type="button" class="table-action-btn" style="color:#F87171;" aria-label="Eliminar fila" onclick="removeEvidenceTypeCatalogRow(this)">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function removeEvidenceTypeCatalogRow(btn) {
+      const tr = btn.closest('tr');
+      if (tr) tr.remove();
+    }
+
+    async function saveEvidenceTypesCatalog() {
+      const rows = Array.from(document.querySelectorAll('#evidenceTypesCatalogTbody tr'));
+      const evidenceTypes = rows.map((r, i) => {
+        const id = r.querySelector('.cat-id')?.value.trim().toUpperCase() || `TYPE_${i+1}`;
+        const label = r.querySelector('.cat-label')?.value.trim() || id;
+        const description = r.querySelector('.cat-desc')?.value.trim() || '';
+        const active = !!r.querySelector('.cat-active')?.checked;
+        return { id, label, description, active };
+      }).filter(e => e.id);
+
+      if (evidenceTypes.length === 0) {
+        KronaCore.toast('Debe haber al menos un tipo de evidencia configurado.', true);
+        return;
+      }
+
+      try {
+        const res = await KronaCore.post('/api/custody/catalog/evidence-types', { evidenceTypes });
+        custodyEvidenceTypesCatalog = res.evidenceTypes || evidenceTypes;
+        renderCustodyEvidenceTypesOptions();
+        closeEvidenceTypesCatalogModal();
+        KronaCore.toast('✅ Catálogo de tipos de evidencia actualizado.');
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    async function handlePhotoFileInput(event) {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      const typeSelect = document.getElementById('photoTypeSelect');
+      const captionInput = document.getElementById('photoCaptionInput');
+      const photoType = typeSelect.value;
+      const caption = captionInput.value || typeSelect.options[typeSelect.selectedIndex].text;
+
+      for (const file of files) {
+        const dataUri = await readFileAsDataUri(file);
+        intakePhotosList.push({
+          photoType,
+          caption,
+          dataUri,
+          createdAt: new Date().toISOString(),
+        });
+      }
+
+      event.target.value = '';
+      captionInput.value = '';
+      renderIntakePhotosGrid();
+    }
+
+    function readFileAsDataUri(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderIntakePhotosGrid() {
+      const grid = document.getElementById('intakePhotosGrid');
+      const badge = document.getElementById('intakePhotosCountBadge');
+      if (!grid || !badge) return;
+
+      badge.textContent = `${intakePhotosList.length} Foto${intakePhotosList.length !== 1 ? 's' : ''}`;
+      if (intakePhotosList.length === 0) {
+        grid.innerHTML = '<div style="font-size:0.75rem;color:var(--text-muted);grid-column:1/-1;">Sin fotos de evidencia adjuntas.</div>';
+        return;
+      }
+
+      grid.innerHTML = intakePhotosList.map((p, idx) => `
+        <div class="custody-photo-card">
+          <img src="${p.dataUri}" alt="${p.caption}" onclick="openPhotoViewerModal('${p.dataUri}', '${p.photoType} - ${p.caption}')" />
+          <div class="custody-photo-meta">
+            <span class="custody-photo-tag">${p.photoType.slice(0, 8)}</span>
+            <button type="button" class="custody-photo-delete-btn" onclick="removeIntakePhoto(${idx})">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeIntakePhoto(index) {
+      intakePhotosList.splice(index, 1);
+      renderIntakePhotosGrid();
+    }
+
+    async function submitCreateCustodyPackage() {
+      const storeId = document.getElementById('intakeStoreSelect').value;
+      const purpose = document.getElementById('intakePurposeSelect').value;
+      const isForThirdParty = !!document.getElementById('intakeForThirdPartyChk')?.checked;
+
+      const depositorSelect = document.getElementById('intakeDepositorSelect');
+      const depositorUserId = depositorSelect?.value || null;
+      const depositorName = document.getElementById('intakeDepositorName').value.trim();
+      const depositorPhone = document.getElementById('intakeDepositorPhone').value.trim();
+      const depositorEmail = document.getElementById('intakeDepositorEmail').value.trim();
+
+      const recipientSelect = document.getElementById('intakeRecipientSelect');
+      const recipientUserId = isForThirdParty ? (recipientSelect?.value || null) : depositorUserId;
+      let recipientName = document.getElementById('intakeRecipientName').value.trim();
+      let recipientPhone = document.getElementById('intakeRecipientPhone').value.trim();
+      let recipientEmail = document.getElementById('intakeRecipientEmail').value.trim();
+
+      if (!isForThirdParty || !recipientName) {
+        recipientName = depositorName;
+        recipientPhone = depositorPhone;
+        recipientEmail = depositorEmail;
+      }
+
+      const vaultLocation = document.getElementById('intakeVaultLocation')?.value?.trim() || 'Bóveda General';
+      const itemsSummary = document.getElementById('intakeItemsSummary').value.trim();
+
+      if (!depositorName) {
+        KronaCore.toast('Ingresa el nombre del remitente (quién deja las cartas).', true);
+        return;
+      }
+      if (isForThirdParty && !recipientName) {
+        KronaCore.toast('Ingresa el nombre del destinatario autorizado para recoger.', true);
+        return;
+      }
+
+      const rows = Array.from(document.querySelectorAll('#intakeItemsTbody tr'));
+      const items = rows.map(r => ({
+        quantity: Number(r.querySelector('.item-qty')?.value || 1),
+        cardName: r.querySelector('.item-name')?.value || 'Carta TCG',
+      })).filter(it => it.cardName.trim());
+
+      try {
+        const payload = {
+          storeId,
+          purpose,
+          depositorUserId,
+          depositorName,
+          depositorPhone,
+          depositorEmail,
+          recipientUserId,
+          recipientName,
+          recipientPhone,
+          recipientEmail,
+          isForThirdParty,
+          // Compatibilidad retroactiva
+          clientUserId: recipientUserId || depositorUserId,
+          clientName: recipientName,
+          clientPhone: recipientPhone || depositorPhone,
+          clientEmail: recipientEmail || depositorEmail,
+          vaultLocation,
+          itemsSummary,
+          items,
+          photos: intakePhotosList,
+        };
+
+        const res = await KronaCore.post('/api/custody/packages/create', payload);
+        KronaCore.toast(`✅ Resguardo ${res.package.folio} registrado formalmente.`);
+        activeCustodyPackageId = res.package.id;
+        
+        // Limpiar fotos
+        intakePhotosList = [];
+        renderIntakePhotosGrid();
+
+        await loadCustodyPackages();
+        renderThermalPreview(res.package);
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    async function loadCustodyPackages() {
+      try {
+        const storeId = KronaCore.getSelectedStoreId();
+        const searchVal = document.getElementById('custodySearchInput')?.value || '';
+        let url = `/api/custody/packages?storeId=${encodeURIComponent(storeId)}`;
+        if (activeStatusFilter !== 'ALL') {
+          url += `&status=${encodeURIComponent(activeStatusFilter)}`;
+        }
+        if (searchVal.trim()) {
+          url += `&search=${encodeURIComponent(searchVal.trim())}`;
+        }
+
+        const res = await KronaCore.get(url);
+        custodyPackages = res.packages || [];
+        renderCustodyPackagesTable();
+        updateKpis();
+
+        if (activeCustodyPackageId) {
+          const current = custodyPackages.find(p => p.id === activeCustodyPackageId);
+          if (current) renderThermalPreview(current);
+        } else if (custodyPackages.length > 0) {
+          activeCustodyPackageId = custodyPackages[0].id;
+          renderThermalPreview(custodyPackages[0]);
+        }
+      } catch (err) {
+        console.warn('Error cargando paquetes de custodia:', err);
+      }
+    }
+
+    function setCustodyStatusFilter(status) {
+      activeStatusFilter = status;
+      document.querySelectorAll('.tactical-tabs button').forEach(b => b.classList.remove('active'));
+      const activeBtn = {
+        'ALL': document.getElementById('tabFilterAll'),
+        'IN_VAULT': document.getElementById('tabFilterInVault'),
+        'READY_FOR_PICKUP': document.getElementById('tabFilterReady'),
+        'RELEASED': document.getElementById('tabFilterReleased'),
+      }[status];
+      if (activeBtn) activeBtn.classList.add('active');
+      loadCustodyPackages();
+    }
+
+    function onCustodySearchInput() {
+      clearTimeout(window._searchTimer);
+      window._searchTimer = setTimeout(loadCustodyPackages, 300);
+    }
+
+    function renderCustodyPackagesTable() {
+      const tbody = document.getElementById('custodyPackagesTbody');
+      const badge = document.getElementById('custodyTotalBadge');
+      if (!tbody || !badge) return;
+
+      badge.textContent = `${custodyPackages.length} Paquete${custodyPackages.length !== 1 ? 's' : ''}`;
+      if (custodyPackages.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text-muted);">
+              No hay cartas en resguardo con los filtros seleccionados.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const statusMap = {
+        'RECEIVED': { label: 'RECIBIDO', cls: 'badge-gold' },
+        'IN_VAULT': { label: 'EN BÓVEDA', cls: 'badge-emerald' },
+        'READY_FOR_PICKUP': { label: 'LISTO RETIRO', cls: 'badge-emerald' },
+        'RELEASED': { label: 'ENTREGADO', cls: 'badge-slate' },
+        'CANCELLED_ERROR': { label: 'ANULADO', cls: 'badge-crimson' },
+      };
+
+      tbody.innerHTML = custodyPackages.map(pkg => {
+        const st = statusMap[pkg.status] || { label: pkg.status, cls: 'badge-slate' };
+        const purpObj = custodyPurposesCatalog.find(p => p.id === pkg.purpose);
+        const purp = purpObj ? purpObj.label : pkg.purpose;
+        const isReleased = pkg.status === 'RELEASED';
+        const isCancelled = pkg.status === 'CANCELLED_ERROR';
+
+        const isThird = pkg.isForThirdParty || (pkg.depositorName && pkg.recipientName && pkg.depositorName.toLowerCase() !== pkg.recipientName.toLowerCase());
+
+        return `
+          <tr style="${pkg.id === activeCustodyPackageId ? 'background:rgba(245,158,11,0.07);' : ''}">
+            <td>
+              <button type="button" class="btn-text mono" style="color:var(--accent-gold-hover);font-weight:700;padding:0;background:none;border:none;cursor:pointer;text-align:left;font-size:0.86rem;" onclick="selectCustodyPackage('${pkg.id}')">
+                ${pkg.folio}
+              </button>
+              <div class="mono" style="font-size:0.65rem;color:var(--text-muted);">${pkg.claimVerificationCode}</div>
+            </td>
+            <td>
+              ${isThird ? `
+                <div style="font-size:0.74rem;color:var(--text-secondary);">De: <strong>${KronaCore.escapeHtml(pkg.depositorName || 'Remitente')}</strong></div>
+                <div style="font-size:0.79rem;color:var(--accent-emerald-hover);font-weight:700;">Para: ${KronaCore.escapeHtml(pkg.recipientName || pkg.clientName)}</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">${KronaCore.escapeHtml(pkg.recipientPhone || pkg.depositorPhone || '')}</div>
+                <span class="badge badge-gold" style="font-size:0.6rem;padding:0.1rem 0.35rem;margin-top:0.2rem;display:inline-block;">P2P / TERCERO</span>
+              ` : `
+                <div><strong>${KronaCore.escapeHtml(pkg.clientName || pkg.depositorName)}</strong></div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">${KronaCore.escapeHtml(pkg.clientPhone || pkg.depositorPhone || 'Sin tel')} · Titular</div>
+              `}
+            </td>
+            <td>
+              <span class="badge badge-gold" style="font-size:0.62rem;">${purp}</span>
+              <div style="font-size:0.75rem;color:var(--text-secondary);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                ${KronaCore.escapeHtml(pkg.itemsSummary)}
+              </div>
+            </td>
+            <td>
+              <button type="button" class="badge ${pkg.photos && pkg.photos.length > 0 ? 'badge-emerald' : 'badge-slate'}" style="cursor:pointer;border:none;" onclick="openInspectModal('${pkg.id}')" aria-label="Ver fotos de ${pkg.folio}">
+                📸 ${pkg.photos ? pkg.photos.length : 0}
+              </button>
+            </td>
+            <td>
+              <span class="badge ${st.cls}">${st.label}</span>
+            </td>
+            <td style="text-align:right;">
+              <div style="display:inline-flex;gap:0.35rem;justify-content:flex-end;">
+                <button type="button" class="btn btn-slate" style="padding:0.25rem 0.5rem;font-size:0.72rem;" onclick="selectCustodyPackage('${pkg.id}')" title="Ver Comprobante">
+                  🎫 Ticket
+                </button>
+                <button type="button" class="btn btn-slate" style="padding:0.25rem 0.5rem;font-size:0.72rem;" onclick="openInspectModal('${pkg.id}')" title="Inspección y Fotos">
+                  🔍 Inspeccionar
+                </button>
+                ${!isReleased && !isCancelled ? `
+                  <button type="button" class="btn btn-emerald" style="padding:0.25rem 0.5rem;font-size:0.72rem;" onclick="openReleaseModal('${pkg.id}')" title="Entregar al Cliente">
+                    🤝 Entregar
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function selectCustodyPackage(packageId) {
+      activeCustodyPackageId = packageId;
+      const pkg = custodyPackages.find(p => p.id === packageId);
+      if (pkg) {
+        renderThermalPreview(pkg);
+        renderCustodyPackagesTable();
+      }
+    }
+
+    function updateKpis() {
+      const inVault = custodyPackages.filter(p => p.status === 'IN_VAULT' || p.status === 'RECEIVED').length;
+      const ready = custodyPackages.filter(p => p.status === 'READY_FOR_PICKUP').length;
+      const released = custodyPackages.filter(p => p.status === 'RELEASED').length;
+      const purposesCount = custodyPurposesCatalog.filter(p => p.active).length;
+
+      document.getElementById('kpiInVaultCount').textContent = inVault;
+      document.getElementById('kpiReadyCount').textContent = ready;
+      document.getElementById('kpiReleasedCount').textContent = released;
+      const kpiPurp = document.getElementById('kpiPurposesCount');
+      if (kpiPurp) kpiPurp.textContent = purposesCount;
+    }
+
+    function renderThermalPreview(pkg) {
+      if (!pkg) return;
+      const box = document.getElementById('custodyThermalPreviewBox');
+      const qrBox = document.getElementById('custodyQrPreviewContainer');
+      if (!box) return;
+
+      const itemsLines = (pkg.items || []).map(it => 
+        `  - ${it.quantity}x ${it.cardName}`
+      ).join('\n') || `  - ${pkg.itemsSummary}`;
+
+      const purpObj = custodyPurposesCatalog.find(p => p.id === pkg.purpose);
+      const purpLabel = purpObj ? purpObj.label : pkg.purpose;
+
+      const depName = pkg.depositorName || pkg.clientName || 'Remitente';
+      const depPhone = pkg.depositorPhone || pkg.clientPhone || 'N/A';
+      const recName = pkg.recipientName || pkg.clientName || 'Destinatario';
+      const recPhone = pkg.recipientPhone || pkg.clientPhone || 'N/A';
+      const isThird = pkg.isForThirdParty || (depName.toLowerCase() !== recName.toLowerCase());
+
+      const partiesText = isThird ? `
+REMITENTE (DEJA):     ${depName}
+TEL. REMITENTE:       ${depPhone}
+DESTINATARIO (RECIBE):${recName}
+TEL. DESTINATARIO:    ${recPhone}`.trim() : `
+CLIENTE / TITULAR:    ${depName}
+TELÉFONO:             ${depPhone}`.trim();
+
+      const text = `
+========================================
+           KRONA VAULT™
+  COMPROBANTE OFICIAL DE RESGUARDO
+========================================
+Sede: ${pkg.storeName || pkg.storeCode || pkg.storeId}
+Fecha Ingreso: ${pkg.intakeTimestamp ? pkg.intakeTimestamp.slice(0, 16).replace('T', ' ') : new Date().toISOString().slice(0, 16)}
+Operador: ${pkg.intakeStaffName || pkg.intakeStaffId || 'Staff Bóveda'}
+
+----------------------------------------
+FOLIO:        ${pkg.folio}
+CÓDIGO:       ${pkg.claimVerificationCode}
+${partiesText}
+MODALIDAD:    ${purpLabel}
+CASILLERO:    ${pkg.vaultLocation}
+----------------------------------------
+DESGLOSE DE CONTENIDO:
+${itemsLines}
+----------------------------------------
+ESTADO: ${pkg.status}
+EVIDENCIA: ${pkg.photos ? pkg.photos.length : 0} fotografía(s) con hash SHA-256
+SELLO CRIPTOGRÁFICO:
+${pkg.receiptSecuritySeal || pkg.receiptToken?.slice(-19) || 'VAULTSEAL-OFFICIAL-VALID'}
+
+========================================
+AVISO LEGAL OBLIGATORIO DE NO-REPUDIO:
+ESTE COMPROBANTE O SU CÓDIGO QR DIGITAL
+DEBE PRESENTARSE OBLIGATORIAMENTE PARA
+LA RECOLECCIÓN DEL PAQUETE.
+LAS CARTAS SE ENTREGARÁN ÚNICAMENTE
+AL DESTINATARIO DESIGNADO (${recName})
+O A QUIEN PRESENTE ESTE COMPROBANTE
+VALIDADO CRIPTOGRÁFICAMENTE.
+========================================
+
+✂ - - - - - - - - - - - - - - - - - - ✂
+      TALÓN DE BOLSA INVIOLABLE
+    (ENGRAMPAR A LA BOLSA EN BÓVEDA)
+FOLIO:        ${pkg.folio}
+DE (DEJA):    ${depName}
+PARA (RECIBE):${recName}
+CASILLERO:    ${pkg.vaultLocation}
+✂ - - - - - - - - - - - - - - - - - - ✂
+`.trim();
+
+      box.textContent = text;
+
+      if (qrBox) {
+        qrBox.style.display = 'block';
+        qrBox.innerHTML = KronaCore.renderQrSvg(pkg.claimToken || pkg.claimVerificationCode, pkg.folio);
+      }
+    }
+
+    function onCustodyPaperWidthChanged(val) {
+      currentPaperWidth = val;
+      const box = document.getElementById('custodyThermalPreviewBox');
+      if (box) {
+        box.className = val === '58mm' ? 'thermal-receipt-58mm' : 'thermal-receipt-80mm';
+      }
+    }
+
+    function printActiveCustodyReceipt() {
+      const pkg = custodyPackages.find(p => p.id === activeCustodyPackageId);
+      if (!pkg) {
+        KronaCore.toast('Selecciona un paquete primero.', true);
+        return;
+      }
+      const rawText = document.getElementById('custodyThermalPreviewBox').textContent;
+      const qrSvg = KronaCore.renderQrSvg(pkg.claimToken || pkg.claimVerificationCode, pkg.folio);
+      KronaCore.printThermalText(rawText, {
+        title: `KRONA Custody - ${pkg.folio}`,
+        paperWidth: currentPaperWidth,
+        qrSvg,
+      });
+    }
+
+    // MODAL DE LIBERACIÓN / CLAIM
+    function openReleaseModal(packageId) {
+      const pkg = custodyPackages.find(p => p.id === packageId);
+      if (!pkg) return;
+
+      activeCustodyPackageId = packageId;
+      document.getElementById('releaseModalFolio').textContent = pkg.folio;
+      const depEl = document.getElementById('releaseModalDepositor');
+      if (depEl) depEl.textContent = pkg.depositorName || pkg.clientName;
+      const recEl = document.getElementById('releaseModalRecipient');
+      if (recEl) recEl.textContent = pkg.recipientName || pkg.clientName;
+
+      const pickNameEl = document.getElementById('releasePickedUpByName');
+      if (pickNameEl) pickNameEl.value = pkg.recipientName || pkg.clientName;
+
+      document.getElementById('releaseClaimCodeInput').value = pkg.claimVerificationCode;
+
+      // Fotos al ingreso
+      const grid = document.getElementById('releaseModalPhotosGrid');
+      if (grid) {
+        if (!pkg.photos || pkg.photos.length === 0) {
+          grid.innerHTML = '<div style="font-size:0.75rem;color:var(--text-muted);grid-column:1/-1;">Sin fotos registradas al ingreso.</div>';
+        } else {
+          grid.innerHTML = pkg.photos.map(p => `
+            <div class="custody-photo-card">
+              <img src="${p.dataUri}" alt="${p.caption}" onclick="openPhotoViewerModal('${p.dataUri}', '${p.photoType} - ${p.caption}')" />
+              <div class="custody-photo-meta">
+                <span class="custody-photo-tag">${p.photoType.slice(0, 10)}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Four eyes si aplica
+      const fourEyesBox = document.getElementById('releaseFourEyesBox');
+      if (fourEyesBox) {
+        fourEyesBox.style.display = pkg.isHighValue ? 'block' : 'none';
+      }
+
+      KronaCore.openModal('custodyReleaseModal');
+    }
+
+    function closeReleaseModal() {
+      KronaCore.closeModal('custodyReleaseModal');
+    }
+
+    async function submitExecuteCustodyRelease() {
+      const pkg = custodyPackages.find(p => p.id === activeCustodyPackageId);
+      if (!pkg) return;
+
+      const claimCode = document.getElementById('releaseClaimCodeInput').value.trim();
+      const clientPin = document.getElementById('releaseClientPinInput').value.trim();
+      const chk1 = document.getElementById('chkPackageUntampered').checked;
+      const chk2 = document.getElementById('chkClientMatch').checked;
+      const pickedUpByName = document.getElementById('releasePickedUpByName')?.value.trim() || pkg.recipientName || pkg.clientName;
+      const pickedUpByRole = document.getElementById('releasePickedUpByRole')?.value || 'DESTINATARIO_TITULAR';
+
+      if (!chk1 || !chk2) {
+        KronaCore.toast('Debes verificar los puntos de la lista de cotejo de seguridad.', true);
+        return;
+      }
+      if (!claimCode) {
+        KronaCore.toast('Ingresa el código del comprobante presentado por el cliente.', true);
+        return;
+      }
+      if (!pickedUpByName) {
+        KronaCore.toast('Ingresa el nombre de la persona que retira físicamente las cartas.', true);
+        return;
+      }
+
+      let supervisorPin = undefined;
+      let coAuthorizerId = undefined;
+      if (pkg.isHighValue) {
+        supervisorPin = document.getElementById('releaseSupervisorPin').value.trim();
+        coAuthorizerId = document.getElementById('releaseSupervisorSelect').value;
+        if (!supervisorPin) {
+          KronaCore.toast('Ingresa el PIN de co-firma del supervisor para paquetes de alto valor.', true);
+          return;
+        }
+      }
+
+      try {
+        const payload = {
+          packageId: pkg.id,
+          claimVerificationCode: claimCode,
+          clientPinOrToken: clientPin,
+          supervisorPin,
+          coAuthorizerId,
+          pickedUpByName,
+          pickedUpByRole,
+          clientSignatureProof: `CLAIM_CONFIRMED_VIA_CODE_${claimCode}_BY_${pickedUpByName.toUpperCase().replace(/\s+/g, '_')}_ON_${new Date().toISOString()}`
+        };
+
+        const res = await KronaCore.post('/api/custody/packages/release', payload);
+        KronaCore.toast(`✅ Paquete ${res.package.folio} entregado a ${pickedUpByName}.`);
+        closeReleaseModal();
+        await loadCustodyPackages();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    // MODAL DE INSPECCIÓN Y FOTOS
+    function openInspectModal(packageId) {
+      const pkg = custodyPackages.find(p => p.id === packageId);
+      if (!pkg) return;
+
+      activeCustodyPackageId = packageId;
+      document.getElementById('inspectModalFolio').textContent = pkg.folio;
+      document.getElementById('inspectLocationInput').value = pkg.vaultLocation;
+      document.getElementById('inspectStatusSelect').value = pkg.status === 'RELEASED' ? 'IN_VAULT' : pkg.status;
+
+      const purpObj = custodyPurposesCatalog.find(p => p.id === pkg.purpose);
+      const purpLabel = purpObj ? purpObj.label : pkg.purpose;
+
+      const details = document.getElementById('inspectModalDetails');
+      details.innerHTML = `
+        <div><strong>Cliente:</strong> ${pkg.clientName} (${pkg.clientPhone || 'Sin tel'})</div>
+        <div><strong>Modalidad:</strong> ${purpLabel} · <strong>Ubicación:</strong> ${pkg.vaultLocation}</div>
+        <div style="margin-top:0.35rem;"><strong>Resumen:</strong> ${pkg.itemsSummary}</div>
+      `;
+
+      renderInspectPhotosGrid(pkg);
+      KronaCore.openModal('custodyInspectModal');
+    }
+
+    function renderInspectPhotosGrid(pkg) {
+      const grid = document.getElementById('inspectModalPhotosGrid');
+      if (!grid) return;
+      if (!pkg.photos || pkg.photos.length === 0) {
+        grid.innerHTML = '<div style="font-size:0.75rem;color:var(--text-muted);grid-column:1/-1;">Sin fotos registradas.</div>';
+        return;
+      }
+
+      grid.innerHTML = pkg.photos.map(p => `
+        <div class="custody-photo-card">
+          <img src="${p.dataUri}" alt="${p.caption}" onclick="openPhotoViewerModal('${p.dataUri}', '${p.photoType} - ${p.caption} (SHA-256: ${p.sha256Hash ? p.sha256Hash.slice(0, 12) : 'OK'})')" />
+          <div class="custody-photo-meta">
+            <span class="custody-photo-tag">${p.photoType.slice(0, 10)}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function closeInspectModal() {
+      KronaCore.closeModal('custodyInspectModal');
+    }
+
+    async function submitUpdateCustodyLocation() {
+      const pkg = custodyPackages.find(p => p.id === activeCustodyPackageId);
+      if (!pkg) return;
+
+      const vaultLocation = document.getElementById('inspectLocationInput').value.trim();
+      const newStatus = document.getElementById('inspectStatusSelect').value;
+
+      try {
+        const res = await KronaCore.post('/api/custody/packages/location', {
+          packageId: pkg.id,
+          vaultLocation,
+          newStatus,
+          reason: `Actualización de casillero a ${vaultLocation} y estado ${newStatus}`
+        });
+
+        KronaCore.toast(`✅ Ubicación y estado actualizados para ${pkg.folio}.`);
+        closeInspectModal();
+        await loadCustodyPackages();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    async function handleInspectPhotoUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const pkg = custodyPackages.find(p => p.id === activeCustodyPackageId);
+      if (!pkg) return;
+
+      const caption = document.getElementById('inspectNewCaption').value.trim() || 'Foto adicional de inspección en bóveda';
+      const dataUri = await readFileAsDataUri(file);
+
+      try {
+        const res = await KronaCore.post('/api/custody/packages/photos', {
+          packageId: pkg.id,
+          photoType: 'CONTENT_VIEW',
+          caption,
+          dataUri,
+        });
+
+        KronaCore.toast(`📸 Foto de evidencia agregada a ${pkg.folio}.`);
+        event.target.value = '';
+        document.getElementById('inspectNewCaption').value = '';
+        renderInspectPhotosGrid(res.package);
+        await loadCustodyPackages();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    // VISOR DE FOTO COMPLETA
+    function openPhotoViewerModal(dataUri, metaText) {
+      const modal = document.getElementById('custodyPhotoViewerModal');
+      const img = document.getElementById('photoViewerImg');
+      const meta = document.getElementById('photoViewerMeta');
+      if (!modal || !img) return;
+
+      img.src = dataUri;
+      if (meta) meta.textContent = metaText || '';
+      KronaCore.openModal('custodyPhotoViewerModal');
+    }
+
+    function closePhotoViewerModal() {
+      KronaCore.closeModal('custodyPhotoViewerModal');
+    }
+
+    // INICIALIZACIÓN DE PÁGINA
+    KronaCore.initPage('/custody', async (data) => {
+      KronaCore.populateStoreSelect('intakeStoreSelect', { filterActiveOnly: true });
+
+      // Cargar jugadores en selectores de Remitente y Destinatario
+      if (data.players) {
+        const playerOptions = '<option value="">-- Seleccionar Jugador del Padrón (O capturar abajo) --</option>' +
+          data.players.map(p => `<option value="${p.userId}">${p.fullName} (${p.memberCode}) - ${p.alias}</option>`).join('');
+
+        const depSel = document.getElementById('intakeDepositorSelect');
+        if (depSel) depSel.innerHTML = playerOptions;
+
+        const recSel = document.getElementById('intakeRecipientSelect');
+        if (recSel) recSel.innerHTML = playerOptions;
+      }
+
+      // Cargar supervisores en selector four-eyes si existen
+      const staffUsers = (data.users || []).filter(u => u.role === 'SUPER_ADMIN' || u.role === 'STORE_ADMIN');
+      const supSel2 = document.getElementById('releaseSupervisorSelect');
+      const supOptions = staffUsers.map(s => `<option value="${s.userId}">${s.fullName} [${s.role}]</option>`).join('');
+      if (supSel2) supSel2.innerHTML = supOptions;
+
+      await loadCustodyCatalogs();
+      await loadCustodyPackages();
+    }, 4000);
+  </script>
+</body>
+</html>

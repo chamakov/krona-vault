@@ -1,0 +1,11 @@
+{
+  "name": "@control-credito/api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-strip-types --watch src/server.ts",
+    "start": "node --experimental-strip-types src/server.ts",
+    "test": "NODE_ENV=test node --experimental-strip-types --test src/ledger-engine.test.ts src/api-e2e.test.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

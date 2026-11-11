@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Trade-In™ — Valuación de Singles, Compra de Bulk y Bonos | KRONA VAULT™</title>
+  <meta name="description" content="Valuador de cartas sueltas (singles) y compra de lotes (bulk): acreditación directa en bóveda con bonos de crédito en tienda y orígenes contables auditados." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/trade-in" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/trade-in" />
+  <meta property="og:title" content="KRONA Trade-In™ — Valuador de Singles y Compra de Bulk | KRONA VAULT™" />
+  <meta property="og:description" content="Acreditación de saldo en bóveda a jugadores por cartas sueltas y lotes TCG con bonos de tienda." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA Trade-In™ — Valuador de Singles" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Trade-In™ — Valuador de Singles y Compra de Bulk" />
+  <meta name="twitter:description" content="Valuación y adquisición de singles y bulk TCG con acreditación contable inmediata." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip">
+      <div>
+        <div class="page-eyebrow">COMPRA DE CARTAS & EMISIÓN DIRECTA · /trade-in</div>
+        <h1 class="page-title">KRONA Trade-In™ — Valuador de Singles, Compra de Bulk y Bonos de Tienda</h1>
+        <p class="page-subtitle">
+          Acredita saldo en bóveda a jugadores por adquisición de cartas sueltas (Singles), lotes (Bulk TCG), premios promocionales, compensación de jueces y ajustes contables auditados. Totalmente desacoplado de torneos.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;align-items:center;">
+        <a href="/custody" data-require-portal="/custody" class="btn btn-gold">Resguardo en Bóveda (/custody)</a>
+        <a href="/stores?tab=creditSources" data-require-portal="/stores" class="btn btn-emerald">
+          Catálogo de Orígenes
+        </a>
+        <a href="/pos" data-require-portal="/pos" class="btn btn-slate">Terminal POS (/pos)</a>
+        <a href="/tournaments" data-require-portal="/tournaments" class="btn btn-slate">Premios Torneos (/tournaments)</a>
+        <a href="/" data-require-portal="/" class="btn btn-slate">Nexus Hub (/)</a>
+      </div>
+    </section>
+
+    <div class="arena-grid" style="margin-bottom:1.35rem;">
+      <!-- COLUMNA IZQUIERDA: VALUADOR Y EMISIÓN DE SALDO -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+        <section class="vault-card emerald-edge">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="16" height="15" rx="2"/><path d="M6 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-2"/></svg>
+              <span>Valuador y Emisión de Saldo en Bóveda</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.45rem;">
+              <button type="button" class="btn btn-slate" style="padding:0.2rem 0.55rem;font-size:0.73rem;display:inline-flex;align-items:center;gap:0.3rem;" onclick="openFourEyesConfigModal()" title="Configurar montos mínimos, máximos y umbral de 4-Ojos">
+                ⚙️ Configurar Umbrales
+              </button>
+              <span id="issueSourceBadge" class="badge badge-emerald">CTA 1105</span>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;font-size:0.78rem;color:var(--text-secondary);line-height:1.5;">
+            Selecciona la sucursal receptora y el origen contable. El monto se acredita instantáneamente a la billetera del cliente bajo el Libro Mayor de Partida Doble, debitando la cuenta correspondiente (Inventario de Singles, Gastos Promocionales u Honorarios de Juez).
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="issueStore">Sucursal Emisora del Crédito</label>
+              <select id="issueStore" onchange="onIssueStoreChange()"></select>
+            </div>
+            <div class="form-group">
+              <label for="issueSourceType">Origen Contable del Crédito</label>
+              <select id="issueSourceType" onchange="onIssueSourceTypeChange()"></select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="issuePlayerSelect">Jugador / Cliente Destinatario</label>
+            <select id="issuePlayerSelect" onchange="onSelectPlayerChange()"></select>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="issueAmountMxn">Monto a Acreditar (MXN)</label>
+              <input id="issueAmountMxn" type="number" value="350" min="1" step="10" oninput="updateLedgerPreview()" />
+            </div>
+            <div class="form-group">
+              <label for="issueExpiryDays">Vigencia del Tramo (Días)</label>
+              <input id="issueExpiryDays" type="number" value="180" min="0" max="730" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="issueLabel">Concepto / Detalle de Cartas, Lote o Motivo</label>
+            <input id="issueLabel" type="text" value="Trade-In: 1x Sheoldred, the Apocalypse (NM)" placeholder="Ej. Trade-In: 4x Lightning Bolt (Foil) o Lote 500 cartas Bulk" />
+          </div>
+
+          <!-- SECCIÓN 4-OJOS / SUPERVISOR (SI EXCEDE UMBRAL O AJUSTE MANUAL) -->
+          <div id="fourEyesContainer" style="display:none;background:var(--bg-abyss);border:1px dashed var(--accent-gold);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;flex-wrap:wrap;gap:0.4rem;">
+              <div style="font-size:0.76rem;font-weight:700;color:var(--accent-gold-hover);">
+                ⚠️ AUTORIZACIÓN DUAL REQUERIDA (PRINCIPIO DE 4-OJOS)
+              </div>
+              <button type="button" class="btn btn-slate" style="padding:0.15rem 0.5rem;font-size:0.7rem;line-height:1.2;display:inline-flex;align-items:center;gap:0.25rem;" onclick="openFourEyesConfigModal()">
+                ⚙️ Ajustar Umbrales
+              </button>
+            </div>
+            <div id="fourEyesNoticeText" style="font-size:0.74rem;color:var(--text-secondary);margin-bottom:0.5rem;">
+              Esta operación supera el umbral de autorización o es un ajuste manual. Se requiere la credencial de un segundo supervisor.
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label for="coAuthorizerSelect">Segundo Supervisor / Administrador</label>
+              <select id="coAuthorizerSelect"></select>
+            </div>
+            <div class="form-group" style="margin-top:0.5rem;margin-bottom:0;">
+              <label for="coAuthorizerPin">PIN del Supervisor Co-Autorizador (6 Dígitos)</label>
+              <input id="coAuthorizerPin" type="password" maxlength="6" placeholder="PIN de 6 dígitos" class="mono" />
+            </div>
+          </div>
+
+          <!-- PREVISUALIZACIÓN CONTABLE DE PARTIDA DOBLE -->
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-emerald);border-radius:var(--radius-sm);padding:0.75rem 0.95rem;margin-bottom:1.15rem;">
+            <div style="font-size:0.75rem;font-weight:700;color:var(--accent-emerald-hover);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.04em;">
+              Asiento Contable en Partida Doble (Tiempo Real)
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;margin-bottom:0.25rem;">
+              <span><strong>CARGO (Debe):</strong> <span id="prevDebitAccount" class="mono">Cta 1105 - Inventario Singles</span></span>
+              <span id="prevDebitAmount" class="num-tabular mono" style="color:var(--accent-emerald-hover);font-weight:700;">$350.00 MXN</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;margin-bottom:0.35rem;">
+              <span><strong>ABONO (Haber):</strong> <span class="mono">Cta 2101 - Crédito por Pagar (Billetera)</span></span>
+              <span id="prevCreditAmount" class="num-tabular mono" style="color:var(--accent-gold-hover);font-weight:700;">$350.00 MXN</span>
+            </div>
+            <div style="border-top:1px dashed var(--border-subtle);padding-top:0.35rem;display:flex;justify-content:space-between;align-items:center;font-size:0.74rem;color:var(--text-muted);">
+              <span>Saldo actual del cliente: <strong id="prevPlayerBalance" class="mono" style="color:var(--text-primary);">$0.00 MXN</strong></span>
+              <span class="badge badge-emerald">Σ = $0.00 (Balance Cuadrado)</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-emerald btn-block" onclick="submitExecuteTradeIn()">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>Abonar Crédito en Partida Doble al Cliente</span>
+          </button>
+        </section>
+      </div>
+
+      <!-- COLUMNA DERECHA: ALTA DE NUEVO CLIENTE + COMPROBANTE TÉRMICO -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+        
+        <!-- REGISTRO EXPRESS DE CLIENTE -->
+        <section class="vault-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              <span>Alta Express de Cliente en Mostrador</span>
+            </div>
+            <span class="badge badge-gold">NUEVO VENDEDOR</span>
+          </div>
+          <div style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:0.75rem;">
+            Si el cliente no tiene cuenta KRONA VAULT aún, regístralo aquí en 5 segundos para poder abonarle su crédito de Trade-In de inmediato.
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="regFullName">Nombre Completo</label>
+              <input id="regFullName" type="text" placeholder="Ej. Roberto Sánchez" />
+            </div>
+            <div class="form-group">
+              <label for="regAlias">Alias / Handle (Opcional)</label>
+              <input id="regAlias" type="text" placeholder="@roberto_tcg" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="regStore">Sede Base del Jugador</label>
+            <select id="regStore"></select>
+          </div>
+          <button type="button" class="btn btn-gold btn-block" onclick="submitQuickPlayerRegister()">
+            ✨ Dar de Alta e Iniciar Valuación
+          </button>
+        </section>
+
+        <!-- COMPROBANTE TÉRMICO DE TRADE-IN -->
+        <section class="vault-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Comprobante Físico de Recepción de Cartas</span>
+            </div>
+            <span class="badge badge-slate">80MM PRINT</span>
+          </div>
+          <div style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:0.75rem;line-height:1.5;">
+            Imprime una tirilla térmica de 80mm con el desglose del Trade-In o Bono para engrapar con las cartas recibidas y archivar la firma de conformidad del cliente en caja.
+          </div>
+          <button type="button" class="btn btn-slate btn-block" onclick="printLastTradeInReceipt()">
+            🖨️ Imprimir Último Comprobante de Recepción
+          </button>
+        </section>
+
+        <!-- GUÍA DE CUENTAS CONTABLES -->
+        <section class="vault-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Imputación Contable por Origen</span>
+            </div>
+            <span class="badge badge-emerald">GAAP COMPLIANT</span>
+          </div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">
+            <div>• <strong>Cta 1105 (Inventario Singles / Bulk):</strong> Incrementa el activo circulante de la tienda por cartas compradas.</div>
+            <div style="margin-top:0.35rem;">• <strong>Cta 5102 (Gasto Promocional / Rifas):</strong> Imputa el costo como marketing de comunidad o sorteos.</div>
+            <div style="margin-top:0.35rem;">• <strong>Cta 5103 (Honorarios Juez / Staff):</strong> Remunera a jueces en crédito de tienda como costo operativo.</div>
+            <div style="margin-top:0.35rem;">• <strong>Cta 5104 (Fidelización):</strong> Campañas y bonos temporales con caducidad corta FEFO.</div>
+            <div style="margin-top:0.35rem;">• <strong>Cta 5105 (Ajustes Manuales):</strong> Requiere aprobación dual 4-Ojos y queda grabado en la cadena SHA-256.</div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- SECCIÓN INFERIOR: HISTORIAL DE TRADE-IN Y BONOS -->
+    <section class="vault-card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Historial Reciente de Operaciones de Trade-In & Bonos de Tienda</span>
+        </div>
+        <span id="tradeInCountBadge" class="badge badge-emerald">0 Operaciones</span>
+      </div>
+
+      <div class="table-scroll">
+        <table class="krona-table">
+          <thead>
+            <tr>
+              <th>Fecha / Hora</th>
+              <th>Sede</th>
+              <th>Cliente</th>
+              <th>Origen Contable</th>
+              <th>Concepto / Detalle</th>
+              <th>Monto Acreditado</th>
+              <th>Operador</th>
+            </tr>
+          </thead>
+          <tbody id="tradeInHistoryTableBody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:1rem;">Cargando historial de trade-in...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MODAL DE CONFIGURACIÓN DE UMBRALES 4-OJOS Y LÍMITES DE EMISIÓN -->
+    <div id="fourEyesConfigModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="fourEyesModalTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card gold-edge" style="max-width:560px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.8);">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="fourEyesModalTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Configuración de Umbrales 4-Ojos y Límites de Bóveda</span>
+          </div>
+          <button type="button" class="btn btn-slate" style="padding:0.2rem 0.6rem;min-height:32px;" onclick="KronaCore.closeModal('fourEyesConfigModal')">✕</button>
+        </div>
+
+        <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.5;">
+          Define las políticas de mitigación de riesgo financiero para la emisión de crédito. Requiere rol de <strong>Director Corporativo (SUPER_ADMIN)</strong> o <strong>Gerente de Sucursal (STORE_ADMIN)</strong>.
+        </div>
+
+        <div class="form-group">
+          <label for="cfgFourEyesThresholdMxn">Umbral Mínimo para Autorización Dual 4-Ojos (MXN)</label>
+          <input id="cfgFourEyesThresholdMxn" type="number" min="0" step="50" placeholder="1000" />
+          <small style="color:var(--text-muted);font-size:0.72rem;display:block;margin-top:0.25rem;">
+            Toda emisión igual o mayor a este importe exigirá obligatoriamente la firma de un segundo supervisor.
+          </small>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="cfgMinIssuanceMxn">Monto Mínimo de Emisión Única (MXN)</label>
+            <input id="cfgMinIssuanceMxn" type="number" min="1" step="1" placeholder="1" />
+            <small style="color:var(--text-muted);font-size:0.72rem;display:block;margin-top:0.25rem;">
+              Mínimo por operación individual (ej. $1.00 MXN).
+            </small>
+          </div>
+          <div class="form-group">
+            <label for="cfgMaxIssuanceMxn">Monto Máximo de Emisión Única (MXN)</label>
+            <input id="cfgMaxIssuanceMxn" type="number" min="10" step="100" placeholder="50000" />
+            <small style="color:var(--text-muted);font-size:0.72rem;display:block;margin-top:0.25rem;">
+              Techo máximo por operación individual (ej. $50,000 MXN).
+            </small>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.25rem;">
+          <button type="button" class="btn btn-slate" onclick="KronaCore.closeModal('fourEyesConfigModal')">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-gold" onclick="saveFourEyesConfig()">
+            💾 Guardar Políticas de Bóveda
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    let lastTradeInRecord = null;
+
+    function onIssueStoreChange() {
+      updateIssueSourceDropdown();
+      updateLedgerPreview();
+    }
+
+    function updateIssueSourceDropdown() {
+      const storeId = document.getElementById('issueStore')?.value || KronaCore.getSelectedStoreId();
+      const state = KronaCore.getState();
+      const store = (state?.stores || []).find((s) => s.id === storeId) || (state?.stores && state.stores[0]);
+      const select = document.getElementById('issueSourceType');
+      if (!select) return;
+
+      const sources = (store?.creditSources && store.creditSources.length > 0)
+        ? store.creditSources.filter((s) => s.isEnabled !== false)
+        : [
+            { code: 'SINGLES_TRADE_IN', name: 'Compra de Cartas Sueltas (Singles Trade-In)', defaultAccountCode: '1105', defaultExpiryDays: 180 },
+            { code: 'RAFFLE_DOOR_PRIZE', name: 'Rifa / Door Prize de Torneo', defaultAccountCode: '5102', defaultExpiryDays: 180 },
+            { code: 'JUDGE_STAFF_BONUS', name: 'Compensación de Juez / Staff', defaultAccountCode: '5103', defaultExpiryDays: 365 },
+            { code: 'PROMOTIONAL_BONUS', name: 'Bono Promocional (Prioridad FEFO Alta)', defaultAccountCode: '5104', defaultExpiryDays: 90 },
+            { code: 'BULK_BUYBACK', name: 'Compra de Lotes / Bulk TCG', defaultAccountCode: '1105', defaultExpiryDays: 180 },
+            { code: 'LEAGUE_ACHIEVEMENT', name: 'Logros y Temporada de Liga', defaultAccountCode: '5102', defaultExpiryDays: 180 },
+            { code: 'MANUAL_ADJUSTMENT', name: 'Ajuste Manual Contable Autorizado', defaultAccountCode: '5105', defaultExpiryDays: 180 },
+          ];
+
+      const currentVal = select.value;
+      select.innerHTML = sources.map((s) => `
+        <option value="${s.code}" data-account="${s.defaultAccountCode || '5101'}" data-expiry="${s.defaultExpiryDays || 180}" ${s.code === currentVal ? 'selected' : ''}>
+          ${s.name} (Cta ${s.defaultAccountCode || '5101'})
+        </option>
+      `).join('');
+
+      onIssueSourceTypeChange();
+    }
+
+    function onIssueSourceTypeChange() {
+      const select = document.getElementById('issueSourceType');
+      if (!select) return;
+      const opt = select.options[select.selectedIndex];
+      if (!opt) return;
+
+      const expiry = opt.getAttribute('data-expiry');
+      const account = opt.getAttribute('data-account');
+
+      if (expiry) {
+        const expiryInput = document.getElementById('issueExpiryDays');
+        if (expiryInput) expiryInput.value = expiry;
+      }
+
+      const badge = document.getElementById('issueSourceBadge');
+      if (badge && account) {
+        badge.textContent = `CTA ${account}`;
+      }
+
+      // Pre-cargar concepto sugerido si está vacío
+      const labelInput = document.getElementById('issueLabel');
+      if (labelInput && (!labelInput.value || labelInput.value.startsWith('Trade-In:') || labelInput.value.startsWith('Rifa:') || labelInput.value.startsWith('Bono:'))) {
+        if (select.value === 'SINGLES_TRADE_IN') {
+          labelInput.value = 'Trade-In: 1x Sheoldred, the Apocalypse (NM)';
+        } else if (select.value === 'BULK_BUYBACK') {
+          labelInput.value = 'Compra de Bulk: 1,000 cartas comunes/infrecuentes';
+        } else if (select.value === 'RAFFLE_DOOR_PRIZE') {
+          labelInput.value = 'Rifa de Asistencia: Dinámica de fin de semana';
+        } else if (select.value === 'JUDGE_STAFF_BONUS') {
+          labelInput.value = 'Honorarios Juez L1: Soporte de eventos en tienda';
+        } else if (select.value === 'PROMOTIONAL_BONUS') {
+          labelInput.value = 'Bono Promocional: Campaña de bienvenida';
+        } else if (select.value === 'MANUAL_ADJUSTMENT') {
+          labelInput.value = 'Ajuste contable justificado con 4-Ojos';
+        }
+      }
+
+      checkFourEyesRequirement();
+      updateLedgerPreview();
+    }
+
+    function checkFourEyesRequirement() {
+      const state = KronaCore.getState();
+      const amountMxn = Number(document.getElementById('issueAmountMxn')?.value || 0);
+      const amountCents = Math.round(amountMxn * 100);
+      const sourceType = document.getElementById('issueSourceType')?.value;
+      const thresholdCents = state?.org?.requireFourEyesThresholdCents !== undefined ? state.org.requireFourEyesThresholdCents : 100000;
+
+      const needsFourEyes = amountCents >= thresholdCents || sourceType === 'MANUAL_ADJUSTMENT';
+      const container = document.getElementById('fourEyesContainer');
+      const noticeText = document.getElementById('fourEyesNoticeText');
+
+      if (noticeText) {
+        if (sourceType === 'MANUAL_ADJUSTMENT') {
+          noticeText.textContent = `Ajuste contable manual. Por regla de auditoría forense, todo ajuste manual exige co-autorización Four-Eyes obligatoria.`;
+        } else {
+          noticeText.textContent = `Esta operación (${KronaCore.fmt(amountCents)}) supera el umbral configurado (${KronaCore.fmt(thresholdCents)}). Se requiere la credencial de un segundo supervisor.`;
+        }
+      }
+
+      if (container) {
+        container.style.display = needsFourEyes ? 'block' : 'none';
+      }
+    }
+
+    function openFourEyesConfigModal() {
+      const state = KronaCore.getState();
+      const role = state?.sessionUser?.role;
+      if (role !== 'SUPER_ADMIN' && role !== 'STORE_ADMIN') {
+        KronaCore.toast('⚠️ Esta configuración requiere rol de Gerente (STORE_ADMIN) o Director Corporativo (SUPER_ADMIN).', true);
+        return;
+      }
+      const org = state?.org || {};
+      const thresholdCents = org.requireFourEyesThresholdCents !== undefined ? org.requireFourEyesThresholdCents : 100000;
+      const minCents = org.minSingleIssuanceCents !== undefined ? org.minSingleIssuanceCents : 100;
+      const maxCents = org.maxSingleIssuanceCents !== undefined ? org.maxSingleIssuanceCents : 5000000;
+
+      document.getElementById('cfgFourEyesThresholdMxn').value = Math.round(thresholdCents / 100);
+      document.getElementById('cfgMinIssuanceMxn').value = Math.round(minCents / 100);
+      document.getElementById('cfgMaxIssuanceMxn').value = Math.round(maxCents / 100);
+
+      KronaCore.openModal('fourEyesConfigModal');
+    }
+
+    async function saveFourEyesConfig() {
+      const thresholdMxn = Number(document.getElementById('cfgFourEyesThresholdMxn').value || 0);
+      const minMxn = Number(document.getElementById('cfgMinIssuanceMxn').value || 0);
+      const maxMxn = Number(document.getElementById('cfgMaxIssuanceMxn').value || 0);
+
+      if (minMxn <= 0 || maxMxn <= 0 || thresholdMxn < 0) {
+        KronaCore.toast('⚠️ Todos los montos deben ser valores positivos.', true);
+        return;
+      }
+      if (minMxn > maxMxn) {
+        KronaCore.toast('⚠️ El monto mínimo no puede ser mayor que el monto máximo.', true);
+        return;
+      }
+
+      try {
+        await KronaCore.post('/api/admin/policies', {
+          requireFourEyesThresholdCents: Math.round(thresholdMxn * 100),
+          minSingleIssuanceCents: Math.round(minMxn * 100),
+          maxSingleIssuanceCents: Math.round(maxMxn * 100),
+          reason: 'Ajuste de umbrales 4-Ojos y límites de emisión desde Valuador Bóveda'
+        });
+        KronaCore.toast('✅ Umbrales y límites de emisión actualizados con éxito.');
+        KronaCore.closeModal('fourEyesConfigModal');
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    function onSelectPlayerChange() {
+      const playerSelect = document.getElementById('issuePlayerSelect');
+      if (playerSelect?.value) {
+        KronaCore.setSelectedPlayerId(playerSelect.value);
+      }
+      updateLedgerPreview();
+    }
+
+    function updateLedgerPreview() {
+      const select = document.getElementById('issueSourceType');
+      const opt = select?.options[select.selectedIndex];
+      const accountCode = opt?.getAttribute('data-account') || '1105';
+      const amountMxn = Number(document.getElementById('issueAmountMxn')?.value || 0);
+
+      const acctNameMap = {
+        '1105': 'Cta 1105 - Inventario Singles / Bulk (Trade-In)',
+        '5102': 'Cta 5102 - Gasto Promocional / Rifas / Subsidios',
+        '5103': 'Cta 5103 - Honorarios en Especie (Jueces / Staff)',
+        '5104': 'Cta 5104 - Gasto de Fidelización y Campañas',
+        '5105': 'Cta 5105 - Ajustes Contables Auditados',
+        '5101': 'Cta 5101 - Costo de Premios de Torneos (OP)',
+      };
+
+      const debitAccountEl = document.getElementById('prevDebitAccount');
+      if (debitAccountEl) {
+        debitAccountEl.textContent = acctNameMap[accountCode] || `Cta ${accountCode}`;
+      }
+
+      const formatted = KronaCore.fmt(Math.round(amountMxn * 100));
+      const prevDebitAmount = document.getElementById('prevDebitAmount');
+      const prevCreditAmount = document.getElementById('prevCreditAmount');
+      if (prevDebitAmount) prevDebitAmount.textContent = formatted;
+      if (prevCreditAmount) prevCreditAmount.textContent = formatted;
+
+      const playerId = document.getElementById('issuePlayerSelect')?.value || KronaCore.getSelectedPlayerId();
+      const state = KronaCore.getState();
+      const player = (state?.players || []).find((p) => p.userId === playerId);
+      const prevPlayerBalance = document.getElementById('prevPlayerBalance');
+      if (prevPlayerBalance) {
+        prevPlayerBalance.textContent = player ? KronaCore.fmt(player.availableBalanceCents) : '$0.00 MXN';
+      }
+
+      checkFourEyesRequirement();
+    }
+
+    async function submitExecuteTradeIn() {
+      const amountMxn = Number(document.getElementById('issueAmountMxn').value || 0);
+      const storeId = document.getElementById('issueStore')?.value || KronaCore.getSelectedStoreId();
+      const targetUserId = document.getElementById('issuePlayerSelect')?.value || KronaCore.getSelectedPlayerId();
+      const sourceType = document.getElementById('issueSourceType').value;
+      const sourceLabel = document.getElementById('issueLabel').value.trim();
+      const expiryDays = Number(document.getElementById('issueExpiryDays').value || 180);
+      const container = document.getElementById('fourEyesContainer');
+      const needsFourEyes = container && container.style.display !== 'none';
+      const coAuthorizerUserId = needsFourEyes ? (document.getElementById('coAuthorizerSelect')?.value || undefined) : undefined;
+      const coAuthorizerPin = needsFourEyes ? (document.getElementById('coAuthorizerPin')?.value?.trim() || undefined) : undefined;
+
+      if (!targetUserId) {
+        KronaCore.toast('Selecciona el cliente destinatario', true);
+        return;
+      }
+      if (amountMxn <= 0) {
+        KronaCore.toast('Ingresa un monto mayor a 0', true);
+        return;
+      }
+      if (!sourceLabel) {
+        KronaCore.toast('Ingresa el detalle o concepto del Trade-In', true);
+        return;
+      }
+      if (needsFourEyes && !coAuthorizerPin) {
+        KronaCore.toast('Ingresa el PIN de seguridad del supervisor co-autorizador', true);
+        return;
+      }
+
+      try {
+        const payload = {
+          storeId,
+          targetUserId,
+          amountCents: Math.round(amountMxn * 100),
+          sourceType,
+          sourceLabel,
+          expiryDays,
+          coAuthorizerUserId,
+          coAuthorizerPin,
+        };
+
+        const res = await KronaCore.post('/api/credit/issue', payload);
+        KronaCore.toast(`💎 Abono de ${KronaCore.fmt(amountMxn * 100)} acreditado en partida doble`);
+
+        const state = KronaCore.getState();
+        const store = (state?.stores || []).find((s) => s.id === storeId);
+        const player = (state?.players || []).find((p) => p.userId === targetUserId);
+        const sessionUser = state?.sessionUser;
+
+        lastTradeInRecord = {
+          folio: res.journalEntry?.id || ('TRD-' + Date.now().toString().slice(-6)),
+          storeName: store ? store.name : 'Tienda Local',
+          playerName: player ? player.fullName : 'Cliente Mostrador',
+          playerMemberCode: player ? player.memberCode : 'CC-XXXX',
+          amountCents: Math.round(amountMxn * 100),
+          sourceType,
+          concept: sourceLabel,
+          operatorName: sessionUser ? sessionUser.fullName : 'Cajero / Valuador',
+          dateStr: new Date().toLocaleString('es-MX'),
+        };
+
+        await KronaCore.refreshState();
+
+        // Reset completo de todos los campos para evitar añadir por error más crédito
+        document.getElementById('issueAmountMxn').value = '0';
+        document.getElementById('issueLabel').value = '';
+        const container = document.getElementById('fourEyesContainer');
+        if (container) container.style.display = 'none';
+        updateLedgerPreview();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    async function submitQuickPlayerRegister() {
+      const fullName = document.getElementById('regFullName').value.trim();
+      const alias = document.getElementById('regAlias').value.trim();
+      const storeId = document.getElementById('regStore')?.value || KronaCore.getSelectedStoreId();
+
+      if (!fullName) {
+        KronaCore.toast('Ingresa el nombre completo del cliente', true);
+        return;
+      }
+
+      try {
+        const res = await KronaCore.post('/api/players/register', { fullName, alias, storeId });
+        KronaCore.setSelectedPlayerId(res.player.userId);
+        document.getElementById('regFullName').value = '';
+        document.getElementById('regAlias').value = '';
+        KronaCore.toast(`✅ Cliente ${res.player.fullName} (${res.player.memberCode}) registrado exitosamente`);
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    function printLastTradeInReceipt() {
+      if (!lastTradeInRecord) {
+        KronaCore.toast('Aún no has registrado una operación de Trade-In en esta sesión', true);
+        return;
+      }
+
+      const rec = lastTradeInRecord;
+      const text = [
+        '========================================',
+        '      COMPROBANTE DE RECEPCIÓN TCG      ',
+        '        KRONA Trade-In™ & BONOS         ',
+        '========================================',
+        'Sede:      ' + rec.storeName,
+        'Folio:     ' + rec.folio,
+        'Fecha:     ' + rec.dateStr,
+        'Operador:  ' + rec.operatorName,
+        '----------------------------------------',
+        'Cliente:   ' + rec.playerName,
+        'ID Krona:  ' + rec.playerMemberCode,
+        '----------------------------------------',
+        'Concepto:  ' + rec.concept,
+        'Origen:    ' + rec.sourceType,
+        'ABONO:     ' + KronaCore.fmt(rec.amountCents),
+        '----------------------------------------',
+        'El Crédito de Tienda ha sido abonado a  ',
+        'la bóveda digital en partida doble.     ',
+        '',
+        'Firma de Entrega / Conformidad Cliente: ',
+        '',
+        '',
+        '________________________________________',
+        '      ' + rec.playerName,
+        '========================================',
+      ].join('\n');
+
+      KronaCore.toast('🖨️ Imprimiendo comprobante de Trade-In...');
+      KronaCore.printThermalText(text, { title: 'Trade-In ' + rec.folio, paperWidth: '80mm' });
+    }
+
+    function renderRecentTradeInHistory(data) {
+      const tbody = document.getElementById('tradeInHistoryTableBody');
+      if (!tbody) return;
+
+      const logs = (data && data.auditLogs) || [];
+      const tradeInLogs = logs.filter(
+        (l) => l.eventAction === 'CREDIT_ISSUED' || l.eventAction === 'TRADE_IN_ACCEPTED'
+      ).slice(0, 20);
+
+      document.getElementById('tradeInCountBadge').textContent = `${tradeInLogs.length} Operaciones`;
+
+      if (tradeInLogs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:1rem;">No hay operaciones de trade-in registradas aún. Emite la primera arriba.</td></tr>';
+        return;
+      }
+
+      const storeMap = new Map((data.stores || []).map((s) => [s.id, s]));
+      const userMap = new Map((data.allUsers || data.players || []).map((u) => [u.userId, u]));
+
+      tbody.innerHTML = tradeInLogs.map((log) => {
+        const store = storeMap.get(log.storeId);
+        const storeName = store ? store.name : log.storeId;
+        const targetUser = userMap.get(log.targetEntityId) || { fullName: log.targetEntityId, memberCode: 'CC' };
+        const actorUser = userMap.get(log.actorUserId) || { fullName: log.actorUserId };
+        const payload = log.payloadAfter || {};
+        const amountCents = payload.amountCents || (payload.lot ? payload.lot.initialAmountCents : 0);
+        const sourceType = payload.sourceType || (payload.lot ? payload.lot.sourceType : 'SINGLES_TRADE_IN');
+        const reason = log.reasonJustification || payload.sourceLabel || 'Trade-in mostrador';
+        const dateStr = new Date(log.timestamp).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        return `
+          <tr>
+            <td class="mono" style="font-size:0.75rem;">${dateStr}</td>
+            <td style="font-size:0.8rem;"><strong>${storeName}</strong></td>
+            <td style="font-size:0.8rem;">${targetUser.fullName} <span class="mono" style="color:var(--accent-gold-hover);">(${targetUser.memberCode || ''})</span></td>
+            <td><span class="mono" style="font-size:0.72rem;background:var(--bg-abyss);padding:1px 5px;border-radius:3px;border:1px solid var(--border-default);">${sourceType}</span></td>
+            <td style="font-size:0.78rem;color:var(--text-secondary);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${reason}</td>
+            <td class="num-tabular mono" style="font-weight:700;color:var(--accent-emerald-hover);">${KronaCore.fmt(amountCents)}</td>
+            <td style="font-size:0.76rem;color:var(--text-muted);">${actorUser.fullName}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    KronaCore.initPage('/trade-in', (data) => {
+      // Poblar combos de sucursales
+      KronaCore.populateStoreSelect('issueStore', { filterActiveOnly: true, selectedId: KronaCore.getSelectedStoreId() });
+      KronaCore.populateStoreSelect('regStore', { includeGlobal: true, globalLabel: 'SIN ASIGNACIÓN FIJA (Todas las Sedes)', selectedId: KronaCore.getSelectedStoreId() });
+
+      // Poblar combo de jugadores
+      const playerSelect = document.getElementById('issuePlayerSelect');
+      const players = (data.players || []).filter((p) => p.status === 'ACTIVE');
+      const activePlayerId = KronaCore.getSelectedPlayerId() || (players[0] && players[0].userId);
+
+      playerSelect.innerHTML = players.map((p) => `
+        <option value="${p.userId}" ${p.userId === activePlayerId ? 'selected' : ''}>
+          ${p.fullName} (${p.memberCode}) · Saldo: ${KronaCore.fmt(p.availableBalanceCents)}
+        </option>
+      `).join('');
+
+      // Poblar combo de co-autorizadores
+      const coAuthSelect = document.getElementById('coAuthorizerSelect');
+      const supervisors = (data.staff || []).filter(
+        (s) => s.role === 'SUPER_ADMIN' || s.role === 'STORE_ADMIN'
+      );
+      coAuthSelect.innerHTML = supervisors.map((s) => `
+        <option value="${s.userId}">${s.fullName} [${s.role}]</option>
+      `).join('');
+
+      updateIssueSourceDropdown();
+      updateLedgerPreview();
+      renderRecentTradeInHistory(data);
+    });
+  </script>
+</body>
+</html>

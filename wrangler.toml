@@ -1,0 +1,21 @@
+name = "krona-vault"
+main = "apps/api/src/worker.ts"
+compatibility_date = "2025-02-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Sirve gratis los 8 portales HTML, CSS, JS y PWA desde el Edge de Cloudflare
+[assets]
+directory = "./apps/web-pwa/public"
+binding = "ASSETS"
+not_found_handling = "none"
+
+# Base de datos SQLite Serverless gratuita (Cloudflare D1)
+# Para vincular tu base de datos creada con: npx wrangler d1 create krona_vault_db
+# reemplaza database_id con el UUID que te entregue Wrangler.
+[[d1_databases]]
+binding = "DB"
+database_name = "krona_vault_db"
+database_id = "krona_vault_db_id_placeholder"
+
+[vars]
+HSM_SECRET = "prod_hsm_secret_control_credito_2026"

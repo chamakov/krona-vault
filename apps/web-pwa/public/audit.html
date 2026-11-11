@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Citadel™ — Libro Mayor de Partida Doble y Auditoría Forense | KRONA VAULT™</title>
+  <meta name="description" content="Consola forense y libro mayor inmutable: arqueo y cierre de turno Z, verificación de sellos térmicos VaultSeal™ y trazabilidad de eventos encadenados por SHA-256." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/audit" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/audit" />
+  <meta property="og:title" content="KRONA Citadel™ — Libro Mayor y Auditoría Forense | KRONA VAULT™" />
+  <meta property="og:description" content="Trazabilidad forense inmutable, cierre de turno Z de caja y verificación de partida doble." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA Citadel™ — Auditoría Forense" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Citadel™ — Libro Mayor y Auditoría Forense" />
+  <meta name="twitter:description" content="Libro mayor de partida doble con ecuación contable en tiempo real y sellos VaultSeal™." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip no-print">
+      <div>
+        <div class="page-eyebrow">BÓVEDA CONTABLE Y TRAZABILIDAD FORENSE · /audit</div>
+        <h1 class="page-title">KRONA Citadel™ — "¿Quién Hizo Qué?", Cierre de Turno y Libro Mayor</h1>
+        <p class="page-subtitle">
+          Rastrea con exactitud criptográfica qué operador ejecutó cada acción, con qué rol, en qué sucursal y quién co-autorizó en 4-Ojos, además de emitir el Cierre de Turno / Arqueo de Caja y verificar vouchers físicos.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+        <button type="button" data-require-permission="pos:shift:close_z" class="btn btn-gold" onclick="generateShiftClosure()">
+          Generar Cierre de Turno / Arqueo
+        </button>
+      </div>
+    </section>
+
+    <!-- BUSCADOR FORENSE INTERACTIVO: "¿QUIÉN HIZO QUÉ, CUÁNDO Y CON AUTORIZACIÓN DE QUIÉN?" -->
+    <section class="vault-card emerald-edge no-print" style="margin-bottom:1.35rem;">
+      <div class="card-header">
+        <div class="card-title">Buscador Forense de Trazabilidad ("¿Quién Hizo Qué?")</div>
+        <span id="forensicMatchCount" class="badge badge-emerald">0 Eventos</span>
+      </div>
+
+      <div class="kpi-grid-4" style="margin-bottom:0.85rem;">
+        <div class="form-group" style="margin:0;">
+          <label for="filterActorInput">Filtrar por Actor / Co-Autorizador</label>
+          <input id="filterActorInput" type="text" placeholder="Ej. Carlos, @JudgeRob, CC-0001..." oninput="applyForensicFilters()" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label for="filterRoleSelect">Filtrar por Rol Operativo</label>
+          <select id="filterRoleSelect" onchange="applyForensicFilters()">
+            <option value="ALL">Todos los Roles (6)</option>
+            <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+            <option value="STORE_ADMIN">STORE_ADMIN</option>
+            <option value="TOURNAMENT_ORGANIZER">TOURNAMENT_ORGANIZER</option>
+            <option value="CASHIER">CASHIER</option>
+            <option value="AUDITOR">AUDITOR</option>
+            <option value="PLAYER">PLAYER</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label for="filterActionSelect">Filtrar por Tipo de Operación</label>
+          <select id="filterActionSelect" onchange="applyForensicFilters()">
+            <option value="ALL">Todas las Operaciones</option>
+            <option value="CREDIT_ISSUED">Emisión de Crédito / Premios</option>
+            <option value="POS_REDEMPTION">Cobros en Caja POS (Vouchers)</option>
+            <option value="TOURNAMENT">Creación / Inscripción de Torneos</option>
+            <option value="USER_">Altas de Usuario / Login / Perfil</option>
+            <option value="REFUND">Devoluciones Anti-Cash-Out</option>
+            <option value="CLAWBACK">Disputas y Reversos Clawback</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label for="filterTargetInput">Torneo, Voucher o Jugador Afectado</label>
+          <input id="filterTargetInput" type="text" placeholder="Ej. TRN-RCQ-01, VCH-CEN, CC-8492..." oninput="applyForensicFilters()" />
+        </div>
+      </div>
+
+      <div class="table-scroll table-scroll-fixed-height">
+        <table class="krona-table">
+          <thead>
+            <tr>
+              <th># / Timestamp</th>
+              <th>Sede</th>
+              <th>¿Quién lo Hizo? (Actor + Rol)</th>
+              <th>¿Quién Co-Autorizó? (4-Ojos / 2FA)</th>
+              <th>Acción & Entidad</th>
+              <th>Motivo / Hash SHA-256</th>
+            </tr>
+          </thead>
+          <tbody id="forensicSearchBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FILA MEDIA: CORTE Z IMPRIMIBLE + VERIFICADOR FORENSE DE VOUCHERS EN PAPEL -->
+    <section class="citadel-grid-2">
+      <!-- MÓDULO A: CORTE Z Y ARQUEO DE CAJA -->
+      <div class="vault-card gold-edge">
+        <div class="card-header no-print">
+          <div class="card-title">Corte Z — Cierre de Turno y Arqueo de Caja (80mm / 58mm)</div>
+          <span class="badge badge-gold">CORTE Z</span>
+        </div>
+        <p class="no-print" style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.85rem;">
+          Genera el resumen de cierre de turno con el rango de folios físicos que deben estar en la gaveta, alertas de reimpresión y saldos inter-sucursal (CxC / CxP).
+        </p>
+        <div class="no-print form-group" style="margin-bottom:0.85rem;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end;">
+          <div style="flex:2;min-width:180px;">
+            <label for="corteZStoreSelect" style="font-size:0.75rem;">Sucursal para Arqueo / Cierre de Turno</label>
+            <select id="corteZStoreSelect" onchange="generateShiftClosure()" style="font-size:0.82rem;padding:0.4rem 0.6rem;">
+            </select>
+          </div>
+          <div style="flex:1;min-width:130px;">
+            <label for="corteZPaperSelect" style="font-size:0.75rem;">Ancho Térmico</label>
+            <select id="corteZPaperSelect" onchange="onCorteZPaperChanged(this.value)" style="font-size:0.82rem;padding:0.4rem 0.6rem;">
+              <option value="80mm" selected>80mm (Estándar)</option>
+              <option value="58mm">58mm (Móvil)</option>
+            </select>
+          </div>
+        </div>
+        <pre id="citadelClosureOutput" class="thermal-receipt-80mm">Haz clic en "Generar Cierre de Turno" para emitir el arqueo de caja...</pre>
+        <div class="no-print" style="display:flex;gap:0.65rem;margin-top:0.85rem;">
+          <button type="button" class="btn btn-gold" style="flex:1;" onclick="generateShiftClosure()">
+            🔄 Actualizar Arqueo de Turno
+          </button>
+          <button type="button" class="btn btn-emerald" style="flex:1;" onclick="printClosureReport()">
+            🖨️ Imprimir Arqueo de Turno
+          </button>
+        </div>
+      </div>
+
+      <!-- MÓDULO B: VERIFICADOR FORENSE VAULTSEAL + GOBERNANZA Y CLAWBACK -->
+      <div class="no-print" style="display:flex;flex-direction:column;gap:1.25rem;">
+        <div class="vault-card emerald-edge">
+          <div class="card-header">
+            <div class="card-title">Verificador Forense de Póliza Física (VaultSeal™)</div>
+            <span class="badge badge-emerald">HMAC-SHA256</span>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="verifyFolioInput">Folio del Voucher Físico</label>
+              <input id="verifyFolioInput" type="text" placeholder="VCH-CEN-..." />
+            </div>
+            <div class="form-group">
+              <label for="verifyAmountMxn">Monto Impreso en Papel (MXN)</label>
+              <input id="verifyAmountMxn" type="number" value="200" step="10" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="verifySealInput">Sello Criptográfico Impreso (XXXX-XXXX-XXXX-XXXX)</label>
+            <input id="verifySealInput" type="text" placeholder="ABCD-1234-EF56-7890" />
+          </div>
+          <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+            <button type="button" class="btn btn-emerald" style="flex:1;" onclick="verifyPaperVoucher()">
+              🔍 Auditar Autenticidad del Ticket
+            </button>
+            <button type="button" class="btn btn-slate" onclick="autofillLastVoucherForVerify()">
+              Autocompletar Último Voucher
+            </button>
+          </div>
+          <div id="verifyResultBox" style="margin-top:0.75rem;font-size:0.8rem;"></div>
+        </div>
+
+        <div class="vault-card">
+          <div class="card-header">
+            <div class="card-title">Políticas Multi-Sede, P2P y Disputas (Clawback)</div>
+            <span class="badge badge-crimson">SUPER_ADMIN</span>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="policySharingSelect">Arquitectura Contable Multi-Tienda</label>
+              <select id="policySharingSelect" data-require-permission="admin:policies:update" onchange="updateOrgPolicies()">
+                <option value="ORG_POOLED_SAME_ENTITY">ORG_POOLED_SAME_ENTITY (Misma Razón Social)</option>
+                <option value="INTER_STORE_CLEARING">INTER_STORE_CLEARING (Clearing CxC 1201 / CxP 2201)</option>
+                <option value="STORE_ISOLATED">STORE_ISOLATED (Saldo Aislado por Tienda)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="policyP2pSelect">Transferencias P2P Entre Jugadores</label>
+              <select id="policyP2pSelect" data-require-permission="admin:policies:update" onchange="updateOrgPolicies()">
+                <option value="DISABLED">DISABLED (Deshabilitado — Regla por Defecto)</option>
+                <option value="FAMILY_WHITELIST_ONLY">FAMILY_WHITELIST_ONLY (Solo Familiares)</option>
+                <option value="ENABLED_WITH_LIMITS">ENABLED_WITH_LIMITS (1-Salto Anti-Mercado Negro)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin-top:0.75rem;">
+            <div class="form-group" style="margin:0;">
+              <label for="policyFourEyesThresholdMxn" style="font-size:0.73rem;">Umbral 4-Ojos (MXN)</label>
+              <input id="policyFourEyesThresholdMxn" type="number" min="0" step="50" onchange="updateOrgPolicies()" data-require-permission="admin:policies:update" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label for="policyMinIssuanceMxn" style="font-size:0.73rem;">Mín. Emisión (MXN)</label>
+              <input id="policyMinIssuanceMxn" type="number" min="1" step="1" onchange="updateOrgPolicies()" data-require-permission="admin:policies:update" />
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label for="policyMaxIssuanceMxn" style="font-size:0.73rem;">Máx. Emisión (MXN)</label>
+              <input id="policyMaxIssuanceMxn" type="number" min="10" step="100" onchange="updateOrgPolicies()" data-require-permission="admin:policies:update" />
+            </div>
+          </div>
+
+          <div style="padding-top:0.75rem;border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;margin-top:0.75rem;">
+            <div style="font-size:0.78rem;color:var(--text-secondary);">
+              <strong>Simulador Clawback (Cta 1205):</strong> Reversa $500 MXN de un premio asignado por error al jugador activo (aunque ya lo haya gastado).
+            </div>
+            <button type="button" data-require-permission="admin:clawback:execute" class="btn btn-crimson" onclick="executeClawbackDemo()">
+              Ejecutar Clawback ($500 MXN)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILA INFERIOR: LIBRO MAYOR DE PARTIDA DOBLE -->
+    <section class="vault-card no-print">
+      <div class="card-header">
+        <div class="card-title">Libro Mayor de Partida Doble con Atribución de Actor y Co-Autorizador</div>
+        <span id="ledgerBalanceBadge" class="badge badge-emerald">Σ DEBE = Σ HABER</span>
+      </div>
+      <div class="table-scroll table-scroll-fixed-height">
+        <table class="krona-table">
+          <thead>
+            <tr>
+              <th>Póliza / Fecha</th>
+              <th>Operación y Referencia</th>
+              <th>Creado Por (Maker) / Co-Autorizado Por (Checker)</th>
+              <th>Asientos de Partida Doble (Cuenta · Debe / Haber)</th>
+            </tr>
+          </thead>
+          <tbody id="citadelJournalBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    async function generateShiftClosure() {
+      try {
+        const storeSel = document.getElementById('corteZStoreSelect');
+        const storeId = (storeSel && storeSel.value) ? storeSel.value : KronaCore.getSelectedStoreId();
+        const res = await KronaCore.post('/api/pos/shift-closure', {
+          storeId,
+        });
+        document.getElementById('citadelClosureOutput').textContent = res.report.thermalClosureText;
+        KronaCore.toast(`🧾 Cierre de Turno (${res.report.closureId}) generado para ${res.report.storeName}`);
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    function onCorteZPaperChanged(val) {
+      const out = document.getElementById('citadelClosureOutput');
+      if (out) {
+        out.className = val === '58mm' ? 'thermal-receipt-58mm' : 'thermal-receipt-80mm';
+      }
+    }
+
+    function printClosureReport() {
+      const txt = document.getElementById('citadelClosureOutput').textContent;
+      const paperWidth = document.getElementById('corteZPaperSelect')?.value || '80mm';
+      KronaCore.printThermalText(txt, { title: 'Cierre de Turno y Arqueo de Caja', paperWidth });
+    }
+
+    function autofillLastVoucherForVerify() {
+      const state = KronaCore.getState();
+      if (!state || !state.vouchers[0]) return;
+      const v = state.vouchers[0];
+      document.getElementById('verifyFolioInput').value = v.voucherFolio;
+      document.getElementById('verifyAmountMxn').value = (v.creditAppliedCents / 100).toFixed(2);
+      document.getElementById('verifySealInput').value = v.cryptographicSeal;
+    }
+
+    async function verifyPaperVoucher() {
+      const folio = document.getElementById('verifyFolioInput').value.trim();
+      const amountMxn = Number(document.getElementById('verifyAmountMxn').value || 0);
+      const seal = document.getElementById('verifySealInput').value.trim();
+      try {
+        const res = await KronaCore.post('/api/pos/verify-voucher', {
+          voucherFolio: folio,
+          reportedCreditCents: Math.round(amountMxn * 100),
+          providedSeal: seal,
+        });
+        const box = document.getElementById('verifyResultBox');
+        if (res.authentic) {
+          box.innerHTML = `<div class="badge badge-emerald" style="padding:0.5rem 0.75rem;">✅ AUTÉNTICO: ${res.reason}</div>`;
+        } else {
+          box.innerHTML = `<div class="badge badge-crimson" style="padding:0.5rem 0.75rem;">🚨 ALERTA FORENSE: ${res.reason}</div>`;
+        }
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    async function updateOrgPolicies() {
+      const sharingPolicy = document.getElementById('policySharingSelect').value;
+      const p2pPolicy = document.getElementById('policyP2pSelect').value;
+      const thresholdMxn = Number(document.getElementById('policyFourEyesThresholdMxn')?.value || 1000);
+      const minMxn = Number(document.getElementById('policyMinIssuanceMxn')?.value || 1);
+      const maxMxn = Number(document.getElementById('policyMaxIssuanceMxn')?.value || 50000);
+
+      try {
+        await KronaCore.post('/api/admin/policies', {
+          sharingPolicy,
+          p2pPolicy,
+          requireFourEyesThresholdCents: Math.round(thresholdMxn * 100),
+          minSingleIssuanceCents: Math.round(minMxn * 100),
+          maxSingleIssuanceCents: Math.round(maxMxn * 100),
+          reason: 'Actualización de políticas corporativas y límites desde Citadel Audit',
+        });
+        KronaCore.toast(`⚙️ Políticas y límites de bóveda actualizados exitosamente.`);
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    async function executeClawbackDemo() {
+      const confirmed = await KronaCore.confirm({
+        title: 'Ejecutar Clawback / Reversión Auditada',
+        message: '¿Estás seguro de ejecutar un Clawback de $500.00 MXN contra la billetera del jugador seleccionado?',
+        details: 'Se debitará el saldo disponible y se creará una cuenta por cobrar (Cta 1205) por cualquier remanente impago.',
+        confirmText: 'Ejecutar Clawback',
+        danger: true,
+      });
+      if (!confirmed) return;
+
+      try {
+        const res = await KronaCore.post('/api/admin/clawback', {
+          storeId: KronaCore.getSelectedStoreId(),
+          targetUserId: KronaCore.getSelectedPlayerId(),
+          amountToReverseCents: 50000,
+          reason: 'Corrección de resultado de torneo auditada desde KRONA Citadel',
+        });
+        KronaCore.toast(
+          `⚠️ Clawback ejecutado: Drenado ${KronaCore.fmt(res.drainedFromAvailableCents)} | Deuda Cta 1205: ${KronaCore.fmt(res.newDebtCreatedCents)}`
+        );
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    function applyForensicFilters() {
+      const state = KronaCore.getState();
+      if (!state || !state.auditLogs) return;
+
+      const aq = (document.getElementById('filterActorInput').value || '').trim().toLowerCase();
+      const rf = document.getElementById('filterRoleSelect').value;
+      const af = document.getElementById('filterActionSelect').value;
+      const tq = (document.getElementById('filterTargetInput').value || '').trim().toLowerCase();
+
+      const filtered = state.auditLogs.filter((al) => {
+        if (aq) {
+          const hayActor =
+            (al.actorFullName || '').toLowerCase().includes(aq) ||
+            (al.actorMemberCode || '').toLowerCase().includes(aq) ||
+            (al.actorAlias || '').toLowerCase().includes(aq) ||
+            (al.coAuthorizerName || '').toLowerCase().includes(aq) ||
+            (al.coAuthorizerMemberCode || '').toLowerCase().includes(aq);
+          if (!hayActor) return false;
+        }
+        if (rf !== 'ALL' && al.actorRole !== rf) return false;
+        if (af !== 'ALL' && !al.eventAction.includes(af)) return false;
+        if (tq) {
+          const hayTarget =
+            al.targetEntityId.toLowerCase().includes(tq) ||
+            (al.targetMemberCode || '').toLowerCase().includes(tq) ||
+            (al.targetFullName || '').toLowerCase().includes(tq) ||
+            al.reasonJustification.toLowerCase().includes(tq) ||
+            JSON.stringify(al.payloadAfter).toLowerCase().includes(tq);
+          if (!hayTarget) return false;
+        }
+        return true;
+      });
+
+      document.getElementById('forensicMatchCount').textContent = `${filtered.length} Eventos Coincidentes`;
+      if (filtered.length === 0) {
+        document.getElementById('forensicSearchBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text-muted);">No se encontraron eventos forenses con los filtros especificados.</td></tr>';
+      } else {
+        document.getElementById('forensicSearchBody').innerHTML = filtered
+          .map(
+            (al) => `
+            <tr>
+              <td class="mono" style="font-size:0.7rem;">
+                <div style="font-weight:700;">#${al.seqId}</div>
+                <div style="color:var(--text-muted);">${al.createdAt.slice(11, 19)}</div>
+              </td>
+              <td class="mono" style="font-size:0.72rem;">${al.storeCode || al.storeId}</td>
+              <td>
+                <div><strong>${al.actorFullName || al.actorUserId}</strong></div>
+                <div class="mono" style="font-size:0.68rem;color:var(--accent-gold-hover);">
+                  ${al.actorMemberCode || ''} · [${al.actorRole}]
+                </div>
+              </td>
+              <td>
+                ${
+                  al.coAuthorizerId
+                    ? `<div><strong>${al.coAuthorizerName || al.coAuthorizerId}</strong></div>
+                       <div class="mono" style="font-size:0.68rem;color:var(--accent-emerald-hover);">${al.coAuthorizerMemberCode || ''} · ${al.coAuthMethod || '2FA'}</div>`
+                    : '<span style="color:var(--text-muted);font-size:0.72rem;">Directo / Sin 4-Ojos</span>'
+                }
+              </td>
+              <td>
+                <span class="badge badge-gold">${al.eventAction}</span>
+                <div class="mono" style="font-size:0.68rem;color:var(--text-secondary);margin-top:0.2rem;">
+                  Entidad: ${al.targetFullName ? `${al.targetFullName} (${al.targetMemberCode})` : al.targetEntityId}
+                </div>
+              </td>
+              <td style="font-size:0.75rem;">
+                <div>${al.reasonJustification}</div>
+                <div class="mono" style="font-size:0.66rem;color:var(--accent-emerald-hover);">HASH: ${al.rowHash.slice(0, 18)}...</div>
+              </td>
+            </tr>
+          `
+          )
+          .join('');
+      }
+    }
+
+    KronaCore.initPage('/audit', (data) => {
+      document.getElementById('policySharingSelect').value = data.org.sharingPolicy;
+      document.getElementById('policyP2pSelect').value = data.org.p2pPolicy;
+      if (document.getElementById('policyFourEyesThresholdMxn')) {
+        document.getElementById('policyFourEyesThresholdMxn').value = Math.round((data.org.requireFourEyesThresholdCents !== undefined ? data.org.requireFourEyesThresholdCents : 100000) / 100);
+      }
+      if (document.getElementById('policyMinIssuanceMxn')) {
+        document.getElementById('policyMinIssuanceMxn').value = Math.round((data.org.minSingleIssuanceCents !== undefined ? data.org.minSingleIssuanceCents : 100) / 100);
+      }
+      if (document.getElementById('policyMaxIssuanceMxn')) {
+        document.getElementById('policyMaxIssuanceMxn').value = Math.round((data.org.maxSingleIssuanceCents !== undefined ? data.org.maxSingleIssuanceCents : 5000000) / 100);
+      }
+
+      // Poblar selector de sucursal para Corte Z dinámicamente
+      KronaCore.populateStoreSelect('corteZStoreSelect', { filterActiveOnly: true, selectedId: KronaCore.getSelectedStoreId() });
+
+      if (data.shiftClosures[0] && document.getElementById('citadelClosureOutput').textContent.includes('Haz clic')) {
+        document.getElementById('citadelClosureOutput').textContent = data.shiftClosures[0].thermalClosureText;
+      }
+
+      if (!document.getElementById('verifyFolioInput').value && data.vouchers[0]) {
+        autofillLastVoucherForVerify();
+      }
+
+      document.getElementById('ledgerBalanceBadge').textContent =
+        `Σ DEBE ${KronaCore.fmt(data.integrity.totalDebitsCents)} = Σ HABER ${KronaCore.fmt(data.integrity.totalCreditsCents)}`;
+
+      applyForensicFilters();
+
+      const journalEntries = data.journalEntries || [];
+      if (journalEntries.length === 0) {
+        document.getElementById('citadelJournalBody').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--text-muted);">No hay pólizas registradas en el Libro Diario aún.</td></tr>';
+      } else {
+        document.getElementById('citadelJournalBody').innerHTML = journalEntries
+          .map(
+            (je) => `
+            <tr>
+              <td>
+                <div class="mono" style="font-weight:700;color:var(--accent-gold-hover);">${je.id}</div>
+                <div style="font-size:0.68rem;color:var(--text-muted);">${(je.postedAt || je.createdAt || '').slice(0, 19).replace('T', ' ')}</div>
+              </td>
+              <td>
+                <span class="badge badge-gold">${je.operationType}</span>
+                <div class="mono" style="font-size:0.7rem;color:var(--accent-emerald-hover);margin-top:0.15rem;">Ref: ${je.referenceId}</div>
+                <div style="font-size:0.74rem;margin-top:0.15rem;">${je.description}</div>
+              </td>
+            <td style="font-size:0.74rem;">
+              <div>Maker: <strong>${je.createdByFullName || je.createdByUserId}</strong> <span class="mono" style="color:var(--text-muted);">(${je.createdByMemberCode || ''})</span></div>
+              ${
+                je.coAuthorizedByUserId
+                  ? `<div style="color:var(--accent-emerald-hover);">Checker: <strong>${je.coAuthorizedByName || je.coAuthorizedByUserId}</strong></div>`
+                  : ''
+              }
+            </td>
+            <td class="mono" style="font-size:0.72rem;">
+              ${je.lines
+                .map(
+                  (l) =>
+                    `<div>[${l.storeCode}] <strong>${l.accountCode}</strong> ${l.accountName}: ${
+                      l.debitCents > 0
+                        ? `<span style="color:var(--accent-gold-hover);">DEBE ${KronaCore.fmt(l.debitCents)}</span>`
+                        : `<span style="color:var(--accent-emerald-hover);">HABER ${KronaCore.fmt(l.creditCents)}</span>`
+                    }</div>`
+                )
+                .join('')}
+            </td>
+          </tr>
+        `
+          )
+          .join('');
+      }
+    });
+  </script>
+</body>
+</html>

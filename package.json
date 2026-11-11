@@ -1,0 +1,57 @@
+{
+  "name": "control-credito",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema Multi-Tienda y Multi-Usuario de Control Contable de Crédito de Torneos, POS con Voucher Físico, QR Dinámico 2FA y Auditoría Criptográfica",
+  "license": "MIT",
+  "author": "chamakov",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chamakov/controlCredito.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chamakov/controlCredito/issues"
+  },
+  "homepage": "https://github.com/chamakov/controlCredito#readme",
+  "keywords": [
+    "pos",
+    "store-credit",
+    "ledger",
+    "double-entry-accounting",
+    "totp",
+    "pwa",
+    "docker",
+    "self-hosted",
+    "cryptographic-audit",
+    "thermal-voucher"
+  ],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "start": "npm --workspace=@control-credito/api run start",
+    "dev": "npm --workspace=@control-credito/api run dev",
+    "db:reset": "node --experimental-strip-types apps/api/src/reset-db.ts",
+    "db:backup": "node --experimental-strip-types scripts/backup-db.ts",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "npm test && npm run test:e2e",
+    "dev:api": "npm --workspace=@control-credito/api run dev",
+    "dev:web": "npm --workspace=@control-credito/web-pwa run dev",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=22.23.4",
+    "npm": ">=10.9.9"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Terminal™ — Punto de Venta, Canje y Vouchers VaultSeal™ | KRONA VAULT™</title>
+  <meta name="description" content="Terminal POS de mostrador para tiendas TCG: cobro mixto, consumo de crédito FEFO, políticas anti-cash-out y emisión de vouchers térmicos de 80mm." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/pos" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/pos" />
+  <meta property="og:title" content="KRONA Terminal™ — Punto de Venta y Mostrador POS | KRONA VAULT™" />
+  <meta property="og:description" content="Consola táctica de caja para redención de crédito, validación 2FA de jugadores y emisión de vouchers VaultSeal™." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA Terminal™ — Mostrador POS" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Terminal™ — Punto de Venta y Mostrador POS" />
+  <meta name="twitter:description" content="Terminal de mostrador con cobro mixto y vouchers VaultSeal™ de 80mm." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip no-print">
+      <div>
+        <div class="page-eyebrow">ESTACIÓN TÁCTICA DE CAJA · /pos</div>
+        <h1 class="page-title">KRONA Terminal™ — Cobro Mixto, Anti-Cash-Out y Voucher 80mm</h1>
+        <p class="page-subtitle">
+          Valida el <strong>código 2FA o QR Dinámico</strong> del cliente, toma saldo a cuenta bajo el concepto <strong>Redención de crédito en tienda</strong> y emite la póliza física <strong>VaultSeal™</strong> para la gaveta.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+        <a href="/custody" data-require-portal="/custody" class="btn btn-gold">Resguardo en Bóveda (Alt+C)</a>
+        <a href="/trade-in" data-require-portal="/trade-in" class="btn btn-emerald">Trade-In & Bonos (Alt+8)</a>
+        <a href="/wallet" data-require-portal="/wallet" class="btn btn-slate">Ver QR del Jugador (Alt+1)</a>
+        <a href="/audit" data-require-portal="/audit" class="btn btn-slate">Cierre de Turno / Arqueo (Alt+4)</a>
+      </div>
+    </section>
+
+    <div class="split-terminal-grid">
+      <!-- PANEL IZQUIERDO: OPERACIÓN DE CAJA -->
+      <section class="vault-card gold-edge no-print">
+        <div class="card-header">
+          <div class="card-title">Consola de Mostrador POS</div>
+          <span id="posActivePlayerSaldo" class="badge badge-emerald">Saldo Disponible: $0.00 MXN</span>
+        </div>
+
+        <!-- SELECTORES DE OPERACIÓN: SUCURSAL Y CLIENTE EN MOSTRADOR -->
+        <div class="form-grid-2" style="margin-bottom:0.85rem;">
+          <div class="form-group" style="margin:0;">
+            <label for="posStoreSelect">Sucursal / Terminal Activa</label>
+            <select id="posStoreSelect" onchange="onPosStoreChanged(this.value)"></select>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label for="posPlayerSelector">Cliente / Jugador en Mostrador</label>
+            <select id="posPlayerSelector" onchange="onPosPlayerChanged(this.value)"></select>
+          </div>
+        </div>
+
+        <!-- BANNERS DE VALIDACIÓN DE CRÉDITO DEL JUGADOR -->
+        <div id="posNoCreditBanner" style="display:none;background:var(--status-crimson-soft);border:1px solid var(--status-crimson-border);border-radius:var(--radius-sm);padding:0.75rem 0.9rem;margin-bottom:0.9rem;font-size:0.8rem;color:#FCA5A5;">
+          <strong>⚠️ Cliente sin saldo disponible:</strong> El cliente seleccionado no cuenta con crédito a favor ($0.00 MXN). No es posible tomar crédito a cuenta en esta venta.
+        </div>
+        <div id="posHasCreditBanner" style="display:none;background:rgba(16,185,129,0.08);border:1px solid var(--accent-emerald);border-radius:var(--radius-sm);padding:0.75rem 0.9rem;margin-bottom:0.9rem;font-size:0.8rem;color:var(--accent-emerald-hover);display:flex;justify-content:space-between;align-items:center;">
+          <span><strong>Crédito Disponible:</strong> Este cliente puede aplicar saldo de tienda a su compra.</span>
+          <strong id="posAvailableBadge" class="num-tabular" style="font-size:1.05rem;">$0.00 MXN</strong>
+        </div>
+
+        <div class="tactical-tabs">
+          <button type="button" id="posTabRedeem" class="tactical-tab active" onclick="switchPosTab('REDEEM')">
+            1. Cobrar / Tomar a Cuenta
+          </button>
+          <button type="button" id="posTabRefund" class="tactical-tab" onclick="switchPosTab('REFUND')">
+            2. Devolución Anti-Cash-Out
+          </button>
+        </div>
+
+        <!-- PESTAÑA 1: REDENCIÓN / COBRO MIXTO -->
+        <div id="posViewRedeem">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="posTotalMxn">Total de la Venta en Mostrador (MXN)</label>
+              <input id="posTotalMxn" type="number" value="0" min="0" step="10" oninput="updateSplitPreview()" />
+            </div>
+            <div class="form-group">
+              <label for="posCreditMxn">Crédito a Tomar a Cuenta (MXN)</label>
+              <input id="posCreditMxn" type="number" value="0" min="0" step="10" oninput="updateSplitPreview()" />
+              <small id="posCreditHelpText" style="color:var(--text-muted);font-size:0.72rem;margin-top:0.25rem;display:block;">
+                Máximo aplicable: $0.00 MXN
+              </small>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <div style="display:flex;justify-content:space-between;align-items:center;min-height:28px;margin-bottom:0.35rem;">
+                <label for="posCategory" style="margin:0;">Categoría (Reglas FEFO de Sede)</label>
+                <button type="button" class="btn btn-slate" style="padding:0.15rem 0.5rem;font-size:0.72rem;min-height:26px;display:inline-flex;align-items:center;gap:0.3rem;" onclick="openPosCategoryModal()" title="Personalizar catálogo de categorías de producto de esta sede">
+                  ⚙️ Catálogo
+                </button>
+              </div>
+              <select id="posCategory" onchange="onPosCategoryChanged(this.value)" style="min-height:42px;height:42px;"></select>
+              <small id="posCategoryEligibleNote" style="color:var(--text-muted);font-size:0.71rem;display:block;margin-top:0.25rem;">
+                Lotes universales + específicos para esta categoría.
+              </small>
+            </div>
+            <div class="form-group">
+              <div style="display:flex;justify-content:space-between;align-items:center;min-height:28px;margin-bottom:0.35rem;">
+                <label for="posConceptInput" style="margin:0;">Concepto de Operación</label>
+                <span style="font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);">VENTA_MOSTRADOR</span>
+              </div>
+              <input id="posConceptInput" type="text" value="Redención de crédito en tienda" placeholder="Descripción de la venta" style="min-height:42px;height:42px;" />
+              <small style="color:var(--text-muted);font-size:0.71rem;display:block;margin-top:0.25rem;">
+                Identificador de la transacción para el voucher térmico.
+              </small>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <div style="display:flex;align-items:center;min-height:28px;margin-bottom:0.35rem;">
+                <label for="posAuthMethod" style="margin:0;">Método de Autorización 2FA Jugador</label>
+              </div>
+              <select id="posAuthMethod" onchange="togglePosAuthFields()" style="min-height:42px;height:42px;">
+                <option value="QR_DYNAMIC_TOTP" selected>QR Dinámico KRONA Pulse™ (Escaneo PWA 30s)</option>
+                <option value="PIN_OFFLINE_2FA">Código 2FA / PIN (6 Dígitos - Google Auth o PIN)</option>
+              </select>
+              <small style="color:var(--text-muted);font-size:0.71rem;display:block;margin-top:0.25rem;">
+                Verificación requerida contra fraude y suplantación.
+              </small>
+            </div>
+            <div class="form-group" id="posAuthQrGroup">
+              <div style="display:flex;justify-content:space-between;align-items:center;min-height:28px;margin-bottom:0.35rem;">
+                <label for="posQrTokenInput" style="margin:0;">Token del QR Dinámico</label>
+                <span style="font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);">30s TOTP</span>
+              </div>
+              <div style="display:flex;gap:0.45rem;align-items:center;">
+                <input id="posQrTokenInput" type="text" placeholder="Token escaneado o manual" style="flex:1;min-height:42px;height:42px;" />
+                <button type="button" class="btn btn-slate" style="padding:0 0.85rem;font-size:0.8rem;min-height:42px;height:42px;display:inline-flex;align-items:center;gap:0.4rem;white-space:nowrap;" onclick="openPosQrScanner()" title="Escanear con la cámara del dispositivo">
+                  📷 <span>Escanear</span>
+                </button>
+              </div>
+              <small style="color:var(--text-muted);font-size:0.71rem;display:block;margin-top:0.25rem;">
+                Escaneado con cámara desde la pantalla de la PWA del jugador o ingresado manualmente.
+              </small>
+            </div>
+            <div class="form-group" id="posAuthPinGroup" style="display:none;">
+              <div style="display:flex;justify-content:space-between;align-items:center;min-height:28px;margin-bottom:0.35rem;">
+                <label for="posAuthPinInput" style="margin:0;">Código 2FA / PIN (6 Dígitos)</label>
+                <span style="font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);">6 DÍGITOS</span>
+              </div>
+              <input id="posAuthPinInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="Ej. 123456" style="min-height:42px;height:42px;" />
+              <small style="color:var(--text-muted);font-size:0.71rem;display:block;margin-top:0.25rem;">
+                Authenticator (Google/Microsoft), PIN KRONA Pulse™ o PIN de Seguridad.
+              </small>
+            </div>
+          </div>
+
+          <!-- RESUMEN DE COBRO MIXTO (SPLIT-TENDER) -->
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;">
+            <div>
+              <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">Crédito Tomado a Cuenta</div>
+              <div id="splitCreditPreview" class="num-tabular" style="font-size:1.15rem;font-weight:700;color:var(--accent-emerald-hover);">$0.00 MXN</div>
+            </div>
+            <div style="font-family:var(--font-mono);color:var(--text-muted);">+</div>
+            <div>
+              <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">Diferencia a Cobrar en Caja (Efectivo/Tarjeta)</div>
+              <div id="splitCashPreview" class="num-tabular" style="font-size:1.15rem;font-weight:700;color:var(--accent-gold-hover);">$0.00 MXN</div>
+            </div>
+          </div>
+
+          <button type="button" id="posRedeemBtn" class="btn btn-gold btn-block" onclick="executePosRedeem()">
+            ⚡ Autorizar Cobro 2FA y Emitir Voucher Físico VaultSeal™
+          </button>
+        </div>
+
+        <!-- PESTAÑA 2: DEVOLUCIÓN ANTI-CASH-OUT -->
+        <div id="posViewRefund" style="display:none;">
+          <div style="background:var(--status-crimson-soft);border:1px solid var(--status-crimson-border);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:0.9rem;font-size:0.78rem;color:#FCA5A5;">
+            <strong>Regla Inquebrantable Anti-Lavado (No Cash-Out):</strong> Toda devolución sobre compras mixtas restaura primero el Crédito de Tienda con su fecha de expiración original; jamás entrega efectivo por saldo originado en premios.
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="refundVoucherSelect">Seleccionar Voucher Emitido</label>
+              <select id="refundVoucherSelect"></select>
+            </div>
+            <div class="form-group">
+              <label for="refundAmountMxn">Monto a Reembolsar (MXN)</label>
+              <input id="refundAmountMxn" type="number" value="150" min="1" step="10" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="refundReason">Motivo de Devolución (Autorización Four-Eyes Gerencial)</label>
+            <input id="refundReason" type="text" value="Producto sellado con defecto / cambio autorizado" />
+          </div>
+          <button type="button" class="btn btn-emerald btn-block" onclick="executePosRefund()">
+            ↩ Ejecutar Reembolso Auditado Anti-Cash-Out
+          </button>
+        </div>
+      </section>
+
+      <!-- PANEL DERECHO: IMPRESORA TÉRMICA VAULTSEAL™ (80MM / 58MM) -->
+      <section class="thermal-printer-housing">
+        <div class="card-header no-print">
+          <div class="card-title">Impresora Térmica (VaultSeal™)</div>
+          <span id="voucherCountBadge" class="badge badge-gold">0 Vouchers Térmicos</span>
+        </div>
+
+        <div class="no-print form-group" style="margin-bottom:0.75rem;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end;">
+          <div style="flex:2;min-width:180px;">
+            <label for="voucherHistorySelect" style="font-size:0.75rem;">Voucher Físico a Visualizar / Reimprimir</label>
+            <select id="voucherHistorySelect" onchange="selectVoucherFromList(this.value)" style="font-size:0.82rem;padding:0.4rem 0.6rem;"></select>
+          </div>
+          <div style="flex:1;min-width:130px;">
+            <label for="thermalPaperSelect" style="font-size:0.75rem;">Ancho Térmico</label>
+            <select id="thermalPaperSelect" onchange="onThermalPaperChanged(this.value)" style="font-size:0.82rem;padding:0.4rem 0.6rem;">
+              <option value="80mm" selected>80mm (Estándar)</option>
+              <option value="58mm">58mm (Móvil)</option>
+            </select>
+          </div>
+        </div>
+
+        <pre id="thermalOutputBox" class="thermal-receipt-80mm">Selecciona o emite un cobro para generar el Voucher Térmico...</pre>
+
+        <div class="no-print" style="display:flex;gap:0.65rem;margin-top:0.95rem;flex-wrap:wrap;">
+          <button type="button" class="btn btn-emerald" style="flex:1;" onclick="printCurrentVoucher()">
+            🖨️ Imprimir Voucher
+          </button>
+          <button type="button" class="btn btn-slate" style="flex:1;" onclick="reprintCurrentVoucher()">
+            📄 Reimprimir Copia Auditada (#N)
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- MODAL FLOTANTE: ADMINISTRAR CATÁLOGO DE CATEGORÍAS DE SEDE -->
+    <div id="posCategoryModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="posCategoryModalTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card gold-edge" style="max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.8);">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="posCategoryModalTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <span>Catálogo de Categorías FEFO: <span id="posModalStoreName" style="color:var(--accent-gold-hover);"></span></span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closePosCategoryModal()" aria-label="Cerrar modal">✕</button>
+        </div>
+
+        <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.5;">
+          Personaliza las categorías autorizadas para redención de crédito en esta sede. Los lotes de crédito y el selector de este POS reflejarán estos cambios inmediatamente.
+        </p>
+
+        <!-- LISTA DE CATEGORÍAS DE ESTA SEDE -->
+        <div id="posModalCategoryList" style="display:flex;flex-direction:column;gap:0.55rem;margin-bottom:1rem;"></div>
+
+        <!-- AGREGAR NUEVA CATEGORÍA -->
+        <div style="background:var(--bg-abyss);border:1px dashed var(--border-default);border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:1.15rem;">
+          <div style="font-size:0.73rem;font-weight:600;color:var(--accent-gold-hover);margin-bottom:0.45rem;text-transform:uppercase;letter-spacing:0.04em;">
+            + Agregar Nueva Categoría a Esta Sede
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group" style="margin-bottom:0.4rem;">
+              <label for="posNewCatCode" style="font-size:0.72rem;">Código (ej. BOARD_GAMES, COMICS)</label>
+              <input id="posNewCatCode" type="text" placeholder="BOARD_GAMES" style="font-size:0.82rem;" />
+            </div>
+            <div class="form-group" style="margin-bottom:0.4rem;">
+              <label for="posNewCatName" style="font-size:0.72rem;">Nombre Comercial</label>
+              <input id="posNewCatName" type="text" placeholder="Juegos de Mesa y Wargames" style="font-size:0.82rem;" />
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0.45rem;">
+            <label for="posNewCatDesc" style="font-size:0.72rem;">Descripción / Ejemplos</label>
+            <input id="posNewCatDesc" type="text" placeholder="Catan, Carcassonne, Warhammer" style="font-size:0.82rem;" />
+          </div>
+          <button type="button" class="btn btn-slate" style="font-size:0.75rem;padding:0.35rem 0.75rem;" onclick="posAddCategoryToList()">
+            + Añadir a la Lista
+          </button>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;justify-content:space-between;align-items:center;flex-wrap:wrap;padding-top:0.75rem;border-top:1px solid var(--border-subtle);">
+          <a href="/stores" data-require-portal="/stores" class="mono" style="font-size:0.75rem;color:var(--accent-gold-hover);">
+            Ir a Gestión de Sedes (/stores) →
+          </a>
+          <div style="display:flex;gap:0.5rem;">
+            <button type="button" class="btn btn-gold" onclick="posSaveCategories()">
+              Guardar y Aplicar en POS
+            </button>
+            <button type="button" class="btn btn-slate" onclick="closePosCategoryModal()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL FLOTANTE: ESCÁNER QR CON CÁMARA PARA CAJA POS -->
+    <div id="posQrScannerModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="posQrScannerModalTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card gold-edge" style="max-width:480px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.8);">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="posQrScannerModalTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Escanear QR Dinámico KRONA Pulse™</span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closePosQrScanner()" aria-label="Cerrar escáner">✕</button>
+        </div>
+
+        <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:0.75rem;">
+          Apunta la cámara al <strong>KRONA Pass</strong> en el teléfono del cliente para capturar su token de un solo uso.
+        </p>
+
+        <div style="position:relative;background:#000;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border-default);margin-bottom:0.85rem;min-height:220px;display:flex;align-items:center;justify-content:center;">
+          <video id="posQrVideo" autoplay playsinline style="width:100%;max-height:260px;object-fit:cover;"></video>
+          <div id="posQrScannerGuide" style="position:absolute;inset:20px;border:2px dashed rgba(212,160,23,0.7);border-radius:8px;pointer-events:none;display:flex;align-items:center;justify-content:center;">
+            <span style="background:rgba(0,0,0,0.6);padding:2px 8px;border-radius:4px;font-size:0.7rem;color:#FFF;">Centra el código QR aquí</span>
+          </div>
+          <div id="posQrCameraError" style="display:none;position:absolute;padding:1rem;color:#FCA5A5;font-size:0.78rem;text-align:center;">
+            No se pudo acceder a la cámara. Verifica los permisos del navegador o ingresa el token manualmente.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+          <button type="button" class="btn btn-slate" onclick="closePosQrScanner()">
+            Cerrar Escáner
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    let selectedVoucherFolio = null;
+    let cachedPlayers = [];
+
+    function switchPosTab(tab) {
+      document.getElementById('posTabRedeem').classList.toggle('active', tab === 'REDEEM');
+      document.getElementById('posTabRefund').classList.toggle('active', tab === 'REFUND');
+      document.getElementById('posViewRedeem').style.display = tab === 'REDEEM' ? 'block' : 'none';
+      document.getElementById('posViewRefund').style.display = tab === 'REFUND' ? 'block' : 'none';
+    }
+
+    function togglePosAuthFields() {
+      const method = document.getElementById('posAuthMethod').value;
+      const isQr = method === 'QR_DYNAMIC_TOTP';
+      document.getElementById('posAuthQrGroup').style.display = isQr ? 'block' : 'none';
+      document.getElementById('posAuthPinGroup').style.display = isQr ? 'none' : 'block';
+    }
+
+    let posModalCategories = [];
+
+    function openPosCategoryModal() {
+      const storeSelect = document.getElementById('posStoreSelect');
+      const storeId = storeSelect?.value || KronaCore.getSelectedStoreId();
+      const state = KronaCore.getState();
+      const store = (state?.stores || []).find((s) => s.id === storeId);
+      if (!store) {
+        KronaCore.toast('⚠️ Selecciona primero una sucursal en el POS.', true);
+        return;
+      }
+
+      document.getElementById('posModalStoreName').textContent = `${store.name} (${store.code})`;
+
+      const defaultCats = [
+        { code: 'SEALED_PRODUCT', name: 'Producto Sellado (Sobres / Cajas / Bundles)', description: 'Boosters, Bundles, Commander Decks, Displays', isEnabled: true },
+        { code: 'SINGLES', name: 'Cartas Sueltas / Singles TCG', description: 'Cartas individuales, foils, showcase, graded', isEnabled: true },
+        { code: 'ACCESSORIES', name: 'Accesorios (Micas / Deckboxes / Playmats)', description: 'Protectores Dragon Shield, carpetas, dados, tapetes', isEnabled: true },
+        { code: 'TOURNAMENT_ENTRY', name: 'Inscripción a Torneo', description: 'Buy-in de eventos locales, ligas y preliminares', isEnabled: true },
+        { code: 'SNACKS_DRINKS', name: 'Snacks y Bebidas', description: 'Alimentos y refrigerios en mostrador', isEnabled: true },
+      ];
+
+      posModalCategories = (store.productCategories && store.productCategories.length > 0)
+        ? JSON.parse(JSON.stringify(store.productCategories))
+        : JSON.parse(JSON.stringify(defaultCats));
+
+      renderPosModalCategoryList();
+      KronaCore.openModal('posCategoryModal');
+    }
+
+    function closePosCategoryModal() {
+      KronaCore.closeModal('posCategoryModal');
+    }
+
+    function renderPosModalCategoryList() {
+      const container = document.getElementById('posModalCategoryList');
+      if (!container) return;
+
+      if (posModalCategories.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted);font-size:0.75rem;padding:0.5rem;">No hay categorías para esta sede. Agrega una nueva abajo.</div>';
+        return;
+      }
+
+      container.innerHTML = posModalCategories.map((cat, idx) => {
+        const isEnabled = cat.isEnabled !== false;
+        return `
+          <div style="background:var(--bg-slate);border:1px solid ${isEnabled ? 'var(--border-default)' : 'var(--border-subtle)'};opacity:${isEnabled ? '1' : '0.65'};border-radius:var(--radius-sm);padding:0.6rem 0.8rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:0.6rem;flex:1;min-width:200px;">
+              <input type="checkbox" id="posCatChk_${idx}" ${isEnabled ? 'checked' : ''} onchange="posToggleCategory(${idx})" style="cursor:pointer;accent-color:var(--accent-gold);" />
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+                  <strong style="font-size:0.83rem;color:${isEnabled ? 'var(--text-primary)' : 'var(--text-muted)'};">${cat.name}</strong>
+                  <span class="mono" style="font-size:0.68rem;padding:1px 5px;background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:3px;color:var(--accent-gold-hover);">${cat.code}</span>
+                  ${isEnabled ? '<span class="badge badge-emerald" style="font-size:0.62rem;padding:1px 5px;">Habilitada</span>' : '<span class="badge badge-crimson" style="font-size:0.62rem;padding:1px 5px;">Deshabilitada</span>'}
+                </div>
+                ${cat.description ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.2rem;">${cat.description}</div>` : ''}
+              </div>
+            </div>
+            <button type="button" class="btn btn-slate" style="padding:0.2rem 0.5rem;font-size:0.7rem;color:var(--status-crimson);" onclick="posRemoveCategory(${idx})" title="Eliminar de la lista">
+              ✕
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function posToggleCategory(index) {
+      if (posModalCategories[index]) {
+        posModalCategories[index].isEnabled = !posModalCategories[index].isEnabled;
+        renderPosModalCategoryList();
+      }
+    }
+
+    function posRemoveCategory(index) {
+      if (posModalCategories[index]) {
+        posModalCategories.splice(index, 1);
+        renderPosModalCategoryList();
+      }
+    }
+
+    function posAddCategoryToList() {
+      const codeInput = document.getElementById('posNewCatCode');
+      const nameInput = document.getElementById('posNewCatName');
+      const descInput = document.getElementById('posNewCatDesc');
+
+      let code = (codeInput?.value || '').trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+      const name = (nameInput?.value || '').trim();
+      const description = (descInput?.value || '').trim();
+
+      if (!name) {
+        KronaCore.toast('Ingresa el nombre comercial de la categoría', true);
+        return;
+      }
+      if (!code) {
+        code = name.toUpperCase().replace(/[^A-Z0-9]/g, '_').slice(0, 24);
+      }
+
+      if (posModalCategories.some((c) => c.code === code)) {
+        KronaCore.toast(`Ya existe una categoría con el código ${code}`, true);
+        return;
+      }
+
+      posModalCategories.push({
+        code,
+        name,
+        description,
+        isEnabled: true,
+      });
+
+      codeInput.value = '';
+      nameInput.value = '';
+      descInput.value = '';
+      renderPosModalCategoryList();
+      KronaCore.toast(`Categoría "${name}" agregada. Haz clic en Guardar para aplicar.`);
+    }
+
+    async function posSaveCategories() {
+      const storeSelect = document.getElementById('posStoreSelect');
+      const storeId = storeSelect?.value || KronaCore.getSelectedStoreId();
+      if (!storeId) return;
+
+      try {
+        const res = await KronaCore.post('/api/stores/categories', {
+          storeId,
+          categories: posModalCategories,
+        });
+        KronaCore.toast(`✅ Catálogo de ${res.store.name} actualizado (${posModalCategories.filter(c => c.isEnabled).length} categorías activas)`);
+        closePosCategoryModal();
+        await KronaCore.refreshState();
+        populateStoreCategories(storeId);
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    function populateStoreCategories(storeId) {
+      const storeSelect = document.getElementById('posStoreSelect');
+      const effStoreId = storeId || storeSelect?.value || KronaCore.getSelectedStoreId();
+      const state = KronaCore.getState();
+      const store = (state?.stores || []).find((s) => s.id === effStoreId);
+      const rawCategories = (store?.productCategories && store.productCategories.length > 0)
+        ? store.productCategories
+        : [
+            { code: 'SEALED_PRODUCT', name: 'Producto Sellado (Sobres / Cajas / Bundles)', isEnabled: true },
+            { code: 'SINGLES', name: 'Cartas Sueltas / Singles TCG', isEnabled: true },
+            { code: 'ACCESSORIES', name: 'Accesorios (Micas / Deckboxes / Playmats)', isEnabled: true },
+            { code: 'TOURNAMENT_ENTRY', name: 'Inscripción a Torneo', isEnabled: true },
+            { code: 'SNACKS_DRINKS', name: 'Snacks y Bebidas', isEnabled: true },
+          ];
+      const categories = rawCategories.filter((c) => c.isEnabled !== false);
+
+      const catSelect = document.getElementById('posCategory');
+      if (catSelect) {
+        const prevVal = catSelect.value;
+        catSelect.innerHTML = categories
+          .map((c) => `<option value="${c.code}" ${c.code === prevVal ? 'selected' : ''}>${c.name}</option>`)
+          .join('');
+        if (!catSelect.value && categories[0]) {
+          catSelect.value = categories[0].code;
+        }
+      }
+    }
+
+    function onPosStoreChanged(storeId) {
+      if (storeId) {
+        KronaCore.setSelectedStoreId(storeId);
+      }
+      populateStoreCategories(storeId);
+      applyPlayerCreditConstraints();
+    }
+
+    function getSelectedPlayerRecord() {
+      const select = document.getElementById('posPlayerSelector');
+      const pid = select?.value || KronaCore.getSelectedPlayerId();
+      return cachedPlayers.find((p) => p.userId === pid) || null;
+    }
+
+    function onPosPlayerChanged(playerId) {
+      if (playerId) {
+        KronaCore.setSelectedPlayerId(playerId);
+      }
+      applyPlayerCreditConstraints();
+    }
+
+    function onPosCategoryChanged(catCode) {
+      applyPlayerCreditConstraints();
+    }
+
+    function getPlayerCategoryEligibleCents(player, catCode) {
+      if (!player) return 0;
+      const lots = player.lots || [];
+      if (lots.length === 0) return Number(player.availableBalanceCents || 0);
+
+      const storeId = document.getElementById('posStoreSelect')?.value || KronaCore.getSelectedStoreId();
+      const state = KronaCore.getState();
+      const sharingPolicy = state?.org?.sharingPolicy || 'ORG_POOLED_SAME_ENTITY';
+
+      const eligible = lots.filter((lot) => {
+        if (lot.status !== 'ACTIVE' || lot.remainingAmountCents <= 0) return false;
+        if (sharingPolicy === 'STORE_ISOLATED' && lot.issuingStoreId !== storeId) return false;
+        if (lot.allowedCategories && lot.allowedCategories.length > 0 && !lot.allowedCategories.includes(catCode)) {
+          return false;
+        }
+        return true;
+      });
+
+      return eligible.reduce((sum, l) => sum + Number(l.remainingAmountCents || 0), 0);
+    }
+
+    function applyPlayerCreditConstraints() {
+      const player = getSelectedPlayerRecord();
+      const totalAvailCents = player ? Number(player.availableBalanceCents || 0) : 0;
+      const catCode = document.getElementById('posCategory')?.value || 'SINGLES';
+      const catEligibleCents = getPlayerCategoryEligibleCents(player, catCode);
+      const catEligibleMxn = Math.floor(catEligibleCents / 100);
+
+      const catNote = document.getElementById('posCategoryEligibleNote');
+      if (catNote) {
+        if (player) {
+          catNote.innerHTML = `Saldo elegible en esta categoría: <strong style="color:var(--text-primary);">${KronaCore.fmt(catEligibleCents)}</strong> ${catEligibleCents < totalAvailCents ? `(de ${KronaCore.fmt(totalAvailCents)} totales en billetera)` : '(100% elegible)'}`;
+        } else {
+          catNote.textContent = 'Lotes universales + específicos para esta categoría.';
+        }
+      }
+
+      const saldoBadge = document.getElementById('posActivePlayerSaldo');
+      const noCredBanner = document.getElementById('posNoCreditBanner');
+      const hasCredBanner = document.getElementById('posHasCreditBanner');
+      const availBadge = document.getElementById('posAvailableBadge');
+      const creditInput = document.getElementById('posCreditMxn');
+      const redeemBtn = document.getElementById('posRedeemBtn');
+      const helpText = document.getElementById('posCreditHelpText');
+
+      if (!player || totalAvailCents <= 0) {
+        // El cliente NO tiene crédito en lo absoluto
+        saldoBadge.textContent = player ? `${player.fullName}: $0.00 MXN` : 'Sin Saldo: $0.00 MXN';
+        saldoBadge.className = 'badge badge-crimson';
+        noCredBanner.style.display = 'block';
+        noCredBanner.innerHTML = '<strong>⚠️ Cliente sin saldo disponible:</strong> El cliente seleccionado no cuenta con crédito a favor ($0.00 MXN). No es posible tomar crédito a cuenta en esta venta.';
+        hasCredBanner.style.display = 'none';
+
+        creditInput.value = '0';
+        creditInput.disabled = true;
+        creditInput.max = '0';
+        redeemBtn.disabled = true;
+        redeemBtn.textContent = '⚠️ Sin Saldo Disponible para Aplicar Crédito';
+        helpText.textContent = 'El cliente no cuenta con saldo disponible ($0.00 MXN).';
+      } else if (catEligibleCents <= 0) {
+        // El cliente tiene crédito, pero NO es elegible para la categoría seleccionada (Precedente FEFO)
+        saldoBadge.textContent = `${player.fullName}: ${KronaCore.fmt(totalAvailCents)}`;
+        saldoBadge.className = 'badge badge-gold';
+        noCredBanner.style.display = 'block';
+        noCredBanner.innerHTML = `<strong>⚠️ Saldo Restringido por Categoría:</strong> El cliente tiene ${KronaCore.fmt(totalAvailCents)} en su billetera, pero corresponden a premios asignados exclusivamente a otras categorías. No cuenta con saldo aplicable para <em>${catCode}</em>.`;
+        hasCredBanner.style.display = 'none';
+
+        creditInput.value = '0';
+        creditInput.disabled = true;
+        creditInput.max = '0';
+        redeemBtn.disabled = true;
+        redeemBtn.textContent = `⚠️ Saldo No Aplicable para ${catCode}`;
+        helpText.textContent = `Saldo disponible para ${catCode}: $0.00 MXN (Saldo total: ${KronaCore.fmt(totalAvailCents)})`;
+      } else {
+        // El cliente TIENE crédito elegible para esta categoría
+        saldoBadge.textContent = `${player.fullName}: ${KronaCore.fmt(totalAvailCents)}`;
+        saldoBadge.className = 'badge badge-emerald';
+        noCredBanner.style.display = 'none';
+        hasCredBanner.style.display = 'flex';
+        availBadge.textContent = KronaCore.fmt(catEligibleCents);
+
+        creditInput.disabled = false;
+        creditInput.max = String(catEligibleMxn);
+        redeemBtn.disabled = false;
+        redeemBtn.textContent = '⚡ Autorizar Cobro 2FA y Emitir Voucher Físico VaultSeal™';
+        helpText.textContent = catEligibleCents < totalAvailCents
+          ? `Máximo aplicable para ${catCode}: ${KronaCore.fmt(catEligibleCents)} (de ${KronaCore.fmt(totalAvailCents)} totales)`
+          : `Máximo aplicable: ${KronaCore.fmt(catEligibleCents)}`;
+
+        const totalMxn = Number(document.getElementById('posTotalMxn').value || 0);
+        const currentVal = Number(creditInput.value || 0);
+        if (currentVal <= 0 || currentVal > catEligibleMxn) {
+          creditInput.value = String(Math.min(totalMxn, catEligibleMxn));
+        }
+      }
+
+      updateSplitPreview();
+    }
+
+    function updateSplitPreview() {
+      const player = getSelectedPlayerRecord();
+      const catCode = document.getElementById('posCategory')?.value || 'SINGLES';
+      const availCents = player ? getPlayerCategoryEligibleCents(player, catCode) : 0;
+      const availMxn = Math.floor(availCents / 100);
+
+      const totalMxn = Math.max(0, Number(document.getElementById('posTotalMxn').value || 0));
+      const creditInput = document.getElementById('posCreditMxn');
+      let credMxn = Number(creditInput.value || 0);
+
+      if (availMxn <= 0) {
+        credMxn = 0;
+        creditInput.value = '0';
+        creditInput.disabled = true;
+      } else {
+        const maxApplicable = Math.min(totalMxn, availMxn);
+        if (credMxn > maxApplicable) {
+          credMxn = maxApplicable;
+          creditInput.value = String(credMxn);
+        }
+      }
+
+      const totalCents = Math.round(totalMxn * 100);
+      const credCents = Math.round(credMxn * 100);
+      const cashDiffCents = Math.max(0, totalCents - credCents);
+
+      document.getElementById('splitCreditPreview').textContent = KronaCore.fmt(credCents);
+      document.getElementById('splitCashPreview').textContent = KronaCore.fmt(cashDiffCents);
+    }
+
+    async function executePosRedeem() {
+      const player = getSelectedPlayerRecord();
+      const playerUserId = player ? player.userId : KronaCore.getSelectedPlayerId();
+      const storeId = document.getElementById('posStoreSelect')?.value || KronaCore.getSelectedStoreId();
+
+      const totalMxn = Number(document.getElementById('posTotalMxn').value || 0);
+      const creditMxn = Number(document.getElementById('posCreditMxn').value || 0);
+
+      if (!playerUserId) {
+        KronaCore.toast('⚠️ Selecciona un cliente en mostrador para continuar.', true);
+        return;
+      }
+
+      if (creditMxn <= 0) {
+        KronaCore.toast('⚠️ El monto de crédito a tomar a cuenta debe ser mayor a $0.00 MXN.', true);
+        return;
+      }
+
+      const authMethod = document.getElementById('posAuthMethod').value;
+      const totpPin = document.getElementById('posAuthPinInput')?.value.trim();
+      const qrToken = document.getElementById('posQrTokenInput')?.value.trim();
+      const conceptNotes = document.getElementById('posConceptInput')?.value.trim() || 'Redención de crédito en tienda';
+
+      try {
+        const res = await KronaCore.post('/api/pos/redeem', {
+          storeId,
+          playerUserId,
+          totalTicketCents: Math.round(totalMxn * 100),
+          creditToApplyCents: Math.round(creditMxn * 100),
+          productCategory: document.getElementById('posCategory').value,
+          authMethod,
+          totpPin: totpPin || undefined,
+          qrToken: qrToken || undefined,
+          externalPosTicketRef: 'N/A',
+          conceptNotes,
+        });
+        selectedVoucherFolio = res.voucher.voucherFolio;
+        document.getElementById('thermalOutputBox').textContent = res.thermalText;
+
+        // Reset completo de campos del formulario para prevenir cobros accidentales o duplicados
+        document.getElementById('posTotalMxn').value = '0';
+        document.getElementById('posCreditMxn').value = '0';
+        if (document.getElementById('posAuthPinInput')) {
+          document.getElementById('posAuthPinInput').value = '';
+        }
+        if (document.getElementById('posQrTokenInput')) {
+          document.getElementById('posQrTokenInput').value = '';
+        }
+        if (document.getElementById('posConceptInput')) {
+          document.getElementById('posConceptInput').value = 'Redención de crédito en tienda';
+        }
+        updateSplitPreview();
+
+        // Emisión e impresión térmica inmediata en el momento de confirmar el canje
+        const paperWidth = document.getElementById('thermalPaperSelect')?.value || '80mm';
+        KronaCore.printThermalText(res.thermalText, { title: 'Voucher ' + res.voucher.voucherFolio, paperWidth });
+
+        KronaCore.toast(`✅ Voucher ${res.voucher.voucherFolio} emitido e impreso exitosamente.`);
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    async function executePosRefund() {
+      const folio = document.getElementById('refundVoucherSelect').value;
+      const amountMxn = Number(document.getElementById('refundAmountMxn').value || 0);
+      const reason = document.getElementById('refundReason').value;
+      if (!folio) return;
+
+      const confirmed = await KronaCore.confirm({
+        title: 'Confirmar Reembolso / Devolución',
+        message: `¿Estás seguro de que deseas reembolsar ${KronaCore.fmt(Math.round(amountMxn * 100))} del voucher ${folio}?`,
+        details: `Motivo: ${reason || 'Devolución de mercancía en POS'}`,
+        confirmText: 'Procesar Reembolso',
+        cancelText: 'Cancelar',
+        danger: true,
+      });
+      if (!confirmed) return;
+
+      try {
+        const res = await KronaCore.post('/api/pos/refund', {
+          voucherFolio: folio,
+          refundAmountCents: Math.round(amountMxn * 100),
+          reason,
+        });
+
+        const paperWidth = document.getElementById('thermalPaperSelect')?.value || '80mm';
+        const refundNote = [
+          '================================',
+          '  KRONA VAULT™ — PÓLIZA DEVOLUCIÓN',
+          '  ANTI-CASH-OUT (GAVETA DE CAJA)',
+          '================================',
+          `FECHA:    ${new Date().toLocaleString('es-MX')}`,
+          `FOLIO DEVOLUCIÓN: DEV-${Date.now().toString().slice(-6)}`,
+          `VOUCHER ORIG: ${folio}`,
+          `MOTIVO:   ${reason}`,
+          '--------------------------------',
+          `RESTITUIDO A CRÉDITO:  ${KronaCore.fmt(res.refundedToStoreCreditCents)}`,
+          `REEMBOLSADO EN EFECTIVO: ${KronaCore.fmt(res.refundedToCashCents)}`,
+          '--------------------------------',
+          'FIRMA CAJERO / SELLO CRIPTOGRÁFICO AUDITADO:',
+          '',
+          '',
+          '[ ] Comprobante para arqueo / cierre',
+          '================================',
+        ].join('\n');
+
+        KronaCore.toast(
+          `↩ Reembolso completado: ${KronaCore.fmt(res.refundedToStoreCreditCents)} a Crédito de Tienda y ${KronaCore.fmt(res.refundedToCashCents)} a Efectivo`
+        );
+        await KronaCore.refreshState();
+        document.getElementById('thermalOutputBox').textContent = refundNote;
+        KronaCore.printThermalText(refundNote, { title: 'Póliza Devolución ' + folio, paperWidth });
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    function selectVoucherFromList(folio) {
+      selectedVoucherFolio = folio;
+      const state = KronaCore.getState();
+      if (!state) return;
+      const found = state.vouchers.find((v) => v.voucherFolio === folio);
+      if (found) {
+        document.getElementById('thermalOutputBox').textContent = found.thermalText;
+      }
+    }
+
+    function onThermalPaperChanged(val) {
+      const out = document.getElementById('thermalOutputBox');
+      if (out) {
+        out.className = val === '58mm' ? 'thermal-receipt-58mm' : 'thermal-receipt-80mm';
+      }
+    }
+
+    function printCurrentVoucher() {
+      const txt = document.getElementById('thermalOutputBox').textContent;
+      const paperWidth = document.getElementById('thermalPaperSelect')?.value || '80mm';
+      KronaCore.printThermalText(txt, { title: selectedVoucherFolio || 'Voucher', paperWidth });
+    }
+
+    async function reprintCurrentVoucher() {
+      if (!selectedVoucherFolio) return;
+      try {
+        const res = await KronaCore.post('/api/pos/reprint-voucher', {
+          voucherFolio: selectedVoucherFolio,
+          reason: 'Copia solicitada en KRONA Terminal',
+        });
+        document.getElementById('thermalOutputBox').textContent = res.thermalText;
+        KronaCore.toast(`📄 Copia #${res.voucher.printCount} registrada en auditoría (NO VÁLIDA ARQUEO)`);
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    // ==========================================
+    // ESCÁNER QR CON CÁMARA & ATAJOS DE TECLADO
+    // ==========================================
+    let posCameraStream = null;
+    let posQrScannerInterval = null;
+
+    async function openPosQrScanner() {
+      const video = document.getElementById('posQrVideo');
+      const errBox = document.getElementById('posQrCameraError');
+      errBox.style.display = 'none';
+      KronaCore.openModal('posQrScannerModal');
+
+      try {
+        posCameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }
+        });
+        video.srcObject = posCameraStream;
+        await video.play();
+
+        if ('BarcodeDetector' in window) {
+          const barcodeDetector = new window.BarcodeDetector({ formats: ['qr_code'] });
+          posQrScannerInterval = setInterval(async () => {
+            if (!video.videoWidth) return;
+            try {
+              const barcodes = await barcodeDetector.detect(video);
+              if (barcodes.length > 0) {
+                const rawValue = barcodes[0].rawValue;
+                handleScannedQrToken(rawValue);
+              }
+            } catch (_) {}
+          }, 350);
+        }
+      } catch (err) {
+        console.warn('Cámara no disponible o denegada:', err);
+        errBox.style.display = 'block';
+      }
+    }
+
+    function handleScannedQrToken(token) {
+      if (!token) return;
+      const input = document.getElementById('posQrTokenInput');
+      if (input) {
+        input.value = token;
+      }
+      closePosQrScanner();
+      KronaCore.toast('✅ Token QR capturado correctamente');
+    }
+
+    function closePosQrScanner() {
+      if (posQrScannerInterval) {
+        clearInterval(posQrScannerInterval);
+        posQrScannerInterval = null;
+      }
+      if (posCameraStream) {
+        posCameraStream.getTracks().forEach((t) => t.stop());
+        posCameraStream = null;
+      }
+      KronaCore.closeModal('posQrScannerModal');
+    }
+
+    // Atajo de teclado: Enter en inputs de cobro para autorizar sin mouse
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const active = document.activeElement;
+        if (active && ['posTotalMxn', 'posCreditMxn', 'posAuthPinInput', 'posQrTokenInput'].includes(active.id)) {
+          e.preventDefault();
+          executePosRedeem();
+        }
+      }
+    });
+
+    KronaCore.initPage('/pos', (data) => {
+      // Poblar combo de sucursal activa de cobro
+      KronaCore.populateStoreSelect('posStoreSelect', { filterActiveOnly: true, selectedId: KronaCore.getSelectedStoreId() });
+      populateStoreCategories(KronaCore.getSelectedStoreId());
+
+      // Cachear padrón de jugadores
+      cachedPlayers = data.players || [];
+      const currentSelectedPlayerId = KronaCore.getSelectedPlayerId();
+      const playerSelector = document.getElementById('posPlayerSelector');
+
+      if (cachedPlayers.length === 0) {
+        playerSelector.innerHTML = '<option value="">(Sin clientes registrados)</option>';
+      } else {
+        const hasSelected = cachedPlayers.some((p) => p.userId === currentSelectedPlayerId);
+        const effectiveId = hasSelected ? currentSelectedPlayerId : cachedPlayers[0].userId;
+        if (!hasSelected) {
+          KronaCore.setSelectedPlayerId(effectiveId);
+        }
+        playerSelector.innerHTML = cachedPlayers
+          .map(
+            (p) =>
+              `<option value="${p.userId}" ${p.userId === effectiveId ? 'selected' : ''}>${p.fullName} (${p.memberCode}) · ${KronaCore.fmt(p.availableBalanceCents)}</option>`
+          )
+          .join('');
+      }
+
+      // Aplicar restricciones según saldo del jugador seleccionado
+      applyPlayerCreditConstraints();
+
+      // Vouchers térmicos emitidos
+      document.getElementById('voucherCountBadge').textContent = `${data.vouchers.length} Vouchers Térmicos`;
+
+      if (!selectedVoucherFolio && data.vouchers[0]) {
+        selectedVoucherFolio = data.vouchers[0].voucherFolio;
+      }
+
+      const vOptions = data.vouchers
+        .map(
+          (v) =>
+            `<option value="${v.voucherFolio}" ${v.voucherFolio === selectedVoucherFolio ? 'selected' : ''}>${v.voucherFolio} · ${v.playerName} · ${KronaCore.fmt(v.creditAppliedCents)} (${v.printCount === 1 ? 'ORIG' : 'COPIA #' + v.printCount})</option>`
+        )
+        .join('');
+
+      document.getElementById('voucherHistorySelect').innerHTML = vOptions;
+      document.getElementById('refundVoucherSelect').innerHTML = vOptions;
+
+      const currentV = data.vouchers.find((v) => v.voucherFolio === selectedVoucherFolio) || data.vouchers[0];
+      if (currentV) {
+        document.getElementById('thermalOutputBox').textContent = currentV.thermalText;
+      }
+    });
+  </script>
+</body>
+</html>

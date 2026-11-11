@@ -1,0 +1,11 @@
+{
+  "name": "@control-credito/crypto-totp",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "node --experimental-strip-types --test src/crypto.test.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

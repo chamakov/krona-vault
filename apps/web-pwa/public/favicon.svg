@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="kvBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0F19"/>
+      <stop offset="100%" stop-color="#04060A"/>
+    </linearGradient>
+    <linearGradient id="kvGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <linearGradient id="kvEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6EE7B7"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <radialGradient id="kvGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="kvShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Base redondeada oscura (squircle app icon) -->
+  <rect width="512" height="512" rx="112" fill="url(#kvBg)"/>
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="#1E293B" stroke-width="6"/>
+
+  <!-- Halo de resplandor dorado -->
+  <circle cx="256" cy="256" r="210" fill="url(#kvGlow)"/>
+
+  <!-- Escudo / Hexágono exterior de la Bóveda KRONA (Oro) -->
+  <polygon points="256,58 436,158 436,354 256,454 76,354 76,158" 
+           fill="#0B0F19" stroke="url(#kvGold)" stroke-width="20" stroke-linejoin="round" filter="url(#kvShadow)"/>
+
+  <!-- Cámara interior acorazada (Esmeralda) -->
+  <polygon points="256,108 396,186 396,326 256,404 116,326 116,186" 
+           fill="#07090E" stroke="url(#kvEmerald)" stroke-width="8" stroke-linejoin="round"/>
+
+  <!-- Cerradura de Bóveda & Dial Criptográfico Central -->
+  <circle cx="256" cy="230" r="48" fill="url(#kvGold)"/>
+  <polygon points="230,230 282,230 294,324 218,324" fill="url(#kvGold)"/>
+  
+  <!-- Núcleo de Validación Esmeralda -->
+  <circle cx="256" cy="230" r="22" fill="#07090E"/>
+  <circle cx="256" cy="230" r="10" fill="url(#kvEmerald)"/>
+
+  <!-- Remaches tácticos en vértices de bóveda -->
+  <circle cx="256" cy="84" r="7" fill="#FCD34D"/>
+  <circle cx="414" cy="172" r="7" fill="#FCD34D"/>
+  <circle cx="414" cy="340" r="7" fill="#FCD34D"/>
+  <circle cx="256" cy="428" r="7" fill="#FCD34D"/>
+  <circle cx="98" cy="340" r="7" fill="#FCD34D"/>
+  <circle cx="98" cy="172" r="7" fill="#FCD34D"/>
+</svg>

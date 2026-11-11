@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Profile™ — Perfil de Operador y Credenciales 2FA | KRONA VAULT™</title>
+  <meta name="description" content="Configuración de seguridad personal: actualización de PIN de 6 dígitos para firmas Four-Eyes, vinculación de Google/Microsoft Authenticator y bitácora de actividad." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/profile" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/profile" />
+  <meta property="og:title" content="KRONA Profile™ — Perfil y Credenciales de Seguridad | KRONA VAULT™" />
+  <meta property="og:description" content="Gestión personal de contraseñas, PIN de autorización 4-Ojos y doble factor TOTP." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA Profile™ — Seguridad de Cuenta" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Profile™ — Perfil y Credenciales de Seguridad" />
+  <meta name="twitter:description" content="Seguridad del operador: cambio de PIN, sincronización 2FA y registro de auditoría." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+  <script src="/js/qrcode.min.js"></script>
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip">
+      <div>
+        <div class="page-eyebrow">CONFIGURACIÓN PERSONAL Y SEGURIDAD · /profile</div>
+        <h1 class="page-title">KRONA Profile™ — Mi Perfil, Credenciales, Semilla 2FA y Bitácora Personal</h1>
+        <p class="page-subtitle">
+          Administra tus datos personales, actualiza tu Contraseña y PIN de 6 dígitos (para login y firmas Four-Eyes), rota tu semilla TOTP y consulta todas las operaciones asociadas a tu identidad.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+        <a href="/wallet" data-require-portal="/wallet" class="btn btn-gold">Ver Mi Pase QR (/wallet)</a>
+      </div>
+    </section>
+
+    <div class="arena-grid">
+      <!-- COLUMNA 1: FORMULARIO DE CONFIGURACIÓN DE PERFIL Y CREDENCIALES -->
+      <section class="vault-card gold-edge">
+        <div class="card-header">
+          <div class="card-title">Editar Mi Perfil y Credenciales de Seguridad</div>
+          <span id="profRoleBadge" class="badge badge-gold">---</span>
+        </div>
+
+        <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.8rem;margin-bottom:1rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+          <div>
+            <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;">Código de Identidad Inmutable</div>
+            <div id="profMemberCode" class="mono" style="font-size:1.1rem;font-weight:700;color:var(--accent-gold-hover);">---</div>
+          </div>
+          <div>
+            <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;">Sucursal Adscrita</div>
+            <div id="profAssignedStore" class="mono" style="font-size:0.95rem;color:var(--text-primary);">---</div>
+          </div>
+          <div>
+            <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;">Estado</div>
+            <span id="profStatusBadge" class="badge badge-emerald">ACTIVE</span>
+          </div>
+          <div>
+            <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;">PIN de Seguridad</div>
+            <span id="profPinStatusBadge" class="badge badge-slate">---</span>
+          </div>
+          <div>
+            <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;">Authenticator 2FA</div>
+            <span id="profAuthStatusBadge" class="badge badge-slate">---</span>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="profFullName">Nombre Completo Visible</label>
+            <input id="profFullName" type="text" />
+          </div>
+          <div class="form-group">
+            <label for="profAlias">Alias / Handle</label>
+            <input id="profAlias" type="text" />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="profEmail">Correo Electrónico</label>
+            <input id="profEmail" type="email" />
+          </div>
+          <div class="form-group">
+            <label for="profPhone">Teléfono Móvil</label>
+            <input id="profPhone" type="text" />
+          </div>
+        </div>
+
+        <div style="margin-top:0.5rem;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <div style="font-weight:700;font-size:0.82rem;margin-bottom:0.6rem;color:var(--accent-gold-hover);">
+            Rotación de Contraseña y PIN de Autorización (Opcional)
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="profNewPassword">Nueva Contraseña (dejar vacío para conservar)</label>
+              <input id="profNewPassword" type="password" placeholder="••••••••" />
+            </div>
+            <div class="form-group">
+              <label for="profNewPin">Nuevo PIN 6 Dígitos (Opcional si usas Authenticator)</label>
+              <input id="profNewPin" type="password" maxlength="6" placeholder="Ej. 884422 (Opcional)" />
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-gold btn-block" onclick="saveOwnProfile()">
+          💾 Guardar Cambios en Mi Perfil y Credenciales
+        </button>
+
+        <div style="display:flex;gap:0.65rem;margin-top:0.85rem;flex-wrap:wrap;">
+          <button type="button" class="btn btn-slate" style="flex:1;" onclick="rotateMyTotpSeed()">
+            🔄 Rotar Semilla 2FA (KRONA Pulse™)
+          </button>
+          <button type="button" class="btn btn-crimson" style="flex:1;" onclick="toggleMyEmergencyLock()">
+            🔒 Bloqueo de Emergencia
+          </button>
+        </div>
+      </section>
+
+      <!-- COLUMNA 2: SINCRONIZACIÓN CON APP AUTHENTICATOR (RFC 6238) -->
+      <section class="vault-card gold-edge" id="authenticatorSection">
+        <div class="card-header">
+          <div class="card-title">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <circle cx="12" cy="11" r="3"/>
+            </svg>
+            <span>Sincronización 2FA con Authenticator (RFC 6238)</span>
+          </div>
+          <span id="authHeaderBadge" class="badge badge-slate">Consultando...</span>
+        </div>
+
+        <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.5;">
+          Sincroniza tu aplicación favorita (<strong style="color:var(--text-primary);">Google Authenticator, Microsoft Authenticator, 1Password, Authy o Llavero de Apple</strong>). Tus códigos de 6 dígitos se utilizarán para inicio de sesión, autorizaciones en caja POS y firmas 4-Ojos de supervisores.
+        </p>
+
+        <!-- ESTADO ACTIVO -->
+        <div id="authActiveBox" style="display:none;background:rgba(16,185,129,0.08);border:1px solid var(--border-emerald);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.6rem;">
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <span class="badge badge-emerald" style="font-size:0.8rem;padding:0.3rem 0.65rem;">🛡️ 2FA RFC 6238 ACTIVO</span>
+            </div>
+            <div id="authSyncedDate" class="mono" style="font-size:0.75rem;color:var(--accent-emerald-hover);"></div>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-secondary);margin:0 0 0.85rem 0;">
+            Tu cuenta está vinculada a tu aplicación Authenticator. Ya no dependes de un PIN fijo y puedes usar cualquier código temporal generado en tu teléfono móvil.
+          </p>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+            <button type="button" class="btn btn-slate" style="font-size:0.78rem;padding:0.35rem 0.75rem;" onclick="toggleReconfigure2FA()">
+              🔄 Re-vincular / Cambiar Dispositivo
+            </button>
+            <button type="button" class="btn btn-crimson" style="font-size:0.78rem;padding:0.35rem 0.75rem;" onclick="submitDisable2FA()">
+              ❌ Desvincular Authenticator
+            </button>
+          </div>
+        </div>
+
+        <!-- ASISTENTE DE VINCULACIÓN (PASOS 1, 2 Y 3) -->
+        <div id="authSetupBox" style="display:none;">
+          <!-- PASO 1: QR -->
+          <div style="margin-bottom:1.15rem;padding-bottom:1rem;border-bottom:1px solid var(--border-subtle);">
+            <div style="font-weight:700;font-size:0.82rem;color:var(--accent-gold-hover);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              <span style="background:var(--accent-gold);color:#000;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;">1</span>
+              <span>Escanear Código QR en tu Teléfono</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;margin-top:0.65rem;">
+              <div style="background:#FFFFFF;padding:0.65rem;border-radius:var(--radius-sm);box-shadow:0 6px 18px rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;min-width:170px;min-height:170px;">
+                <div id="authQrCodeBox"></div>
+              </div>
+              <div style="flex:1;min-width:200px;">
+                <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.75rem;">
+                  Abre Google Authenticator, Microsoft Authenticator o tu gestor de contraseñas y presiona <strong>"Escanear código QR"</strong>.
+                </p>
+                <a id="authOtpAuthLink" href="#" class="btn btn-slate" style="font-size:0.75rem;display:inline-flex;align-items:center;gap:0.4rem;">
+                  📱 Abrir directamente en App Authenticator
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- PASO 2: CLAVE SECRETA MANUAL -->
+          <div style="margin-bottom:1.15rem;padding-bottom:1rem;border-bottom:1px solid var(--border-subtle);">
+            <div style="font-weight:700;font-size:0.82rem;color:var(--accent-gold-hover);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              <span style="background:var(--accent-gold);color:#000;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;">2</span>
+              <span>O Ingresar la Clave Secreta Manualmente</span>
+            </div>
+            <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.65rem 0.85rem;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;">
+              <div>
+                <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;">Clave Secreta Base32 (RFC 4648)</div>
+                <div id="authFormattedSecret" class="mono" style="font-size:0.95rem;font-weight:700;color:var(--accent-gold-hover);letter-spacing:1px;word-break:break-all;">---</div>
+              </div>
+              <button type="button" class="btn btn-slate" style="font-size:0.72rem;padding:0.3rem 0.6rem;" onclick="copySecretKey()">
+                📋 Copiar
+              </button>
+            </div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.35rem;">
+              Tipo: TOTP (Basado en tiempo) · Algoritmo: SHA1 · Intervalo: 30 segundos · Dígitos: 6
+            </div>
+          </div>
+
+          <!-- PASO 3: CONFIRMACIÓN Y ACTIVACIÓN -->
+          <div>
+            <div style="font-weight:700;font-size:0.82rem;color:var(--accent-gold-hover);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;">
+              <span style="background:var(--accent-gold);color:#000;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;">3</span>
+              <span>Confirmar Código de 6 Dígitos para Activar</span>
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.65rem;">
+              Escribe el código temporal de 6 dígitos que ahora aparece en tu aplicación para confirmar la sincronización:
+            </p>
+            <div style="display:flex;gap:0.65rem;align-items:center;flex-wrap:wrap;">
+              <input id="authVerifyInput" type="text" maxlength="6" inputmode="numeric" placeholder="000000" class="mono" style="font-size:1.25rem;letter-spacing:4px;text-align:center;width:145px;padding:0.45rem 0.5rem;font-weight:700;" />
+              <button type="button" class="btn btn-gold" style="flex:1;min-width:180px;" onclick="submitVerify2FA()">
+                🛡️ Verificar y Activar 2FA
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- SECCIÓN INFERIOR A DEMANDA: BITÁCORA FORENSE DE ACTIVIDAD -->
+    <section class="vault-card emerald-edge" style="margin-top:1.5rem;" id="personalAuditSection">
+      <div class="card-header">
+        <div class="card-title">
+          <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+          <span>Mi Bitácora Forense de Actividad (Trazabilidad Personal)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.65rem;flex-wrap:wrap;">
+          <span id="profActivityCount" class="badge badge-slate">Bajo Demanda</span>
+          <button type="button" class="btn btn-emerald" id="btnTogglePersonalAudit" style="padding:0.35rem 0.85rem;font-size:0.75rem;" onclick="toggleLoadPersonalAudit()">
+            📜 Consultar Mi Bitácora Forense
+          </button>
+        </div>
+      </div>
+
+      <div id="profAuditPlaceholder" style="background:var(--bg-abyss);border:1px dashed var(--border-default);border-radius:var(--radius-sm);padding:1.4rem;text-align:center;color:var(--text-secondary);font-size:0.82rem;line-height:1.6;">
+        🔒 <strong style="color:var(--text-primary);">Trazabilidad Forense Protegida</strong>
+        <div style="margin-top:0.35rem;">
+          Para optimizar el rendimiento y privacidad, los registros inmutables de tu bitácora no se descargan automáticamente en cada visita.
+          Presiona <strong>"Consultar Mi Bitácora Forense"</strong> arriba para verificar en vivo todas tus operaciones, compras POS y firmas 4-Ojos.
+        </div>
+      </div>
+
+      <div id="profAuditContent" style="display:none;margin-top:0.85rem;">
+        <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.85rem;">
+          Registro inmutable de todas las acciones ejecutadas por tu cuenta, co-autorizaciones firmadas o movimientos sobre tu billetera:
+        </p>
+        <div class="table-scroll">
+          <table class="krona-table">
+            <thead>
+              <tr>
+                <th> # / Fecha</th>
+                <th>Acción</th>
+                <th>Participación</th>
+                <th>Detalle / Justificación</th>
+              </tr>
+            </thead>
+            <tbody id="profActivityTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: MIS RESGUARDOS EN BÓVEDA (KRONA CUSTODY™) -->
+    <section class="vault-card emerald-edge" style="margin-top:1.5rem;">
+      <div class="card-header">
+        <div class="card-title">
+          <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>Mis Resguardos en Bóveda (KRONA Custody™)</span>
+        </div>
+        <span id="profCustodyCountBadge" class="badge badge-emerald">0 Resguardos</span>
+      </div>
+      <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:0.85rem;">
+        Cartas y paquetes en resguardo físico en caja fuerte donde eres <strong>Destinatario</strong> (cartas dejadas para ti) o <strong>Remitente</strong> (cartas que depositaste).
+      </p>
+      <div id="profCustodyContainer">
+        <div style="color:var(--text-muted);font-size:0.8rem;padding:0.75rem 0;">Consultando resguardos activos en bóveda...</div>
+      </div>
+    </section>
+
+    <!-- MODAL DE COMPROBANTE OFICIAL DE RECOLECCIÓN EN PERFIL -->
+    <div id="profClaimModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="profClaimModalTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.88);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card gold-edge" style="max-width:440px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.8);text-align:center;">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="profClaimModalTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Comprobante Digital de Retiro</span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closeProfClaimModal()" aria-label="Cerrar modal">✕</button>
+        </div>
+        <div id="profClaimModalContent"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    let loadedUserId = null;
+
+    async function saveOwnProfile() {
+      const fullName = document.getElementById('profFullName').value.trim();
+      const alias = document.getElementById('profAlias').value.trim();
+      const email = document.getElementById('profEmail').value.trim();
+      const phone = document.getElementById('profPhone').value.trim();
+      const newPassword = document.getElementById('profNewPassword').value.trim();
+      const newSecurityPin = document.getElementById('profNewPin').value.trim();
+
+      try {
+        const res = await KronaCore.post('/api/profile/update', {
+          fullName,
+          alias,
+          email,
+          phone,
+          newPassword: newPassword || undefined,
+          newSecurityPin: newSecurityPin || undefined,
+        });
+        document.getElementById('profNewPassword').value = '';
+        document.getElementById('profNewPin').value = '';
+        KronaCore.toast(`✅ Perfil de ${res.user.fullName} actualizado y auditado en Hash-Chain`);
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    async function rotateMyTotpSeed() {
+      const st = KronaCore.getState();
+      if (!st || !st.sessionUser) return;
+      const confirmed = await KronaCore.confirm({
+        title: 'Regenerar Semilla 2FA / Bunker',
+        message: '¿Estás seguro de que deseas rotar la semilla criptográfica de tu cuenta?',
+        details: 'Cualquier código TOTP o pase sin sincronizar dejará de ser válido inmediatamente.',
+        confirmText: 'Regenerar Semilla',
+        danger: true,
+      });
+      if (!confirmed) return;
+
+      try {
+        await KronaCore.post('/api/wallet/security-lock', {
+          targetUserId: st.sessionUser.userId,
+          lock: false,
+          rotateSecret: true,
+          reason: 'Rotación personal de semilla 2FA desde KRONA Profile',
+        });
+        KronaCore.toast('🔐 Semilla 2FA KRONA Pulse™ regenerada exitosamente');
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    async function toggleMyEmergencyLock() {
+      const st = KronaCore.getState();
+      if (!st || !st.sessionUser) return;
+      const shouldLock = st.sessionUser.status === 'ACTIVE';
+      const confirmed = await KronaCore.confirm({
+        title: shouldLock ? '¿Bloquear Cuenta Preventivamente?' : '¿Reactivar Cuenta?',
+        message: shouldLock
+          ? '¿Estás seguro de congelar tu cuenta? No podrás autorizar consumos ni canjes hasta desbloquearla.'
+          : '¿Deseas reactivar tu cuenta y habilitar nuevamente todas las operaciones?',
+        confirmText: shouldLock ? 'Bloquear Preventivamente' : 'Reactivar Cuenta',
+        danger: shouldLock,
+      });
+      if (!confirmed) return;
+
+      try {
+        await KronaCore.post('/api/wallet/security-lock', {
+          targetUserId: st.sessionUser.userId,
+          lock: shouldLock,
+          rotateSecret: false,
+          reason: shouldLock ? 'Autobloqueo desde Mi Perfil' : 'Desbloqueo desde Mi Perfil',
+        });
+        KronaCore.toast(shouldLock ? '🔒 Cuenta bloqueada preventivamente' : '🔓 Cuenta reactivada');
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    let current2faSetup = null;
+
+    async function load2faStatus() {
+      try {
+        const res = await KronaCore.get('/api/auth/2fa/setup');
+        current2faSetup = res;
+        render2faUI(res);
+      } catch (err) {
+        console.error('Error cargando 2FA setup:', err);
+      }
+    }
+
+    function render2faUI(setup) {
+      const badge = document.getElementById('authHeaderBadge');
+      const activeBox = document.getElementById('authActiveBox');
+      const setupBox = document.getElementById('authSetupBox');
+
+      const isSynced = Boolean(setup.hasAuthenticator || setup.isSynced);
+      if (isSynced) {
+        badge.className = 'badge badge-emerald';
+        badge.textContent = 'ACTIVO / VINCULADO';
+        activeBox.style.display = 'block';
+        setupBox.style.display = 'none';
+        const syncDate = setup.authenticatorSyncedAt || setup.syncedAt;
+        const dateStr = syncDate ? new Date(syncDate).toLocaleString('es-MX') : 'Activo';
+        document.getElementById('authSyncedDate').textContent = `Sincronizado: ${dateStr}`;
+      } else {
+        badge.className = 'badge badge-gold';
+        badge.textContent = 'PENDIENTE DE VINCULAR';
+        activeBox.style.display = 'none';
+        setupBox.style.display = 'block';
+        display2faQrAndSecret(setup);
+      }
+    }
+
+    function display2faQrAndSecret(setup) {
+      const uri = setup.otpAuthUri || setup.otpauthUri || setup.uri || '';
+      document.getElementById('authFormattedSecret').textContent = setup.formattedSecret || setup.secret || '---';
+      const link = document.getElementById('authOtpAuthLink');
+      if (link) {
+        link.href = uri || '#';
+      }
+      const qrBox = document.getElementById('authQrCodeBox');
+      if (qrBox && uri) {
+        qrBox.innerHTML = '';
+        try {
+          if (typeof qrcode === 'function') {
+            const qr = qrcode(0, 'M');
+            qr.addData(uri);
+            qr.make();
+            qrBox.innerHTML = qr.createSvgTag(4, 4);
+            const svgEl = qrBox.querySelector('svg');
+            if (svgEl) {
+              svgEl.style.width = '170px';
+              svgEl.style.height = '170px';
+              svgEl.style.display = 'block';
+            }
+          } else {
+            qrBox.innerHTML = `<div class="mono" style="font-size:0.75rem;color:#000;padding:1rem;">Usa la clave secreta o abre el enlace</div>`;
+          }
+        } catch (e) {
+          console.warn('QRCode render error:', e);
+          try {
+            const qr = qrcode(0, 'L');
+            qr.addData(uri);
+            qr.make();
+            qrBox.innerHTML = qr.createSvgTag(4, 4);
+            const svgEl = qrBox.querySelector('svg');
+            if (svgEl) {
+              svgEl.style.width = '170px';
+              svgEl.style.height = '170px';
+              svgEl.style.display = 'block';
+            }
+          } catch (err2) {
+            qrBox.innerHTML = `<div class="mono" style="font-size:0.75rem;color:#000;padding:1rem;">Error generando QR. Usa la clave Base32</div>`;
+          }
+        }
+      }
+    }
+
+    function toggleReconfigure2FA() {
+      const setupBox = document.getElementById('authSetupBox');
+      if (setupBox.style.display === 'none') {
+        setupBox.style.display = 'block';
+        if (current2faSetup) display2faQrAndSecret(current2faSetup);
+      } else {
+        setupBox.style.display = 'none';
+      }
+    }
+
+    function copySecretKey() {
+      if (!current2faSetup || !current2faSetup.secret) return;
+      navigator.clipboard.writeText(current2faSetup.secret).then(
+        () => KronaCore.toast('📋 Clave secreta Base32 copiada al portapapeles'),
+        () => KronaCore.toast('⚠️ No se pudo copiar automáticamente, copia el texto manualmente', true)
+      );
+    }
+
+    async function submitVerify2FA() {
+      const token = document.getElementById('authVerifyInput').value.trim();
+      if (!token || token.length !== 6) {
+        KronaCore.toast('Ingresa el código temporal de 6 dígitos que muestra tu app Authenticator', true);
+        return;
+      }
+      try {
+        await KronaCore.post('/api/auth/2fa/verify-sync', {
+          token,
+          secret: current2faSetup ? current2faSetup.secret : undefined,
+        });
+        document.getElementById('authVerifyInput').value = '';
+        KronaCore.toast('✅ 2FA Vinculado y activado exitosamente con tu app Authenticator');
+        await load2faStatus();
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    async function submitDisable2FA() {
+      const confirmed = await KronaCore.confirm({
+        title: 'Desvincular Authenticator (2FA)',
+        message: '¿Estás seguro de desvincular tu aplicación Authenticator?',
+        details: 'Tu cuenta ya no solicitará códigos TOTP de 6 dígitos para iniciar sesión ni operaciones críticas.',
+        confirmText: 'Desvincular 2FA',
+        danger: true,
+      });
+      if (!confirmed) {
+        return;
+      }
+      try {
+        await KronaCore.post('/api/auth/2fa/disable', {});
+        KronaCore.toast('⚙️ Authenticator desvinculado de tu cuenta');
+        await load2faStatus();
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    let personalAuditLoaded = false;
+
+    function toggleLoadPersonalAudit() {
+      const content = document.getElementById('profAuditContent');
+      const placeholder = document.getElementById('profAuditPlaceholder');
+      const btn = document.getElementById('btnTogglePersonalAudit');
+      const badge = document.getElementById('profActivityCount');
+
+      if (content.style.display === 'block') {
+        content.style.display = 'none';
+        placeholder.style.display = 'block';
+        btn.textContent = '📜 Consultar Mi Bitácora Forense';
+        btn.className = 'btn btn-emerald';
+        badge.className = 'badge badge-slate';
+        badge.textContent = 'Bajo Demanda';
+        personalAuditLoaded = false;
+        return;
+      }
+
+      const data = KronaCore.getState();
+      if (!data || !data.sessionUser) {
+        KronaCore.toast('Sesión no disponible', true);
+        return;
+      }
+      const su = data.sessionUser;
+      const myLogs = (data.auditLogs || []).filter(
+        (al) =>
+          al.actorUserId === su.userId ||
+          al.coAuthorizerId === su.userId ||
+          al.targetEntityId === su.walletId
+      );
+
+      badge.className = 'badge badge-emerald';
+      badge.textContent = `${myLogs.length} Eventos`;
+
+      document.getElementById('profActivityTable').innerHTML = myLogs.length === 0
+        ? `<tr><td colspan="4" style="text-align:center;padding:1.5rem;color:var(--text-muted);">Sin eventos registrados en tu historial</td></tr>`
+        : myLogs
+            .map((al) => {
+              const roleInEvent =
+                al.actorUserId === su.userId
+                  ? 'Ejecutor Principal'
+                  : al.coAuthorizerId === su.userId
+                    ? 'Co-Autorizador (4-Ojos / 2FA)'
+                    : 'Titular de Cuenta';
+              return `
+                <tr>
+                  <td class="mono" style="font-size:0.7rem;">
+                    <div>#${al.seqId}</div>
+                    <div style="color:var(--text-muted);">${al.createdAt.slice(11, 19)}</div>
+                  </td>
+                  <td><span class="badge badge-gold">${al.eventAction}</span></td>
+                  <td><span class="badge badge-emerald">${roleInEvent}</span></td>
+                  <td style="font-size:0.76rem;">
+                    <div>${al.reasonJustification}</div>
+                    <div class="mono" style="font-size:0.66rem;color:var(--text-muted);">HASH: ${al.rowHash.slice(0, 18)}...</div>
+                  </td>
+                </tr>
+              `;
+            })
+            .join('');
+
+      placeholder.style.display = 'none';
+      content.style.display = 'block';
+      btn.textContent = '🙈 Ocultar Bitácora';
+      btn.className = 'btn btn-slate';
+      personalAuditLoaded = true;
+      KronaCore.toast(`📜 ${myLogs.length} eventos forenses cargados para tu cuenta`);
+    }
+
+    KronaCore.initPage('/profile', (data) => {
+      const su = data.sessionUser;
+      document.getElementById('profRoleBadge').textContent = su.role;
+      document.getElementById('profMemberCode').textContent = `${su.memberCode} · ${su.alias}`;
+      const storeObj = (data.stores || []).find((s) => s.id === su.assignedStoreId);
+      document.getElementById('profAssignedStore').textContent = storeObj
+        ? `${storeObj.name} (${storeObj.code})`
+        : (su.assignedStoreId || 'GLOBAL (Todas las Sedes)');
+      document.getElementById('profStatusBadge').textContent = su.status;
+
+      const pinBadge = document.getElementById('profPinStatusBadge');
+      if (pinBadge) {
+        pinBadge.className = su.hasSecurityPin ? 'badge badge-emerald' : 'badge badge-slate';
+        pinBadge.textContent = su.hasSecurityPin ? 'PIN ACTIVO' : 'SIN ASIGNAR';
+      }
+
+      const authBadge = document.getElementById('profAuthStatusBadge');
+      if (authBadge) {
+        authBadge.className = su.hasAuthenticator ? 'badge badge-emerald' : 'badge badge-slate';
+        authBadge.textContent = su.hasAuthenticator ? '2FA VINCULADO' : '2FA PENDIENTE';
+      }
+
+      if (loadedUserId !== su.userId) {
+        loadedUserId = su.userId;
+        document.getElementById('profFullName').value = su.fullName;
+        document.getElementById('profAlias').value = su.alias;
+        document.getElementById('profEmail').value = su.email;
+        document.getElementById('profPhone').value = su.phone;
+      }
+
+      load2faStatus();
+      loadProfileCustodyPackages(su.userId);
+
+      // La bitácora personal NO se renderiza por defecto, solo a petición explícita
+      if (personalAuditLoaded) {
+        toggleLoadPersonalAudit();
+      }
+    });
+
+    let cachedProfileCustodyPackages = [];
+
+    async function loadProfileCustodyPackages(userId) {
+      try {
+        const res = await fetch('/api/custody/packages', {
+          headers: KronaCore.getAuthHeaders ? KronaCore.getAuthHeaders() : { 'Content-Type': 'application/json' },
+          cache: 'no-store'
+        });
+        const data = await res.json();
+        if (!data || !data.packages) return;
+        cachedProfileCustodyPackages = data.packages;
+        renderProfileCustodyPackages(cachedProfileCustodyPackages, userId);
+      } catch (err) {
+        console.warn('Error cargando resguardos en perfil:', err);
+      }
+    }
+
+    function renderProfileCustodyPackages(packages, userId) {
+      const container = document.getElementById('profCustodyContainer');
+      const badge = document.getElementById('profCustodyCountBadge');
+      if (!container || !badge) return;
+
+      const myPackages = packages.filter(
+        p => p.clientUserId === userId || p.depositorUserId === userId || p.recipientUserId === userId
+      );
+
+      badge.textContent = `${myPackages.length} Resguardo${myPackages.length !== 1 ? 's' : ''}`;
+      if (myPackages.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem;padding:0.5rem 0;">No tienes cartas ni paquetes en resguardo físico actualmente.</div>';
+        return;
+      }
+
+      const statusLabels = {
+        'RECEIVED': { label: 'RECIBIDO EN TIENDA', cls: 'badge-gold' },
+        'IN_VAULT': { label: 'EN BÓVEDA / CAJA FUERTE', cls: 'badge-emerald' },
+        'READY_FOR_PICKUP': { label: '¡LISTO PARA RETIRO!', cls: 'badge-emerald' },
+        'RELEASED': { label: 'ENTREGADO / CONCLUIDO', cls: 'badge-slate' },
+        'CANCELLED_ERROR': { label: 'ANULADO', cls: 'badge-crimson' },
+      };
+
+      const purposeLabels = {
+        'GRADING_SUBMISSION': 'Envío a Calificar (Grading)',
+        'CONSIGNMENT_ESCROW': 'Consignación / Escrow P2P',
+        'DETAILED_APPRAISAL_PENDING': 'Valuación Minuciosa',
+        'TOURNAMENT_DECK_QUARANTINE': 'Cuarentena Torneo (Deck Check)',
+        'SAFE_KEEPING_VAULT': 'Guarda en Caja Fuerte',
+      };
+
+      container.innerHTML = myPackages.map((pkg) => {
+        const st = statusLabels[pkg.status] || { label: pkg.status, cls: 'badge-slate' };
+        const purp = purposeLabels[pkg.purpose] || pkg.purpose;
+        const isReady = pkg.status === 'READY_FOR_PICKUP';
+        const isDelivered = pkg.status === 'RELEASED';
+        const isForMe = pkg.recipientUserId === userId;
+
+        return `
+          <div style="background:var(--bg-slate);border:1px solid ${isReady ? 'var(--border-emerald)' : 'var(--border-default)'};border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:0.65rem;box-shadow:${isReady ? 'var(--accent-emerald-glow)' : 'none'};">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;flex-wrap:wrap;gap:0.35rem;">
+              <span class="mono" style="font-weight:700;font-size:0.88rem;color:var(--accent-gold-hover);">${pkg.folio}</span>
+              <div style="display:flex;gap:0.35rem;align-items:center;">
+                ${pkg.isForThirdParty ? `
+                  <span class="badge ${isForMe ? 'badge-emerald' : 'badge-gold'}" style="font-size:0.62rem;">
+                    ${isForMe ? '🎁 DEPOSITADO PARA TI' : '👥 DEPOSITASTE PARA OTRO'}
+                  </span>
+                ` : ''}
+                <span class="badge ${st.cls}">${st.label}</span>
+              </div>
+            </div>
+            <div style="font-size:0.82rem;font-weight:600;color:var(--text-primary);margin-bottom:0.25rem;">
+              ${purp} · ${pkg.itemsSummary}
+            </div>
+            ${pkg.isForThirdParty ? `
+              <div style="font-size:0.73rem;color:var(--text-secondary);margin-bottom:0.4rem;background:rgba(255,255,255,0.03);padding:0.35rem 0.5rem;border-radius:4px;">
+                <strong>Remitente (dejó):</strong> ${pkg.depositorName} · <strong>Destinatario (recibe):</strong> ${pkg.recipientName}
+              </div>
+            ` : ''}
+            <div style="display:flex;justify-content:space-between;font-size:0.73rem;color:var(--text-muted);margin-bottom:0.5rem;">
+              <span>Cartas: <strong>${pkg.items ? pkg.items.length : 1} item(s)</strong></span>
+              <span>Sede: <strong>${pkg.storeId}</strong></span>
+            </div>
+            ${!isDelivered ? `
+              <button type="button" class="btn ${isReady ? 'btn-emerald' : 'btn-slate'} btn-block" style="font-size:0.75rem;padding:0.4rem 0.75rem;" onclick="openProfileClaimModal('${pkg.id}')">
+                🎫 Mostrar Comprobante para Recoger (Código: ${pkg.claimVerificationCode})
+              </button>
+            ` : `
+              <div style="font-size:0.72rem;color:var(--text-muted);text-align:right;">
+                Entregado el: ${pkg.releasedAt ? pkg.releasedAt.slice(0, 16).replace('T', ' ') : 'N/A'} (Retiró: ${pkg.pickedUpByName || 'Titular'})
+              </div>
+            `}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openProfileClaimModal(packageId) {
+      const pkg = cachedProfileCustodyPackages.find(p => p.id === packageId);
+      if (!pkg) return;
+
+      const modal = document.getElementById('profClaimModal');
+      const content = document.getElementById('profClaimModalContent');
+      if (!modal || !content) return;
+
+      content.innerHTML = `
+        <div style="margin-bottom:0.75rem;">
+          <div style="font-size:0.7rem;color:var(--accent-gold-hover);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">
+            COMPROBANTE OFICIAL DE RECOLECCIÓN
+          </div>
+          <div class="mono" style="font-size:1.25rem;font-weight:700;color:var(--text-primary);margin:0.25rem 0;">
+            ${pkg.folio}
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">
+            ${pkg.itemsSummary}
+          </div>
+          ${pkg.isForThirdParty ? `
+            <div style="font-size:0.74rem;color:var(--accent-emerald-hover);margin-top:0.35rem;background:rgba(16,185,129,0.08);padding:0.35rem;border-radius:4px;">
+              🎁 <strong>Dejado por:</strong> ${pkg.depositorName} · <strong>Para:</strong> ${pkg.recipientName}
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="pulse-qr-frame" style="padding:0.85rem;margin:0.65rem 0;">
+          <div id="profClaimQrBox" style="display:flex;justify-content:center;align-items:center;"></div>
+          <div class="mono" style="font-size:1.3rem;font-weight:700;letter-spacing:0.12em;color:#07090E;margin-top:0.4rem;">
+            ${pkg.claimVerificationCode}
+          </div>
+          <div style="font-size:0.72rem;color:#475569;margin-top:0.2rem;">
+            Código de Verificación para Caja
+          </div>
+        </div>
+
+        <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.65rem;font-size:0.74rem;color:var(--text-secondary);text-align:left;line-height:1.4;margin-bottom:0.85rem;">
+          <div>• <strong>Destinatario:</strong> ${pkg.recipientName || pkg.clientName}</div>
+          <div>• <strong>Estado Actual:</strong> <span class="badge ${pkg.status === 'READY_FOR_PICKUP' ? 'badge-emerald' : 'badge-gold'}" style="font-size:0.62rem;">${pkg.status}</span></div>
+          <div>• <strong>Sello Criptográfico:</strong> <span class="mono" style="font-size:0.68rem;">${pkg.receiptSealText || 'VAULTSEAL-OK'}</span></div>
+        </div>
+
+        <button type="button" class="btn btn-slate btn-block" onclick="closeProfileClaimModal()">
+          Cerrar Comprobante
+        </button>
+      `;
+
+      KronaCore.openModal('profClaimModal');
+
+      const qrBox = document.getElementById('profClaimQrBox');
+      if (qrBox) {
+        qrBox.innerHTML = KronaCore.renderQrSvg(pkg.claimToken || pkg.claimVerificationCode, pkg.folio);
+      }
+    }
+
+    function closeProfileClaimModal() {
+      KronaCore.closeModal('profClaimModal');
+    }
+  </script>
+</body>
+</html>

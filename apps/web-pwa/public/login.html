@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Gate™ — Acceso Seguro y Autenticación Criptográfica | KRONA VAULT™</title>
+  <meta name="description" content="Portal de autenticación con control de acceso basado en roles (RBAC), firma de transacciones en hash-chain SHA-256 y credenciales de alta seguridad." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/login" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/login" />
+  <meta property="og:title" content="KRONA Gate™ — Acceso Seguro y Roles RBAC | KRONA VAULT™" />
+  <meta property="og:description" content="Acceso seguro para jugadores, cajeros, jueces y directores de tienda en KRONA VAULT™." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA VAULT™ — Ecosistema TCG Fintech" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Gate™ — Acceso Seguro y Roles RBAC" />
+  <meta name="twitter:description" content="Portal de autenticación con control RBAC y firma SHA-256 en KRONA VAULT™." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip">
+      <div>
+        <div class="page-eyebrow">CONTROL DE IDENTIDAD Y ACCESOS (IAM) · /login</div>
+        <h1 class="page-title">KRONA Gate™ — Inicio de Sesión Criptográfico</h1>
+        <p class="page-subtitle">
+          Autentícate con tu Código de Miembro, Alias o Correo + Contraseña o PIN de 6 dígitos. Cada sesión se registra en el servidor y cada acción queda firmada en el Hash-Chain SHA-256.
+        </p>
+      </div>
+      <div id="loginHeroActions" style="display:none;gap:0.65rem;">
+        <a href="/profile" class="btn btn-gold">Configurar Mi Perfil (Alt+6)</a>
+      </div>
+    </section>
+
+    <div id="loginLayoutContainer" class="arena-grid" style="margin-bottom:1.5rem;">
+      <!-- PANEL DE INICIO DE SESIÓN REAL -->
+      <section class="vault-card gold-edge">
+        <div class="card-header">
+          <div class="card-title">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Iniciar Sesión con Credenciales</span>
+          </div>
+          <span class="badge badge-gold">STATEFUL KST1 SESSION</span>
+        </div>
+
+        <!-- ESTADO DE SESIÓN ACTUAL -->
+        <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.9rem 1rem;margin-bottom:1.15rem;">
+          <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.06em;">
+            Estado de Sesión en Servidor
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.3rem;flex-wrap:wrap;gap:0.5rem;">
+            <div>
+              <strong id="loginCurrentUserName" style="font-size:1rem;color:var(--text-primary);">Verificando sesión...</strong>
+              <div id="loginCurrentUserMeta" class="mono" style="font-size:0.76rem;color:var(--text-secondary);margin-top:0.15rem;">---</div>
+            </div>
+            <span id="loginCurrentRoleBadge" class="badge badge-crimson">NO AUTENTICADO</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="loginIdentifier">Identificador (Código CC-XXXX, Alias @Usuario o Correo)</label>
+          <input id="loginIdentifier" type="text" value="" placeholder="Ej. CC-8492, @AlexMTG, CC-0002 o correo" autocomplete="username" />
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="loginMode">Método de Autenticación</label>
+            <select id="loginMode" onchange="toggleSecretPlaceholder()">
+              <option value="PASSWORD">Contraseña de Cuenta</option>
+              <option value="PIN">PIN Operativo de 6 Dígitos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="loginSecret">Contraseña o PIN Secreto</label>
+            <div class="input-with-action">
+              <input id="loginSecret" type="password" value="" placeholder="Ingresa tu contraseña o PIN" autocomplete="current-password" />
+              <button type="button" id="toggleSecretVisibilityBtn" class="input-icon-btn" aria-label="Mostrar u ocultar contraseña o PIN" onclick="toggleSecretVisibility()">
+                <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:0.65rem;flex-wrap:wrap;margin-top:0.6rem;">
+          <button type="button" class="btn btn-gold" style="flex:1;" onclick="submitRealLogin()">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            <span>Iniciar Sesión</span>
+          </button>
+          <button type="button" id="logoutBtn" class="btn btn-crimson" style="display:none;" onclick="KronaCore.logoutSession()">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Cerrar Sesión (Logout)</span>
+          </button>
+        </div>
+
+        <details open style="margin-top:1.1rem;border-top:1px solid var(--border-subtle);padding-top:0.85rem;font-size:0.78rem;color:var(--text-secondary);">
+          <summary style="cursor:pointer;font-weight:600;color:var(--accent-gold);">
+            Credenciales de Acceso Administrador (SUPER_ADMIN)
+          </summary>
+          <div class="mono" style="margin-top:0.6rem;background:var(--bg-abyss);padding:0.75rem;border-radius:var(--radius-xs);border:1px solid var(--border-gold);font-size:0.73rem;line-height:1.6;">
+            <div>• <strong>Código:</strong> <code>CC-0002</code> (o <code>@chamakov</code>) · <strong>Alias:</strong> <code>@SuperAdmin</code> · <strong>Correo:</strong> <code>director@kronavault.mx</code></div>
+            <div>• <strong>Rol:</strong> <span class="badge badge-emerald" style="padding:1px 6px;font-size:0.68rem;">SUPER_ADMIN</span> (Acceso Total y Autorización)</div>
+            <div>• <strong>Contraseña:</strong> <code>krona2026</code> · <strong>PIN de Seguridad:</strong> <code>123456</code> (o <code>990022</code>)</div>
+          </div>
+        </details>
+      </section>
+
+      <!-- PANEL DE CONMUTADOR RÁPIDO DE ROLES DEMO PARA UAT -->
+      <section id="demoRolesPanel" class="vault-card emerald-edge">
+        <div class="card-header">
+          <div class="card-title">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Conmutador Rápido de Roles Demo (UAT Sandbox)</span>
+          </div>
+          <span id="demoPanelBadge" class="badge badge-emerald">6 ROLES ACTIVOS</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.95rem;">
+          Haz clic en <strong>"Entrar como [ROL] →"</strong> para autenticarte automáticamente con credenciales sembradas y probar de inmediato sus portales autorizados y restricciones RBAC.
+        </p>
+
+        <div id="rolesInteractiveList" style="display:flex;flex-direction:column;gap:0.7rem;"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    const SEEDED_ROLES_INFO = [
+      {
+        userId: 'u_player_1',
+        code: 'CC-8492',
+        name: 'Alejandro Gómez (@AlexMTG)',
+        role: 'PLAYER',
+        targetPortal: '/wallet',
+      },
+      {
+        userId: 'u_cashier_1',
+        code: 'CC-0020',
+        name: 'Carlos M. Cajero (@CarlosPOS)',
+        role: 'CASHIER',
+        targetPortal: '/pos',
+      },
+      {
+        userId: 'u_to_1',
+        code: 'CC-0010',
+        name: 'Roberto Juez L2 (@JudgeRob)',
+        role: 'TOURNAMENT_ORGANIZER',
+        targetPortal: '/tournaments',
+      },
+      {
+        userId: 'u_auditor_1',
+        code: 'CC-0030',
+        name: 'Elena Vega CPA (@AuditorFiscal)',
+        role: 'AUDITOR',
+        targetPortal: '/audit',
+      },
+      {
+        userId: 'u_admin_1',
+        code: 'CC-0001',
+        name: 'Laura Méndez (@LauraAdmin)',
+        role: 'STORE_ADMIN',
+        targetPortal: '/',
+      },
+      {
+        userId: 'u_admin_2',
+        code: 'CC-0002',
+        name: 'Director Corporativo (@SuperAdmin)',
+        role: 'SUPER_ADMIN',
+        targetPortal: '/',
+      },
+    ];
+
+    function toggleSecretPlaceholder() {
+      const mode = document.getElementById('loginMode').value;
+      const secretInput = document.getElementById('loginSecret');
+      secretInput.placeholder = mode === 'PIN' ? 'PIN de 6 dígitos' : 'Contraseña de cuenta';
+    }
+
+    function toggleSecretVisibility() {
+      const secretInput = document.getElementById('loginSecret');
+      const btn = document.getElementById('toggleSecretVisibilityBtn');
+      const isHidden = secretInput.type === 'password';
+      secretInput.type = isHidden ? 'text' : 'password';
+      btn.innerHTML = isHidden ? KronaCore.icon('eyeOff') : KronaCore.icon('eye');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (document.activeElement.id === 'loginIdentifier' || document.activeElement.id === 'loginSecret')) {
+        submitRealLogin();
+      }
+    });
+
+    async function submitRealLogin() {
+      const identifier = document.getElementById('loginIdentifier').value.trim();
+      const mode = document.getElementById('loginMode').value;
+      const secret = document.getElementById('loginSecret').value.trim();
+      if (!identifier || !secret) {
+        KronaCore.toast('Ingresa tu identificador y tu contraseña o PIN', true);
+        return;
+      }
+      try {
+        const res = await KronaCore.post('/api/auth/login', { identifier, mode, secret });
+        KronaCore.setSessionToken(res.token);
+        const dest = (res.capabilities && res.capabilities.defaultHomePortal) || '/profile';
+        KronaCore.toast(`Bienvenido ${res.user.fullName} (${res.user.role}) → Redirigiendo a ${dest}`);
+        setTimeout(() => {
+          window.location.href = dest;
+        }, 300);
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    async function quickDemoLogin(memberCode, password = 'krona2026') {
+      document.getElementById('loginIdentifier').value = memberCode;
+      document.getElementById('loginSecret').value = password;
+      document.getElementById('loginMode').value = 'PASSWORD';
+      await submitRealLogin();
+    }
+
+    async function switchAndOpen(userId, portal) {
+      await KronaCore.quickSwitchRole(userId, portal);
+    }
+
+    KronaCore.initPage('/login', (data) => {
+      const su = data && data.authenticated ? data.sessionUser : null;
+      const isSuperAdmin = Boolean(su && su.role === 'SUPER_ADMIN' && KronaCore.hasPermission('admin:roles:impersonate'));
+
+      const logoutBtn = document.getElementById('logoutBtn');
+      const heroActions = document.getElementById('loginHeroActions');
+
+      if (su) {
+        document.getElementById('loginCurrentUserName').textContent = `${su.fullName} (${su.alias})`;
+        document.getElementById('loginCurrentUserName').style.color = 'var(--accent-emerald-hover)';
+        document.getElementById('loginCurrentUserMeta').textContent =
+          `ID: ${su.memberCode} · Correo: ${su.email} · Sede: ${su.assignedStoreId || 'GLOBAL'}`;
+        document.getElementById('loginCurrentRoleBadge').textContent = su.role;
+        document.getElementById('loginCurrentRoleBadge').className = 'badge badge-emerald';
+        logoutBtn.style.display = 'inline-flex';
+        heroActions.style.display = 'flex';
+      } else {
+        document.getElementById('loginCurrentUserName').textContent = 'Ninguna sesión activa en el servidor';
+        document.getElementById('loginCurrentUserName').style.color = 'var(--text-primary)';
+        document.getElementById('loginCurrentUserMeta').textContent =
+          'Ingresa tu Código de Miembro (CC-XXXX), Alias o Correo y tu Contraseña o PIN';
+        document.getElementById('loginCurrentRoleBadge').textContent = 'NO AUTENTICADO';
+        document.getElementById('loginCurrentRoleBadge').className = 'badge badge-crimson';
+        logoutBtn.style.display = 'none';
+        heroActions.style.display = 'none';
+      }
+
+      // El panel de Conmutador de Roles Demo se renderiza SIEMPRE para facilitar UAT en todo momento
+      const matrix = (data && data.roleMatrix) || {};
+      const allUsers = (data && data.allUsers && data.allUsers.length > 0) ? data.allUsers : [];
+
+      const displayList = SEEDED_ROLES_INFO.map((seed) => {
+        const matchingReal = allUsers.find((u) => u.memberCode === seed.code || u.userId === seed.userId);
+        return {
+          userId: (matchingReal && matchingReal.userId) || seed.userId,
+          memberCode: seed.code,
+          fullName: (matchingReal && matchingReal.fullName) || seed.name,
+          role: seed.role,
+          targetPortal: seed.targetPortal,
+          assignedStoreId: (matchingReal && matchingReal.assignedStoreId) || 'GLOBAL',
+        };
+      });
+
+      document.getElementById('rolesInteractiveList').innerHTML = displayList.map((u) => {
+        const spec = matrix[u.role] || {};
+        const isCurrent = su && (su.memberCode === u.memberCode || su.userId === u.userId);
+        const targetPortal = u.targetPortal || spec.defaultHomePortal || '/';
+        const allowedStr = (spec.allowedPortals || []).join(' · ') || targetPortal;
+
+        return `
+          <div style="background:var(--bg-slate);border:1px solid ${isCurrent ? 'var(--accent-emerald)' : 'var(--border-default)'};border-radius:var(--radius-sm);padding:0.85rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <div>
+                <span class="badge ${isCurrent ? 'badge-emerald' : 'badge-gold'}">${u.role}</span>
+                <strong style="margin-left:0.4rem;font-size:0.88rem;">${u.fullName}</strong>
+                <span class="mono" style="font-size:0.74rem;color:var(--text-muted);margin-left:0.35rem;">(${u.memberCode})</span>
+              </div>
+              <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                <button type="button" class="btn ${isCurrent ? 'btn-emerald' : 'btn-gold'}" style="min-height:38px;padding:0.4rem 0.85rem;font-size:0.76rem;" onclick="quickDemoLogin('${u.memberCode}', 'krona2026')">
+                  ${isCurrent ? `En Sesión · Abrir ${targetPortal} →` : `Entrar como ${u.role} →`}
+                </button>
+                ${isSuperAdmin && !isCurrent ? `
+                  <button type="button" class="btn btn-slate" style="min-height:38px;padding:0.4rem 0.75rem;font-size:0.74rem;" title="Impersonación directa como SuperAdmin" onclick="switchAndOpen('${u.userId}', '${targetPortal}')">
+                    ⚡ Conmutar
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:0.4rem;">
+              ${spec.summary || `Portal principal asignado: ${targetPortal}`}
+            </div>
+            <div class="mono" style="font-size:0.7rem;color:var(--text-muted);margin-top:0.3rem;">
+              Portales permitidos: ${allowedStr} | Sede: ${u.assignedStoreId || 'GLOBAL'}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }, 0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Pass™ — Bóveda Móvil del Jugador y Crédito de Torneos | KRONA VAULT™</title>
+  <meta name="description" content="Bóveda móvil para jugadores de TCG: consulta de saldo disponible, QR dinámico TOTP de 30 segundos, PIN de Modo Sótano sin internet y vales VaultSeal™." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/wallet" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/wallet" />
+  <meta property="og:title" content="KRONA Pass™ — Bóveda Móvil del Jugador | KRONA VAULT™" />
+  <meta property="og:description" content="Gestiona tu saldo de torneos, créditos de tienda, vales VaultSeal™ y cartas en custodia desde tu pase móvil seguro." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA Pass™ — Bóveda Móvil del Jugador" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Pass™ — Bóveda Móvil del Jugador" />
+  <meta name="twitter:description" content="Saldo de torneos, QR dinámico TOTP y Modo Sótano sin internet en KRONA VAULT™." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <!-- Datos Estructurados Schema.org (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "KRONA Pass™ — Bóveda Móvil del Jugador",
+    "operatingSystem": "Web, iOS, Android (PWA)",
+    "applicationCategory": "FinanceApplication",
+    "description": "Bóveda digital personal para jugadores competitivos de TCG. Consulta de saldo de torneos, autorización de cobros con QR dinámico TOTP y modo offline sin señal.",
+    "url": "https://vault.kronatcg.com/wallet"
+  }
+  </script>
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+  <script src="/js/qrcode.min.js"></script>
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip no-print">
+      <div>
+        <div class="page-eyebrow">BÓVEDA DIGITAL DEL JUGADOR · /wallet</div>
+        <h1 class="page-title">KRONA Pass™ — Saldo, Lotes FEFO y Autorización 2FA</h1>
+        <p class="page-subtitle">
+          Presenta tu <strong>QR Dinámico de 30s</strong> en mostrador o dicta tu <strong>PIN Bunker Mode™ de 6 dígitos</strong> si estás jugando en una zona sin señal celular.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+        <a href="/pos" data-require-portal="/pos" class="btn btn-slate">Ir a Mostrador POS (Alt+2)</a>
+        <a href="/profile" data-require-portal="/profile" class="btn btn-slate">Mi Perfil (Alt+6)</a>
+      </div>
+    </section>
+
+    <div class="wallet-viewport">
+      <!-- TARJETA PRINCIPAL DE BÓVEDA DEL JUGADOR -->
+      <section class="krona-pass-card" aria-label="Pase Digital del Jugador">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;">
+          <div>
+            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-gold-hover);font-weight:700;">
+              KRONA PASS™ · VERIFIED COMPETITOR
+            </div>
+            <h1 id="passPlayerName" class="font-display" style="font-size:1.45rem;margin-top:0.15rem;">Cargando...</h1>
+            <div id="passPlayerMeta" class="mono" style="font-size:0.78rem;color:var(--text-secondary);">ID: ---</div>
+          </div>
+          <span id="passStatusBadge" class="badge badge-emerald">ACTIVE</span>
+        </div>
+
+        <!-- SALDO DISPONIBLE NETO -->
+        <div style="margin-top:1.15rem;padding-top:1rem;border-top:1px solid var(--border-subtle);">
+          <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-secondary);">
+            Saldo Líquido Disponible en Tienda
+          </div>
+          <div id="passAvailableBalance" class="num-tabular" style="font-size:2.35rem;font-weight:700;color:var(--accent-emerald-hover);line-height:1.15;margin-top:0.2rem;">
+            $0.00 MXN
+          </div>
+          <div id="passDebtNotice" style="display:none;margin-top:0.55rem;font-size:0.76rem;color:#FCA5A5;">
+            <span>Saldo en Disputa / Retenido: <strong id="passDebtBalance" class="num-tabular" style="color:#FCA5A5;">$0.00</strong></span>
+          </div>
+        </div>
+
+        <!-- SELECTOR DE MODO DE AUTENTICACIÓN 2FA (KRONA PULSE QR vs BUNKER MODE PIN) -->
+        <div class="tactical-tabs" style="margin-top:1.1rem;">
+          <button type="button" id="tabPulseQr" class="tactical-tab active" onclick="setAuthTab('QR')">
+            KRONA Pulse™ (QR 30s)
+          </button>
+          <button type="button" id="tabBunkerPin" class="tactical-tab" onclick="setAuthTab('PIN')">
+            Bunker Mode™ (PIN Offline)
+          </button>
+        </div>
+
+        <!-- VISTA 1: KRONA PULSE QR DINÁMICO -->
+        <div id="viewPulseQr" class="pulse-qr-frame">
+          <div id="qrSvgContainer"></div>
+          <div id="qrTokenPreview" class="mono" style="font-size:0.65rem;color:var(--text-muted);margin-top:0.25rem;word-break:break-all;"></div>
+        </div>
+
+        <!-- VISTA 2: BUNKER MODE PIN TOTP 6 DÍGITOS -->
+        <div id="viewBunkerPin" class="pulse-qr-frame" style="display:none;background:#0D111A;color:var(--text-primary);">
+          <div style="font-size:0.72rem;color:var(--accent-gold-hover);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">
+            BUNKER MODE™ · FIRMA OFFLINE SIN SEÑAL
+          </div>
+          <div id="bunkerPinDisplay" class="num-tabular" style="font-size:2.4rem;font-weight:700;letter-spacing:0.18em;color:var(--accent-emerald-hover);margin:0.65rem 0;">
+            --- ---
+          </div>
+          <p style="font-size:0.74rem;color:var(--text-secondary);">
+            Dicta este código de 6 dígitos al cajero cuando juegues en un sótano o salón sin recepción celular.
+          </p>
+        </div>
+
+        <!-- CONTADOR DE ROTACIÓN CRIPTOGRÁFICA -->
+        <div style="margin-top:0.65rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.74rem;color:var(--text-secondary);">
+            <span>Protección Anti-Screenshot Activa</span>
+            <span class="num-tabular">Rota en <strong id="passTimerSec" style="color:var(--accent-gold-hover);">--s</strong></span>
+          </div>
+          <div class="timer-track">
+            <div id="passTimerBar" class="timer-bar" style="transform:scaleX(1);"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRAMOS DE CONSUMO INTELIGENTE (SMART-BURN TRANCHES FEFO) -->
+      <section class="vault-card" style="margin-bottom:1.15rem;">
+        <div class="card-header">
+          <div class="card-title">Smart-Burn Tranches™ (Lotes FEFO Activos)</div>
+          <span class="badge badge-gold">FEFO AUTO-PRIORITY</span>
+        </div>
+        <p style="font-size:0.76rem;color:var(--text-secondary);margin-bottom:0.85rem;">
+          El motor consume automáticamente primero los bonos promocionales o premios con fecha de vencimiento más próxima para proteger tu saldo permanente.
+        </p>
+        <div id="passLotsContainer"></div>
+      </section>
+
+      <!-- RESGUARDOS FÍSICOS EN BÓVEDA (CUSTODY & ESCROW) -->
+      <section class="vault-card" style="margin-bottom:1.15rem;">
+        <div class="card-header">
+          <div class="card-title">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span>Mis Resguardos en Bóveda (KRONA Custody™)</span>
+          </div>
+          <span id="passCustodyCountBadge" class="badge badge-gold">0 Resguardos</span>
+        </div>
+        <p style="font-size:0.76rem;color:var(--text-secondary);margin-bottom:0.85rem;">
+          Cartas y paquetes en resguardo físico en caja fuerte (Grading, Consignación, Cuarentena o Bóveda). Presenta el <strong>Comprobante Oficial</strong> para recoger tus cartas.
+        </p>
+        <div id="passCustodyContainer"></div>
+      </section>
+
+      <!-- SEGURIDAD DE EMERGENCIA DEL JUGADOR -->
+      <section class="vault-card">
+        <div class="card-header">
+          <div class="card-title">Seguridad y Bloqueo de Emergencia</div>
+          <span class="badge badge-crimson">ZERO-TRUST</span>
+        </div>
+        <p style="font-size:0.76rem;color:var(--text-secondary);margin-bottom:0.85rem;">
+          Si extraviaste tu teléfono o sospechas que alguien fotografió tu código, bloquea tu billetera o rota tu semilla criptográfica al instante.
+        </p>
+        <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+          <button type="button" id="btnToggleLock" class="btn btn-crimson" style="flex:1;" onclick="toggleWalletLock(false)">
+            Bloquear / Desbloquear Billetera
+          </button>
+          <button type="button" class="btn btn-slate" style="flex:1;" onclick="toggleWalletLock(true)">
+            Rotar Semilla TOTP
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- MODAL DE COMPROBANTE DIGITAL DE RETIRO (CLAIM VOUCHER) -->
+    <div id="walletClaimModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="walletClaimModalTitle" style="display:none;position:fixed;inset:0;background:rgba(7,9,14,0.85);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card gold-edge" style="max-width:440px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.8);text-align:center;">
+        <div class="card-header" style="margin-bottom:0.85rem;">
+          <div class="card-title" id="walletClaimModalTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Comprobante Digital de Retiro</span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closeWalletClaimModal()" aria-label="Cerrar modal">✕</button>
+        </div>
+
+        <div id="claimModalContent"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    let currentAuthTab = 'QR';
+
+    function setAuthTab(mode) {
+      currentAuthTab = mode;
+      document.getElementById('tabPulseQr').classList.toggle('active', mode === 'QR');
+      document.getElementById('tabBunkerPin').classList.toggle('active', mode === 'PIN');
+      document.getElementById('viewPulseQr').style.display = mode === 'QR' ? 'block' : 'none';
+      document.getElementById('viewBunkerPin').style.display = mode === 'PIN' ? 'block' : 'none';
+    }
+
+    async function toggleWalletLock(rotateSecret) {
+      const state = KronaCore.getState();
+      if (!state || !state.activePlayer) return;
+      const p = state.activePlayer;
+      const shouldLock = rotateSecret ? false : p.status === 'ACTIVE';
+
+      const title = rotateSecret
+        ? 'Rotar Semilla Criptográfica TOTP'
+        : (shouldLock ? 'Bloqueo Preventivo de Billetera' : 'Reactivar Billetera');
+      const message = rotateSecret
+        ? '¿Estás seguro de regenerar tu semilla 2FA? Los códigos y pases no sincronizados dejarán de ser válidos.'
+        : (shouldLock
+          ? '¿Deseas bloquear tu billetera? No se podrán realizar consumos ni canjes en caja hasta desbloquearla.'
+          : '¿Deseas reactivar tu billetera para autorizar consumos?');
+      const confirmed = await KronaCore.confirm({
+        title,
+        message,
+        confirmText: rotateSecret ? 'Rotar Semilla' : (shouldLock ? 'Bloquear Billetera' : 'Reactivar Billetera'),
+        danger: rotateSecret || shouldLock,
+      });
+      if (!confirmed) return;
+
+      try {
+        await KronaCore.post('/api/wallet/security-lock', {
+          storeId: KronaCore.getSelectedStoreId(),
+          targetUserId: p.userId,
+          lock: shouldLock,
+          rotateSecret,
+          reason: rotateSecret
+            ? 'Rotación de semilla TOTP solicitada desde KRONA Pass'
+            : shouldLock
+              ? 'Bloqueo preventivo activado por el jugador'
+              : 'Reactivación de billetera',
+        });
+        KronaCore.toast(
+          rotateSecret
+            ? '🔐 Semilla criptográfica TOTP rotada exitosamente'
+            : shouldLock
+              ? '🔒 Billetera bloqueada preventivamente'
+              : '🔓 Billetera desbloqueada y operativa'
+        );
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    let lastRenderedQrToken = null;
+    let lastRenderedPin = null;
+    let lastRenderedLotsSig = null;
+    let lastCustodyFetchTime = 0;
+
+    KronaCore.initPage('/wallet', (data) => {
+      const p = data.activePlayer;
+      document.getElementById('passPlayerName').textContent = p.fullName;
+      document.getElementById('passPlayerMeta').textContent = `${p.memberCode} · ${p.alias}`;
+
+      const badge = document.getElementById('passStatusBadge');
+      badge.textContent = p.status;
+      badge.className = 'badge ' + (p.status === 'ACTIVE' ? 'badge-emerald' : 'badge-crimson');
+
+      document.getElementById('passAvailableBalance').textContent = KronaCore.fmt(p.availableBalanceCents);
+      const debtNotice = document.getElementById('passDebtNotice');
+      if (debtNotice) {
+        if (p.debtBalanceCents > 0) {
+          debtNotice.style.display = 'block';
+          document.getElementById('passDebtBalance').textContent = KronaCore.fmt(p.debtBalanceCents);
+        } else {
+          debtNotice.style.display = 'none';
+        }
+      }
+
+      // Solo regenerar el SVG cuando el token QR rote (cada 30s) para evitar parpadeos
+      if (p.dynamicQr !== lastRenderedQrToken) {
+        lastRenderedQrToken = p.dynamicQr;
+        document.getElementById('qrSvgContainer').innerHTML = KronaCore.renderQrSvg(p.dynamicQr, p.memberCode);
+        document.getElementById('qrTokenPreview').textContent = p.dynamicQr;
+      }
+
+      const pinStr = String(p.totpPin || '000000');
+      if (pinStr !== lastRenderedPin) {
+        lastRenderedPin = pinStr;
+        document.getElementById('bunkerPinDisplay').textContent = `${pinStr.slice(0, 3)} • ${pinStr.slice(3)}`;
+      }
+
+      if (!navigator.onLine && currentAuthTab === 'QR') {
+        setAuthTab('PIN');
+      }
+
+      const sec = Number(p.expiresInSeconds || 30);
+      document.getElementById('passTimerSec').textContent = `${sec}s`;
+      const bar = document.getElementById('passTimerBar');
+      bar.style.transform = `scaleX(${Math.max(0.05, sec / 30)})`;
+      bar.style.backgroundColor = sec <= 5 ? 'var(--status-warning)' : 'var(--accent-emerald)';
+
+      const btnLock = document.getElementById('btnToggleLock');
+      btnLock.textContent = p.status === 'ACTIVE' ? '🔒 Bloquear Billetera' : '🔓 Desbloquear Billetera';
+
+      const activeLots = (p.lots || []).filter((l) => l.remainingAmountCents > 0);
+      const lotsSig = JSON.stringify(activeLots.map((l) => [l.id, l.remainingAmountCents]));
+      if (lotsSig !== lastRenderedLotsSig) {
+        lastRenderedLotsSig = lotsSig;
+        if (activeLots.length === 0) {
+          document.getElementById('passLotsContainer').innerHTML =
+            '<div style="color:var(--text-muted);font-size:0.8rem;">No hay tramos de crédito activos en este momento.</div>';
+        } else {
+          document.getElementById('passLotsContainer').innerHTML = activeLots
+            .map(
+              (l, idx) => `
+              <div style="background:var(--bg-slate);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:0.55rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-weight:700;font-size:0.82rem;">#${idx + 1} · ${l.sourceLabel}</span>
+                  <span class="num-tabular" style="font-weight:700;color:var(--accent-emerald-hover);">${KronaCore.fmt(l.remainingAmountCents)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">
+                  <span>Sede Origen: <strong>${l.issuingStoreCode}</strong> · Prioridad FEFO: ${l.priorityRank}</span>
+                  <span>Vence: ${l.expiresAt ? l.expiresAt.slice(0, 10) : 'Permanente'}</span>
+                </div>
+              </div>
+            `
+            )
+            .join('');
+        }
+      }
+
+      // Render de Resguardos en Bóveda (KRONA Custody™) con throttle de 15s
+      const now = Date.now();
+      if (now - lastCustodyFetchTime > 15000) {
+        lastCustodyFetchTime = now;
+        loadPlayerCustodyPackages(p.userId);
+      }
+    }, 1000);
+
+    let cachedCustodyPackages = [];
+
+    async function loadPlayerCustodyPackages(userId) {
+      try {
+        const res = await fetch('/api/custody/packages', {
+          headers: KronaCore.getAuthHeaders ? KronaCore.getAuthHeaders() : { 'Content-Type': 'application/json' },
+          cache: 'no-store'
+        });
+        const data = await res.json();
+        if (!data || !data.packages) return;
+        cachedCustodyPackages = data.packages;
+        renderPlayerCustodyPackages(cachedCustodyPackages);
+      } catch (err) {
+        console.warn('Error cargando resguardos de bóveda:', err);
+      }
+    }
+
+    function renderPlayerCustodyPackages(packages) {
+      const container = document.getElementById('passCustodyContainer');
+      const badge = document.getElementById('passCustodyCountBadge');
+      if (!container || !badge) return;
+
+      badge.textContent = `${packages.length} Resguardo${packages.length !== 1 ? 's' : ''}`;
+      if (packages.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem;">No tienes cartas o paquetes en resguardo físico actualmente.</div>';
+        return;
+      }
+
+      const statusLabels = {
+        'RECEIVED': { label: 'RECIBIDO EN TIENDA', cls: 'badge-gold' },
+        'IN_VAULT': { label: 'EN BÓVEDA / CAJA FUERTE', cls: 'badge-emerald' },
+        'READY_FOR_PICKUP': { label: '¡LISTO PARA RETIRO!', cls: 'badge-emerald' },
+        'RELEASED': { label: 'ENTREGADO / CONCLUIDO', cls: 'badge-slate' },
+        'CANCELLED_ERROR': { label: 'ANULADO', cls: 'badge-crimson' },
+      };
+
+      const purposeLabels = {
+        'GRADING_SUBMISSION': 'Envío a Calificar (Grading)',
+        'CONSIGNMENT_ESCROW': 'Consignación / Escrow P2P',
+        'DETAILED_APPRAISAL_PENDING': 'Valuación Minuciosa',
+        'TOURNAMENT_DECK_QUARANTINE': 'Cuarentena Torneo (Deck Check)',
+        'SAFE_KEEPING_VAULT': 'Guarda en Caja Fuerte',
+      };
+
+      container.innerHTML = packages.map((pkg) => {
+        const st = statusLabels[pkg.status] || { label: pkg.status, cls: 'badge-slate' };
+        const purp = purposeLabels[pkg.purpose] || pkg.purpose;
+        const isReady = pkg.status === 'READY_FOR_PICKUP';
+        const isDelivered = pkg.status === 'RELEASED';
+        const isForMe = pkg.recipientUserId === p.userId;
+
+        return `
+          <div style="background:var(--bg-slate);border:1px solid ${isReady ? 'var(--border-emerald)' : 'var(--border-default)'};border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:0.65rem;box-shadow:${isReady ? 'var(--accent-emerald-glow)' : 'none'};">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;flex-wrap:wrap;gap:0.35rem;">
+              <span class="mono" style="font-weight:700;font-size:0.88rem;color:var(--accent-gold-hover);">${pkg.folio}</span>
+              <div style="display:flex;gap:0.35rem;align-items:center;">
+                ${pkg.isForThirdParty ? `
+                  <span class="badge ${isForMe ? 'badge-emerald' : 'badge-gold'}" style="font-size:0.62rem;">
+                    ${isForMe ? '🎁 DEPOSITADO PARA TI' : '👥 DEPOSITASTE PARA OTRO'}
+                  </span>
+                ` : ''}
+                <span class="badge ${st.cls}">${st.label}</span>
+              </div>
+            </div>
+            <div style="font-size:0.82rem;font-weight:600;color:var(--text-primary);margin-bottom:0.25rem;">
+              ${purp} · ${pkg.itemsSummary}
+            </div>
+            ${pkg.isForThirdParty ? `
+              <div style="font-size:0.73rem;color:var(--text-secondary);margin-bottom:0.4rem;background:rgba(255,255,255,0.03);padding:0.35rem 0.5rem;border-radius:4px;">
+                <strong>Remitente (dejó):</strong> ${pkg.depositorName} · <strong>Destinatario (recibe):</strong> ${pkg.recipientName}
+              </div>
+            ` : ''}
+            <div style="display:flex;justify-content:space-between;font-size:0.73rem;color:var(--text-muted);margin-bottom:0.5rem;">
+              <span>Cartas: <strong>${pkg.items ? pkg.items.length : 1} item(s)</strong></span>
+              <span>Sede: <strong>${pkg.storeId}</strong></span>
+            </div>
+            ${!isDelivered ? `
+              <button type="button" class="btn ${isReady ? 'btn-emerald' : 'btn-slate'} btn-block" style="font-size:0.75rem;padding:0.4rem 0.75rem;" onclick="openWalletClaimModal('${pkg.id}')">
+                🎫 Mostrar Comprobante para Recoger (Código: ${pkg.claimVerificationCode})
+              </button>
+            ` : `
+              <div style="font-size:0.72rem;color:var(--text-muted);text-align:right;">
+                Entregado el: ${pkg.releasedAt ? pkg.releasedAt.slice(0, 16).replace('T', ' ') : 'N/A'} (Retiró: ${pkg.pickedUpByName || 'Titular'})
+              </div>
+            `}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openWalletClaimModal(packageId) {
+      const pkg = cachedCustodyPackages.find(p => p.id === packageId);
+      if (!pkg) return;
+
+      const modal = document.getElementById('walletClaimModal');
+      const content = document.getElementById('claimModalContent');
+      if (!modal || !content) return;
+
+      content.innerHTML = `
+        <div style="margin-bottom:0.75rem;">
+          <div style="font-size:0.7rem;color:var(--accent-gold-hover);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">
+            COMPROBANTE OFICIAL DE RECOLECCIÓN
+          </div>
+          <div class="mono" style="font-size:1.25rem;font-weight:700;color:var(--text-primary);margin:0.25rem 0;">
+            ${pkg.folio}
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">
+            ${pkg.itemsSummary}
+          </div>
+        </div>
+
+        <div style="background:#FFFFFF;padding:0.85rem;border-radius:var(--radius-sm);display:inline-block;margin:0.5rem auto;">
+          ${KronaCore.renderQrSvg(pkg.claimToken || pkg.claimVerificationCode, pkg.folio)}
+        </div>
+
+        <div style="margin-top:0.75rem;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;">
+            CÓDIGO DE RETIRO PARA CAJA
+          </div>
+          <div class="mono num-tabular" style="font-size:1.85rem;font-weight:700;letter-spacing:0.12em;color:var(--accent-emerald-hover);margin:0.25rem 0;">
+            ${pkg.claimVerificationCode}
+          </div>
+        </div>
+
+        <div style="background:var(--bg-abyss);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:0.65rem;margin:0.75rem 0;font-size:0.74rem;color:var(--text-muted);text-align:left;line-height:1.4;">
+          <div>• <strong>Sede:</strong> ${pkg.storeName || pkg.storeId}</div>
+          <div>• <strong>Modalidad:</strong> ${pkg.purpose}</div>
+          <div>• <strong>Ubicación en Bóveda:</strong> ${pkg.vaultLocation}</div>
+          <div>• <strong>Contenido:</strong> ${pkg.itemsSummary}</div>
+        </div>
+
+        <div style="font-size:0.73rem;color:var(--accent-gold-hover);line-height:1.4;margin-bottom:1rem;">
+          ⚠️ <em>Muestra este código o QR al personal de mostrador para que cotejen las fotos de ingreso y liberen tus cartas.</em>
+        </div>
+
+        <button type="button" class="btn btn-slate btn-block" onclick="closeWalletClaimModal()">
+          Entendido / Cerrar Comprobante
+        </button>
+      `;
+
+      KronaCore.openModal('walletClaimModal');
+    }
+
+    function closeWalletClaimModal() {
+      KronaCore.closeModal('walletClaimModal');
+    }
+  </script>
+</body>
+</html>

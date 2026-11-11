@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA IAM™ — Control de Acceso, Staff y Permisos RBAC | KRONA VAULT™</title>
+  <meta name="description" content="Gestión centralizada de identidad y accesos (IAM): alta de personal, matriz de permisos de 6 roles, fusión de cuentas duplicadas y resguardo de padrón." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/users" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/users" />
+  <meta property="og:title" content="KRONA IAM™ — Control de Acceso y Gestión de Staff | KRONA VAULT™" />
+  <meta property="og:description" content="Administración de usuarios, roles operativos RBAC y seguridad de cuentas en KRONA VAULT™." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA IAM™ — Control de Usuarios" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA IAM™ — Control de Acceso y Gestión de Staff" />
+  <meta name="twitter:description" content="Control de usuarios, roles de tienda y políticas de menor privilegio." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip">
+      <div>
+        <div class="page-eyebrow">ADMINISTRACIÓN DE PADRÓN Y ROLES · /users</div>
+        <h1 class="page-title">KRONA IAM™ — Alta de Usuarios, Asignación de Roles y Fusión de Cuentas</h1>
+        <p class="page-subtitle">
+          Registra nuevo personal operativo (Gerentes, Jueces TO, Cajeros, Auditores) o Jugadores bajo el principio de menor privilegio, administra estados de cuenta y fusiona registros duplicados.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;">
+        <a href="/login" class="btn btn-slate">Matriz de los 6 Roles (/login)</a>
+        <a href="/profile" class="btn btn-gold">Mi Perfil Personal (/profile)</a>
+      </div>
+    </section>
+
+    <div class="arena-grid">
+      <!-- COLUMNA IZQUIERDA: ALTA DE NUEVO USUARIO + FUSIÓN DE CUENTAS DUPLICADAS -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+        <section class="vault-card gold-edge">
+          <div class="card-header">
+            <div class="card-title">Dar de Alta Nuevo Usuario (Staff o Jugador)</div>
+            <span id="iamActorBadge" class="badge badge-gold">RBAC GUARD</span>
+          </div>
+
+          <div id="iamRoleNotice" style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.7rem;margin-bottom:0.9rem;font-size:0.76rem;color:var(--text-secondary);"></div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="newUserFullName">Nombre Completo</label>
+              <input id="newUserFullName" type="text" placeholder="Ej. Mariana Torres" />
+            </div>
+            <div class="form-group">
+              <label for="newUserAlias">Alias / Handle Único</label>
+              <input id="newUserAlias" type="text" placeholder="Ej. @MarianaJudge" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="newUserRole">Rol Operativo a Asignar</label>
+              <select id="newUserRole">
+                <option value="PLAYER">PLAYER (Jugador / Competidor)</option>
+                <option value="CASHIER">CASHIER (Cajero de Mostrador POS)</option>
+                <option value="TOURNAMENT_ORGANIZER">TOURNAMENT_ORGANIZER (Juez / TO)</option>
+                <option value="STORE_ADMIN">STORE_ADMIN (Gerente de Sucursal)</option>
+                <option value="AUDITOR">AUDITOR (Auditor Contable — Solo Lectura)</option>
+                <option value="SUPER_ADMIN">SUPER_ADMIN (Director Corporativo)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="newUserStore">Sucursal Base Asignada</label>
+              <select id="newUserStore">
+                <option value="">GLOBAL (Todas las Sedes / Acceso Multitienda)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="newUserEmail">Correo Electrónico</label>
+              <input id="newUserEmail" type="email" placeholder="usuario@kronavault.mx" />
+            </div>
+            <div class="form-group">
+              <label for="newUserPhone">Teléfono Móvil</label>
+              <input id="newUserPhone" type="text" placeholder="+52 55 1234 5678" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="newUserPass">Contraseña Inicial</label>
+              <input id="newUserPass" type="text" value="krona2026" />
+            </div>
+            <div class="form-group">
+              <label for="newUserPin">PIN de Seguridad 6 Dígitos (Opcional — Sin asignar por defecto)</label>
+              <input id="newUserPin" type="password" placeholder="Sin asignar (El usuario lo configurará en su perfil)" maxlength="6" />
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-gold btn-block" onclick="submitCreateUser()">
+            ➕ Registrar Usuario en Padrón y Generar Semilla Criptográfica
+          </button>
+        </section>
+
+        <!-- FUSIÓN DE CUENTAS DUPLICADAS -->
+        <section id="accountMergeCard" class="vault-card">
+          <div class="card-header">
+            <div class="card-title">Fusión de Cuentas Duplicadas de Jugador (Control 4-Ojos / Four-Eyes)</div>
+            <span class="badge badge-escrow">FUSIÓN DE CUENTAS</span>
+          </div>
+          <p style="font-size:0.76rem;color:var(--text-secondary);margin-bottom:0.85rem;">
+            Si un jugador se registró rápido en un torneo y ya tenía cuenta principal, consolida todos sus lotes FEFO y saldos hacia la cuenta titular.
+          </p>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="mergePrimarySelect">Cuenta Principal (Prevalece)</label>
+              <select id="mergePrimarySelect"></select>
+            </div>
+            <div class="form-group">
+              <label for="mergeSecondarySelect">Cuenta Duplicada (Se Absorbe)</label>
+              <select id="mergeSecondarySelect"></select>
+            </div>
+          </div>
+          <button type="button" class="btn btn-slate btn-block" onclick="submitMergeAccounts()">
+            🔗 Fusionar Cuentas y Consolidar Lotes FEFO
+          </button>
+        </section>
+      </div>
+
+      <!-- COLUMNA DERECHA: DIRECTORIO MAESTRO DE USUARIOS Y CONTROL DE ACCESOS -->
+      <section class="vault-card emerald-edge">
+        <div class="card-header">
+          <div class="card-title">Padrón General de Usuarios</div>
+          <span id="usersCountBadge" class="badge badge-emerald">0 Usuarios</span>
+        </div>
+
+        <div id="usersFilterTabs" class="tactical-tabs">
+          <button type="button" id="filterTabAll" class="tactical-tab active" onclick="setUserFilter('ALL')">
+            Todos los Usuarios
+          </button>
+          <button type="button" id="filterTabStaff" class="tactical-tab" onclick="setUserFilter('STAFF')">
+            Staff & Administradores
+          </button>
+          <button type="button" id="filterTabPlayers" class="tactical-tab" onclick="setUserFilter('PLAYERS')">
+            Jugadores (PLAYERS)
+          </button>
+        </div>
+
+        <div class="table-scroll table-scroll-fixed-height">
+          <table class="krona-table">
+            <thead>
+              <tr>
+                <th>Código / Nombre</th>
+                <th>Rol / Sede</th>
+                <th>Estado</th>
+                <th>Saldo</th>
+                <th>Creado Por</th>
+                <th>Acciones IAM</th>
+              </tr>
+            </thead>
+            <tbody id="usersDirectoryBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- MODAL DE EDICIÓN / REASIGNACIÓN DE SUCURSAL Y ROL OPERATIVO -->
+    <div id="editUserModal" class="krona-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="editUserModalTitle" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem;">
+      <div class="vault-card gold-edge" style="max-width:480px;width:100%;margin:auto;box-shadow:var(--shadow-xl);">
+        <div class="card-header">
+          <div class="card-title" id="editUserModalTitle">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>Reasignar Sucursal y Rol Operativo</span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closeEditUserModal()" aria-label="Cerrar modal">✕</button>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:1rem;">
+          Modifica la sucursal de adscripción y el rol de <strong id="modalUserName" style="color:var(--accent-gold-hover);"></strong> (<span id="modalUserCode" class="mono"></span>):
+        </p>
+        <input type="hidden" id="modalUserId" />
+        <div class="form-group" style="margin-bottom:0.85rem;">
+          <label for="modalUserRole">Rol Operativo en Bóveda</label>
+          <select id="modalUserRole"></select>
+        </div>
+        <div class="form-group" style="margin-bottom:1.15rem;">
+          <label for="modalUserStore">Sucursal Base Asignada</label>
+          <select id="modalUserStore"></select>
+        </div>
+        <div style="display:flex;gap:0.65rem;">
+          <button type="button" class="btn btn-slate" style="flex:1;" onclick="closeEditUserModal()">Cancelar</button>
+          <button type="button" class="btn btn-gold" style="flex:1;" onclick="submitSaveUserAssignment()">
+            💾 Guardar Reasignación
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    let currentFilter = 'ALL';
+
+    const ROLE_LABELS = {
+      PLAYER: 'PLAYER — Jugador / Cliente Competitivo',
+      CASHIER: 'CASHIER — Cajero de Mostrador POS',
+      TOURNAMENT_ORGANIZER: 'TOURNAMENT_ORGANIZER — Juez / Organizador TO',
+      AUDITOR: 'AUDITOR — Auditor Contable (Solo Lectura)',
+      STORE_ADMIN: 'STORE_ADMIN — Gerente de Sucursal',
+      SUPER_ADMIN: 'SUPER_ADMIN — Director Corporativo',
+    };
+
+    function setUserFilter(f) {
+      currentFilter = f;
+      document.getElementById('filterTabAll').classList.toggle('active', f === 'ALL');
+      document.getElementById('filterTabStaff').classList.toggle('active', f === 'STAFF');
+      document.getElementById('filterTabPlayers').classList.toggle('active', f === 'PLAYERS');
+      const st = KronaCore.getState();
+      if (st) renderUsersPage(st);
+    }
+
+    async function submitCreateUser() {
+      const fullName = document.getElementById('newUserFullName').value.trim();
+      const alias = document.getElementById('newUserAlias').value.trim();
+      const role = document.getElementById('newUserRole').value;
+      const storeVal = document.getElementById('newUserStore').value;
+      const email = document.getElementById('newUserEmail').value.trim();
+      const phone = document.getElementById('newUserPhone').value.trim();
+      const password = document.getElementById('newUserPass').value.trim();
+      const securityPin = document.getElementById('newUserPin').value.trim();
+
+      if (!fullName || !alias) {
+        KronaCore.toast('Ingresa nombre completo y alias del nuevo usuario', true);
+        return;
+      }
+
+      try {
+        const res = await KronaCore.post('/api/users/create', {
+          fullName,
+          alias,
+          role,
+          assignedStoreId: storeVal || null,
+          email: email || undefined,
+          phone: phone || undefined,
+          password,
+          securityPin: securityPin || undefined,
+        });
+        document.getElementById('newUserFullName').value = '';
+        document.getElementById('newUserAlias').value = '';
+        document.getElementById('newUserEmail').value = '';
+        document.getElementById('newUserPhone').value = '';
+        document.getElementById('newUserPin').value = '';
+        KronaCore.toast(
+          `✅ Usuario ${res.user.fullName} (${res.user.memberCode}) creado con rol ${res.user.role}`
+        );
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    async function toggleUserStatus(userId, currentStatus) {
+      const newStatus = currentStatus === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+      const isSuspending = newStatus === 'SUSPENDED';
+      const confirmed = await KronaCore.confirm({
+        title: isSuspending ? 'Suspender Acceso de Usuario' : 'Reactivar Usuario',
+        message: isSuspending
+          ? `¿Estás seguro de suspender este usuario? No podrá iniciar sesión ni operar en sucursales.`
+          : `¿Deseas reactivar el acceso de este usuario en la plataforma?`,
+        confirmText: isSuspending ? 'Suspender Usuario' : 'Reactivar Usuario',
+        danger: isSuspending,
+      });
+      if (!confirmed) return;
+
+      try {
+        await KronaCore.post('/api/users/update', {
+          targetUserId: userId,
+          newStatus,
+          reason:
+            newStatus === 'SUSPENDED'
+              ? 'Suspensión administrativa desde KRONA IAM'
+              : 'Reactivación administrativa desde KRONA IAM',
+        });
+        KronaCore.toast(`⚙️ Estado del usuario actualizado a ${newStatus}`);
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    async function submitMergeAccounts() {
+      const primaryUserId = document.getElementById('mergePrimarySelect').value;
+      const secondaryUserId = document.getElementById('mergeSecondarySelect').value;
+      if (!primaryUserId || !secondaryUserId || primaryUserId === secondaryUserId) {
+        KronaCore.toast('Selecciona dos cuentas de jugador distintas para fusionar', true);
+        return;
+      }
+
+      const confirmed = await KronaCore.confirm({
+        title: 'Fusión Irreversible de Cuentas',
+        message: '¿Estás seguro de que deseas fusionar estas dos cuentas de jugador?',
+        details: 'El saldo y vouchers de la cuenta secundaria se transferirán permanentemente a la cuenta principal, y la secundaria quedará inactiva.',
+        confirmText: 'Ejecutar Fusión',
+        danger: true,
+      });
+      if (!confirmed) return;
+
+      try {
+        const res = await KronaCore.post('/api/admin/merge-accounts', {
+          primaryUserId,
+          secondaryUserId,
+        });
+        KronaCore.toast(
+          `🔗 Cuentas fusionadas. Nuevo saldo consolidado: ${KronaCore.fmt(res.primaryAvailableCents)}`
+        );
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    function renderUsersPage(data) {
+      if (!data || !data.sessionUser) return;
+      const su = data.sessionUser;
+      const cap = data.sessionCapabilities || {};
+      const isAdmin = su.role === 'SUPER_ADMIN' || su.role === 'STORE_ADMIN';
+      document.getElementById('iamActorBadge').textContent = `SESIÓN: ${su.role}`;
+
+      const creatable = cap.canCreateRoles || [];
+      const roleSelect = document.getElementById('newUserRole');
+      if (roleSelect) {
+        const prevRole = roleSelect.value;
+        roleSelect.innerHTML = creatable
+          .map((r) => `<option value="${r}">${ROLE_LABELS[r] || r}</option>`)
+          .join('');
+        if (creatable.includes(prevRole)) {
+          roleSelect.value = prevRole;
+        }
+      }
+
+      // Poblar dinámicamente las sucursales en el formulario de alta
+      KronaCore.populateStoreSelect('newUserStore', {
+        includeGlobal: true,
+        globalLabel: 'GLOBAL (Todas las Sedes / Acceso Multitienda)',
+      });
+
+      const mergeCard = document.getElementById('accountMergeCard');
+      if (mergeCard) {
+        mergeCard.style.display = isAdmin ? 'block' : 'none';
+      }
+
+      const filterTabs = document.getElementById('usersFilterTabs');
+      if (filterTabs) {
+        filterTabs.style.display = isAdmin ? 'flex' : 'none';
+      }
+
+      document.getElementById('iamRoleNotice').innerHTML =
+        creatable.length > 0
+          ? `Tu sesión activa como <strong>${su.fullName} (${su.role})</strong> está autorizada únicamente para dar de alta los siguientes roles: <strong>${creatable.join(', ')}</strong>.`
+          : `⚠️ Tu rol actual (<strong>${su.role}</strong>) no tiene permisos para crear usuarios.`;
+
+      const all = isAdmin ? data.allUsers || [] : (data.players || []);
+      document.getElementById('usersCountBadge').textContent = `${all.length} Registrados`;
+
+      const storeMap = new Map((data.stores || []).map((s) => [s.id, `${s.name} (${s.code})`]));
+
+      const filtered = all.filter((u) => {
+        if (!isAdmin) return u.role === 'PLAYER';
+        if (currentFilter === 'STAFF') return u.role !== 'PLAYER';
+        if (currentFilter === 'PLAYERS') return u.role === 'PLAYER';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        document.getElementById('usersDirectoryBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text-muted);">No se encontraron usuarios con el filtro seleccionado.</td></tr>';
+      } else {
+        document.getElementById('usersDirectoryBody').innerHTML = filtered
+          .map(
+            (u) => `
+            <tr>
+              <td>
+                <div class="mono" style="font-weight:700;color:var(--accent-gold-hover);">${u.memberCode}</div>
+                <div><strong>${u.fullName}</strong> <span style="color:var(--text-muted);">${u.alias}</span></div>
+                <div style="font-size:0.68rem;color:var(--text-muted);">${u.email}</div>
+              </td>
+              <td>
+                <span class="badge ${u.role === 'PLAYER' ? 'badge-emerald' : 'badge-gold'}">${u.role}</span>
+                <div class="mono" style="font-size:0.68rem;color:var(--text-secondary);margin-top:0.2rem;">
+                  Sede: ${storeMap.get(u.assignedStoreId) || (u.assignedStoreId ? u.assignedStoreId : 'GLOBAL (Todas las Sedes)')}
+                </div>
+              </td>
+              <td>
+                <span class="badge ${u.status === 'ACTIVE' ? 'badge-emerald' : 'badge-crimson'}">${u.status}</span>
+                <div style="display:flex;gap:0.3rem;margin-top:0.35rem;flex-wrap:wrap;">
+                  <span class="badge ${u.hasSecurityPin ? 'badge-emerald' : 'badge-slate'}" style="font-size:0.62rem;" title="${u.hasSecurityPin ? 'PIN de 6 dígitos activo' : 'Sin PIN de seguridad asignado'}">
+                    ${u.hasSecurityPin ? 'PIN: Activo' : 'PIN: Sin Asignar'}
+                  </span>
+                  <span class="badge ${u.hasAuthenticator ? 'badge-gold' : 'badge-slate'}" style="font-size:0.62rem;" title="${u.hasAuthenticator ? 'Sincronizado con Authenticator RFC 6238' : 'Sin Authenticator vinculado'}">
+                    ${u.hasAuthenticator ? '2FA: Vinculado' : '2FA: Pendiente'}
+                  </span>
+                </div>
+              </td>
+              <td class="num-tabular">
+                <div style="color:var(--accent-emerald-hover);font-weight:700;">
+                  Saldo: ${KronaCore.fmt(u.availableBalanceCents)}
+                </div>
+                ${u.debtBalanceCents > 0 ? `<div style="font-size:0.68rem;color:#FCA5A5;">Deuda Cta 1205: ${KronaCore.fmt(u.debtBalanceCents)}</div>` : ''}
+              </td>
+              <td class="mono" style="font-size:0.7rem;color:var(--text-secondary);">
+                ${u.createdByUserId}
+              </td>
+              <td>
+                <div class="table-action-group">
+                  ${
+                    isAdmin && u.userId !== su.userId && u.status !== 'MERGED_INACTIVE'
+                      ? `<button type="button" class="table-action-btn btn btn-slate" onclick="openEditUserModal('${u.userId}')">
+                          Editar Sede
+                        </button>
+                        <button type="button" class="table-action-btn btn ${u.status === 'ACTIVE' ? 'btn-crimson' : 'btn-emerald'}" onclick="toggleUserStatus('${u.userId}', '${u.status}')">
+                          ${u.status === 'ACTIVE' ? 'Suspender' : 'Reactivar'}
+                        </button>`
+                      : `<span class="mono" style="font-size:0.68rem;color:var(--text-muted);">Verificado</span>`
+                  }
+                </div>
+              </td>
+            </tr>
+          `
+          )
+          .join('');
+      }
+
+      const activePlayers = (data.players || []).filter((p) => p.status !== 'MERGED_INACTIVE');
+      const pOpts = activePlayers
+        .map((p) => `<option value="${p.userId}">${p.fullName} (${p.memberCode} · ${KronaCore.fmt(p.availableBalanceCents)})</option>`)
+        .join('');
+      const primSel = document.getElementById('mergePrimarySelect');
+      const secSel = document.getElementById('mergeSecondarySelect');
+      if (primSel && secSel && !primSel.innerHTML) {
+        primSel.innerHTML = pOpts;
+        secSel.innerHTML = pOpts;
+        if (activePlayers[1]) secSel.value = activePlayers[1].userId;
+      }
+    }
+
+    function openEditUserModal(userId) {
+      const state = KronaCore.getState();
+      if (!state) return;
+      const all = state.allUsers || state.players || [];
+      const user = all.find((u) => u.userId === userId);
+      if (!user) {
+        KronaCore.toast('Usuario no encontrado', true);
+        return;
+      }
+      document.getElementById('modalUserId').value = user.userId;
+      document.getElementById('modalUserName').textContent = user.fullName;
+      document.getElementById('modalUserCode').textContent = `${user.memberCode} · ${user.alias}`;
+
+      const creatable = (state.sessionCapabilities && state.sessionCapabilities.canCreateRoles) || Object.keys(ROLE_LABELS);
+      const roleSel = document.getElementById('modalUserRole');
+      roleSel.innerHTML = creatable
+        .map((r) => `<option value="${r}" ${r === user.role ? 'selected' : ''}>${ROLE_LABELS[r] || r}</option>`)
+        .join('');
+
+      KronaCore.populateStoreSelect('modalUserStore', {
+        includeGlobal: true,
+        globalLabel: 'GLOBAL (Todas las Sedes / Acceso Multitienda)',
+        selectedId: user.assignedStoreId || '',
+      });
+
+      KronaCore.openModal('editUserModal');
+    }
+
+    function closeEditUserModal() {
+      KronaCore.closeModal('editUserModal');
+    }
+
+    async function submitSaveUserAssignment() {
+      const targetUserId = document.getElementById('modalUserId').value;
+      const newRole = document.getElementById('modalUserRole').value;
+      const storeVal = document.getElementById('modalUserStore').value;
+      try {
+        await KronaCore.post('/api/users/update', {
+          targetUserId,
+          newRole,
+          newAssignedStoreId: storeVal || null,
+          reason: 'Reasignación de sucursal o rol operativo desde KRONA IAM',
+        });
+        KronaCore.toast('✅ Reasignación de sucursal y rol guardada exitosamente');
+        closeEditUserModal();
+        KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast('❌ ' + err.message, true);
+      }
+    }
+
+    KronaCore.initPage('/users', renderUsersPage);
+  </script>
+</body>
+</html>

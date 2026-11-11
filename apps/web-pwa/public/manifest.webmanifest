@@ -1,0 +1,103 @@
+{
+  "id": "/wallet",
+  "name": "KRONA VAULT™ — Ecosistema TCG Fintech & Bóveda Táctica",
+  "short_name": "KRONA Vault",
+  "description": "Ecosistema Multi-Portal de Crédito de Torneos, KRONA Pass PWA, Resguardo de Cartas en Bóveda, Terminal POS con Vouchers VaultSeal™ y Contabilidad de Partida Doble",
+  "start_url": "/wallet",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07090E",
+  "theme_color": "#07090E",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "categories": [
+    "finance",
+    "business",
+    "games",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "KRONA Pass™ — Bóveda Móvil",
+      "short_name": "Bóveda",
+      "description": "Consulta tu saldo de torneos y genera tu QR dinámico de 30s",
+      "url": "/wallet",
+      "icons": [
+        {
+          "src": "/apple-touch-icon.png",
+          "sizes": "180x180"
+        }
+      ]
+    },
+    {
+      "name": "KRONA Terminal™ — Punto de Venta",
+      "short_name": "Terminal POS",
+      "description": "Mostrador de cobro, redención de crédito y voucher térmico",
+      "url": "/pos",
+      "icons": [
+        {
+          "src": "/apple-touch-icon.png",
+          "sizes": "180x180"
+        }
+      ]
+    },
+    {
+      "name": "KRONA Arena™ — Torneos TCG",
+      "short_name": "Torneos",
+      "description": "Gestión de torneos suizos, pozos por ocupación y liquidación",
+      "url": "/tournaments",
+      "icons": [
+        {
+          "src": "/apple-touch-icon.png",
+          "sizes": "180x180"
+        }
+      ]
+    },
+    {
+      "name": "KRONA Custody™ — Bóveda de Resguardo",
+      "short_name": "Resguardo",
+      "description": "Ingreso y entrega segura de cartas singles de alto valor",
+      "url": "/custody",
+      "icons": [
+        {
+          "src": "/apple-touch-icon.png",
+          "sizes": "180x180"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}

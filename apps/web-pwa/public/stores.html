@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Stores™ — Configuración Multi-Sede y Parámetros Fiscales | KRONA VAULT™</title>
+  <meta name="description" content="Administración de sucursales y franquicias TCG: altas de sedes, prefijos de vouchers, catálogo de categorías FEFO y orígenes contables de crédito." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <link rel="canonical" href="https://vault.kronatcg.com/stores" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/stores" />
+  <meta property="og:title" content="KRONA Stores™ — Administración Multi-Sede y Sucursales | KRONA VAULT™" />
+  <meta property="og:description" content="Configuración de sucursales, parámetros fiscales y políticas de crédito en red comercial TCG." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA Stores™ — Administración de Sedes" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Stores™ — Administración Multi-Sede y Sucursales" />
+  <meta name="twitter:description" content="Configuración de sedes, prefijos térmicos y políticas multi-tienda en KRONA VAULT™." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <section class="page-hero-strip">
+      <div>
+        <div class="page-eyebrow">CONFIGURACIÓN DE RED Y FRANQUICIA · /stores</div>
+        <h1 class="page-title">KRONA Stores™ — Catálogo de Sedes, Sucursales y Parámetros Operativos</h1>
+        <p class="page-subtitle">
+          Administra las sucursales de tu red comercial, da de alta nuevas sedes, edita razones sociales, prefijos de vouchers térmicos 80mm, direcciones físicas y activa, pausa o retira sucursales bajo auditoría inmutable.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+        <button type="button" class="btn btn-gold" onclick="switchStoresTab('CATEGORIES')">
+          Catálogo de Categorías FEFO
+        </button>
+        <button type="button" class="btn btn-emerald" onclick="switchStoresTab('CREDIT_SOURCES')">
+          Catálogo de Orígenes de Crédito
+        </button>
+        <a href="/" data-require-portal="/" class="btn btn-slate">Nexus Hub (/)</a>
+        <a href="/audit" data-require-portal="/audit" class="btn btn-slate">Políticas & Bóveda (/audit)</a>
+      </div>
+    </section>
+
+    <div class="arena-grid">
+      <!-- COLUMNA IZQUIERDA: FORMULARIOS DE ALTA, EDICIÓN Y CATÁLOGOS -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+        
+        <!-- SELECTOR PRINCIPAL DE PESTAÑAS: SEDES VS CATEGORÍAS VS ORÍGENES DE CRÉDITO -->
+        <div style="display:flex;gap:0.4rem;background:var(--bg-abyss);padding:0.4rem;border-radius:var(--radius-sm);border:1px solid var(--border-default);flex-wrap:wrap;">
+          <button type="button" id="tabBtnStores" class="btn btn-gold" style="flex:1;min-width:130px;font-size:0.78rem;padding:0.5rem 0.55rem;" onclick="switchStoresTab('STORES')">
+            Registro de Sedes
+          </button>
+          <button type="button" id="tabBtnCategories" class="btn btn-slate" style="flex:1;min-width:145px;font-size:0.78rem;padding:0.5rem 0.55rem;" onclick="switchStoresTab('CATEGORIES')">
+            Categorías FEFO
+          </button>
+          <button type="button" id="tabBtnCreditSources" class="btn btn-slate" style="flex:1;min-width:150px;font-size:0.78rem;padding:0.5rem 0.55rem;" onclick="switchStoresTab('CREDIT_SOURCES')">
+            Orígenes de Crédito
+          </button>
+        </div>
+
+        <!-- CARD 1: ALTA DE NUEVA SUCURSAL -->
+        <section id="createStoreSection" class="vault-card gold-edge">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4M5 21V10.85M19 21V10.85M9 21v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/></svg>
+              <span>Dar de Alta Nueva Sucursal</span>
+            </div>
+            <span class="badge badge-gold">SUPER_ADMIN</span>
+          </div>
+
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;font-size:0.77rem;color:var(--text-secondary);line-height:1.5;">
+            Cada sucursal opera con su propio prefijo de voucher físico térmico, dirección fiscal y asignación de personal para arqueos de caja y torneos locales.
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="newStoreName">Nombre Comercial de la Sede</label>
+              <input id="newStoreName" type="text" placeholder="Ej. Sucursal Plaza Satélite" />
+            </div>
+            <div class="form-group">
+              <label for="newStoreCode">Código Identificador (Opcional)</label>
+              <input id="newStoreCode" type="text" placeholder="Ej. SUC-SATELITE (Auto si vacío)" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="newStoreTaxId">RFC / Tax ID Fiscal</label>
+              <input id="newStoreTaxId" type="text" placeholder="Ej. RTT260101AAA" />
+            </div>
+            <div class="form-group">
+              <label for="newStoreVoucherPrefix">Prefijo de Voucher Térmico</label>
+              <input id="newStoreVoucherPrefix" type="text" placeholder="Ej. VCH-SAT (Auto si vacío)" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="newStoreAddress">Dirección Física de la Tienda</label>
+            <input id="newStoreAddress" type="text" placeholder="Ej. Circuito Comercial #402, Local 18, Naucalpan" />
+          </div>
+
+          <div class="form-group">
+            <label for="newStoreActive">Estado Operativo Inicial</label>
+            <select id="newStoreActive">
+              <option value="1">Activa (Lista para operaciones de caja y torneos)</option>
+              <option value="0">Pausada (Cierre temporal o preparación de apertura)</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-gold btn-block" onclick="submitCreateStore()">
+            <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Registrar Sucursal en la Red Comercial</span>
+          </button>
+        </section>
+
+        <!-- CARD 2: EDICIÓN DE SUCURSAL EXISTENTE -->
+        <section id="editStoreSection" class="vault-card" style="display:none;border-color:var(--accent-emerald);">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              <span>Editar Sucursal: <span id="editStoreHeaderTitle" style="color:var(--accent-emerald-hover);"></span></span>
+            </div>
+            <span class="badge badge-emerald">MODO EDICIÓN</span>
+          </div>
+
+          <input type="hidden" id="editStoreId" />
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="editStoreName">Nombre Comercial</label>
+              <input id="editStoreName" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="editStoreCode">Código Identificador (SUC-XXX)</label>
+              <input id="editStoreCode" type="text" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="editStoreTaxId">RFC / Tax ID</label>
+              <input id="editStoreTaxId" type="text" />
+            </div>
+            <div class="form-group">
+              <label for="editStoreVoucherPrefix">Prefijo de Voucher</label>
+              <input id="editStoreVoucherPrefix" type="text" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editStoreAddress">Dirección Física</label>
+            <input id="editStoreAddress" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="editStoreActive">Estado Operativo</label>
+            <select id="editStoreActive">
+              <option value="1">Activa (Operación normal)</option>
+              <option value="0">Pausada (Cierre temporal / Fuera de servicio)</option>
+            </select>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;margin-top:0.75rem;">
+            <button type="button" class="btn btn-emerald" style="flex:1;" onclick="submitUpdateStore()">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+              <span>Guardar Cambios</span>
+            </button>
+            <button type="button" class="btn btn-slate" onclick="cancelEditStore()">
+              Cancelar
+            </button>
+          </div>
+        </section>
+
+        <!-- CARD 3: CATÁLOGO DE CATEGORÍAS DE PRODUCTO (REGLAS FEFO) -->
+        <section id="categoriesStoreSection" class="vault-card gold-edge" style="display:none;">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <span>Catálogo de Categorías FEFO: <span id="catStoreHeaderTitle" style="color:var(--accent-gold-hover);"></span></span>
+            </div>
+            <span class="badge badge-gold">CATÁLOGO POR SEDE</span>
+          </div>
+
+          <!-- SELECTOR DE SUCURSAL DENTRO DEL CATÁLOGO -->
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:0.85rem;">
+            <label for="catStoreSelect" style="font-size:0.78rem;font-weight:600;color:var(--accent-gold-hover);display:block;margin-bottom:0.35rem;">
+              Sucursal Activa para el Catálogo de Categorías:
+            </label>
+            <select id="catStoreSelect" onchange="openCategoriesStore(this.value)" style="width:100%;font-size:0.85rem;padding:0.45rem 0.7rem;background:var(--bg-slate);border:1px solid var(--border-default);color:var(--text-primary);"></select>
+          </div>
+
+          <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:0.85rem;line-height:1.5;">
+            Personaliza las categorías autorizadas para redención de crédito en mostrador. Los lotes de crédito y el POS respetarán las categorías activas de esta sede.
+          </p>
+
+          <input type="hidden" id="catStoreId" />
+
+          <!-- LISTA DINÁMICA DE CATEGORÍAS -->
+          <div id="catItemsContainer" style="display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1rem;">
+          </div>
+
+          <!-- AGREGAR NUEVA CATEGORÍA -->
+          <div style="background:var(--bg-abyss);border:1px dashed var(--border-default);border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:1rem;">
+            <div style="font-size:0.74rem;font-weight:600;color:var(--accent-gold-hover);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.04em;">
+              + Agregar Nueva Categoría a Esta Sede
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group" style="margin-bottom:0.4rem;">
+                <label for="newCatCode" style="font-size:0.72rem;">Código (ej. BOARD_GAMES, COMICS)</label>
+                <input id="newCatCode" type="text" placeholder="BOARD_GAMES" style="font-size:0.82rem;" />
+              </div>
+              <div class="form-group" style="margin-bottom:0.4rem;">
+                <label for="newCatName" style="font-size:0.72rem;">Nombre Comercial</label>
+                <input id="newCatName" type="text" placeholder="Juegos de Mesa y Miniaturas" style="font-size:0.82rem;" />
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0.5rem;">
+              <label for="newCatDesc" style="font-size:0.72rem;">Descripción / Ejemplos</label>
+              <input id="newCatDesc" type="text" placeholder="Catan, Carcassonne, Warhammer, D&D" style="font-size:0.82rem;" />
+            </div>
+            <button type="button" class="btn btn-slate" style="font-size:0.75rem;padding:0.35rem 0.75rem;" onclick="addCategoryToLocalList()">
+              + Añadir al Catálogo
+            </button>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;">
+            <button type="button" class="btn btn-gold" style="flex:1;" onclick="submitUpdateCategories()">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              <span>Guardar Catálogo de la Sede</span>
+            </button>
+            <button type="button" class="btn btn-slate" onclick="closeCategoriesStore()">
+              Cerrar
+            </button>
+          </div>
+        </section>
+
+        <!-- CARD 4: CATÁLOGO DE ORÍGENES CONTABLES DEL CRÉDITO -->
+        <section id="creditSourcesStoreSection" class="vault-card emerald-edge" style="display:none;">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <span>Catálogo de Orígenes de Crédito: <span id="sourceStoreHeaderTitle" style="color:var(--accent-emerald-hover);"></span></span>
+            </div>
+            <span class="badge badge-emerald">PARTIDA DOBLE</span>
+          </div>
+
+          <!-- SELECTOR DE SUCURSAL DENTRO DEL CATÁLOGO -->
+          <div style="background:var(--bg-abyss);border:1px solid var(--border-emerald);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:0.85rem;">
+            <label for="sourceStoreSelect" style="font-size:0.78rem;font-weight:600;color:var(--accent-emerald-hover);display:block;margin-bottom:0.35rem;">
+              Sucursal Activa para el Catálogo de Orígenes de Crédito:
+            </label>
+            <select id="sourceStoreSelect" onchange="openCreditSourcesStore(this.value)" style="width:100%;font-size:0.85rem;padding:0.45rem 0.7rem;background:var(--bg-slate);border:1px solid var(--border-default);color:var(--text-primary);"></select>
+          </div>
+
+          <p style="font-size:0.77rem;color:var(--text-secondary);margin-bottom:0.85rem;line-height:1.5;">
+            Personaliza los motivos comerciales para la emisión de crédito en mostrador y torneos. Cada origen define su cuenta contable de egreso/activo y vigencia por defecto, garantizando el balance en partida doble.
+          </p>
+
+          <input type="hidden" id="sourceStoreId" />
+
+          <!-- LISTA DINÁMICA DE ORÍGENES DE CRÉDITO -->
+          <div id="sourceItemsContainer" style="display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1rem;">
+          </div>
+
+          <!-- AGREGAR NUEVO ORIGEN -->
+          <div style="background:var(--bg-abyss);border:1px dashed var(--border-emerald);border-radius:var(--radius-sm);padding:0.85rem;margin-bottom:1rem;">
+            <div style="font-size:0.74rem;font-weight:600;color:var(--accent-emerald-hover);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.04em;">
+              + Agregar Nuevo Origen Contable a Esta Sede
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group" style="margin-bottom:0.4rem;">
+                <label for="newSourceCode" style="font-size:0.72rem;">Código (ej. STREAM_RAFFLE, BULK_BUYBACK)</label>
+                <input id="newSourceCode" type="text" placeholder="STREAM_RAFFLE" style="font-size:0.82rem;" />
+              </div>
+              <div class="form-group" style="margin-bottom:0.4rem;">
+                <label for="newSourceName" style="font-size:0.72rem;">Nombre Comercial del Origen</label>
+                <input id="newSourceName" type="text" placeholder="Rifa de Comunidad en Stream" style="font-size:0.82rem;" />
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group" style="margin-bottom:0.4rem;">
+                <label for="newSourceAccount" style="font-size:0.72rem;">Cuenta Contable (Partida Doble)</label>
+                <select id="newSourceAccount" style="font-size:0.82rem;">
+                  <option value="1105">Cta 1105 - Inventario Singles / Bulk (Trade-In)</option>
+                  <option value="5102" selected>Cta 5102 - Gasto Promocional / Rifas / Subsidios</option>
+                  <option value="5103">Cta 5103 - Honorarios de Staff y Jueces</option>
+                  <option value="5104">Cta 5104 - Gasto de Fidelización y Campañas</option>
+                  <option value="5105">Cta 5105 - Ajustes Contables Auditados</option>
+                  <option value="5101">Cta 5101 - Costo de Premios de Torneo (OP)</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0.4rem;">
+                <label for="newSourceExpiry" style="font-size:0.72rem;">Vigencia por Defecto (Días)</label>
+                <input id="newSourceExpiry" type="number" value="180" min="0" max="730" style="font-size:0.82rem;" />
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0.5rem;">
+              <label for="newSourceDesc" style="font-size:0.72rem;">Descripción / Justificación Operativa</label>
+              <input id="newSourceDesc" type="text" placeholder="Abonos concedidos durante transmisiones en vivo y sorteos de mesa" style="font-size:0.82rem;" />
+            </div>
+            <button type="button" class="btn btn-slate" style="font-size:0.75rem;padding:0.35rem 0.75rem;" onclick="addCreditSourceToLocalList()">
+              + Añadir Origen al Catálogo
+            </button>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;">
+            <button type="button" class="btn btn-emerald" style="flex:1;" onclick="submitUpdateCreditSources()">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              <span>Guardar Catálogo de Orígenes de la Sede</span>
+            </button>
+            <button type="button" class="btn btn-slate" onclick="closeCreditSourcesStore()">
+              Cerrar
+            </button>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- COLUMNA DERECHA: DIRECTORIO DE SUCURSALES EN VIVO -->
+      <div style="display:flex;flex-direction:column;gap:1.25rem;">
+        <section class="vault-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Red de Sucursales Activa</span>
+            </div>
+            <span id="storesCountBadge" class="badge badge-emerald">0 Sedes</span>
+          </div>
+
+          <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:1rem;">
+            Lista de todas las sedes registradas en el Libro Mayor. Selecciona cualquier sucursal para editar sus parámetros o modificar su disponibilidad operativa:
+          </p>
+
+          <div id="storesDirectoryList" style="display:flex;flex-direction:column;gap:0.85rem;">
+            <!-- Renderizado dinámico -->
+          </div>
+        </section>
+
+        <!-- GUÍA DE INTEGRIDAD FINANCIERA -->
+        <section class="vault-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Reglas de Integridad Contable en Tiendas</span>
+            </div>
+          </div>
+          <div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.6;">
+            <div>• <strong>Baja Lógica vs Eliminación:</strong> Si una sucursal ya emitió vouchers o tiene torneos registrados, el sistema bloquea su eliminación física para impedir descuadres en el Libro Mayor de Partida Doble. En su lugar, utiliza <em>Pausar / Desactivar</em>.</div>
+            <div style="margin-top:0.4rem;">• <strong>Prefijo de Vouchers:</strong> El prefijo (ej. <code>VCH-CEN-0001</code>) garantiza que los tickets impresos en mostrador sean inequívocos y auditables durante el arqueo y Cierre de Turno de Caja.</div>
+            <div style="margin-top:0.4rem;">• <strong>Política Multi-Tienda:</strong> Si la red opera en modo <em>ORG_POOLED</em>, los clientes pueden canjear saldo en cualquier tienda. Si opera en <em>INTER_STORE_CLEARING</em>, se registran cuentas por cobrar entre sedes.</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    let localStores = [];
+
+    async function submitCreateStore() {
+      const name = document.getElementById('newStoreName').value.trim();
+      const code = document.getElementById('newStoreCode').value.trim();
+      const taxId = document.getElementById('newStoreTaxId').value.trim();
+      const voucherPrefix = document.getElementById('newStoreVoucherPrefix').value.trim();
+      const address = document.getElementById('newStoreAddress').value.trim();
+      const isActive = document.getElementById('newStoreActive').value === '1';
+
+      if (!name) {
+        KronaCore.toast('Ingresa el nombre comercial de la sucursal', true);
+        return;
+      }
+
+      try {
+        const res = await KronaCore.post('/api/stores/create', {
+          name,
+          code,
+          legalEntityTaxId: taxId,
+          voucherPrefix,
+          address,
+          isActive,
+        });
+        KronaCore.toast(`Sucursal ${res.store.name} (${res.store.code}) dada de alta exitosamente`);
+        // Limpiar formulario
+        document.getElementById('newStoreName').value = '';
+        document.getElementById('newStoreCode').value = '';
+        document.getElementById('newStoreVoucherPrefix').value = '';
+        document.getElementById('newStoreAddress').value = '';
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    function openEditStore(storeId) {
+      const store = localStores.find((s) => s.id === storeId);
+      if (!store) return;
+
+      document.getElementById('editStoreId').value = store.id;
+      document.getElementById('editStoreHeaderTitle').textContent = `${store.name} (${store.code})`;
+      document.getElementById('editStoreName').value = store.name;
+      document.getElementById('editStoreCode').value = store.code;
+      document.getElementById('editStoreTaxId').value = store.legalEntityTaxId || '';
+      document.getElementById('editStoreVoucherPrefix').value = store.voucherPrefix || '';
+      document.getElementById('editStoreAddress').value = store.address || '';
+      document.getElementById('editStoreActive').value = store.isActive ? '1' : '0';
+
+      document.getElementById('editStoreSection').style.display = 'block';
+      document.getElementById('createStoreSection').style.display = 'none';
+      document.getElementById('editStoreSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelEditStore() {
+      document.getElementById('editStoreSection').style.display = 'none';
+      document.getElementById('createStoreSection').style.display = 'block';
+    }
+
+    async function submitUpdateStore() {
+      const storeId = document.getElementById('editStoreId').value;
+      const name = document.getElementById('editStoreName').value.trim();
+      const code = document.getElementById('editStoreCode').value.trim();
+      const taxId = document.getElementById('editStoreTaxId').value.trim();
+      const voucherPrefix = document.getElementById('editStoreVoucherPrefix').value.trim();
+      const address = document.getElementById('editStoreAddress').value.trim();
+      const isActive = document.getElementById('editStoreActive').value === '1';
+
+      if (!name) {
+        KronaCore.toast('El nombre de la sucursal es obligatorio', true);
+        return;
+      }
+
+      try {
+        const res = await KronaCore.post('/api/stores/update', {
+          storeId,
+          name,
+          code,
+          legalEntityTaxId: taxId,
+          voucherPrefix,
+          address,
+          isActive,
+        });
+        KronaCore.toast(`Sucursal ${res.store.name} actualizada correctamente`);
+        cancelEditStore();
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    async function toggleStoreActive(storeId, currentActive) {
+      const nextActive = !currentActive;
+      const actionLabel = nextActive ? 'activar y reabrir' : 'pausar y desactivar temporalmente';
+      const confirmed = await KronaCore.confirm({
+        title: nextActive ? '¿Reactivar Sucursal?' : '¿Pausar Sucursal?',
+        message: `¿Estás seguro de que deseas ${actionLabel} esta sucursal?`,
+        confirmText: nextActive ? 'Reactivar Sucursal' : 'Pausar Operación',
+        danger: !nextActive,
+      });
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        const res = await KronaCore.post('/api/stores/toggle-active', {
+          storeId,
+          isActive: nextActive,
+          reason: nextActive ? 'Reapertura operativa por administración' : 'Cierre temporal / Pausa operativa',
+        });
+        KronaCore.toast(`Sucursal ${res.store.name} marcada como ${nextActive ? 'ACTIVA' : 'INACTIVA'}`);
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    async function deleteStore(storeId, storeName) {
+      const confirmed = await KronaCore.confirm({
+        title: 'Eliminar Sucursal Permanentemente',
+        message: `¿Eliminar definitivamente la sucursal "${storeName}"?`,
+        details: 'Solo procederá si la sucursal no contiene transacciones contables ni personal asignado.',
+        confirmText: 'Eliminar Sede',
+        danger: true,
+      });
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        await KronaCore.post('/api/stores/delete', {
+          storeId,
+          reason: 'Eliminación manual solicitada por SUPER_ADMIN',
+        });
+        KronaCore.toast(`Sucursal "${storeName}" eliminada permanentemente`);
+        if (document.getElementById('editStoreId').value === storeId) {
+          cancelEditStore();
+        }
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    let activeEditingCategories = [];
+    let activeEditingCreditSources = [];
+
+    const DEFAULT_SYSTEM_SOURCES = [
+      { code: 'SINGLES_TRADE_IN', name: 'Compra de Cartas Sueltas (Singles Trade-In)', description: 'Adquisición de cartas individuales con cargo a inventario de singles', defaultAccountCode: '1105', defaultExpiryDays: 180, isEnabled: true },
+      { code: 'RAFFLE_DOOR_PRIZE', name: 'Rifa / Door Prize de Torneo', description: 'Premios de asistencia, rifas entre rondas o dinámicas de comunidad', defaultAccountCode: '5102', defaultExpiryDays: 180, isEnabled: true },
+      { code: 'JUDGE_STAFF_BONUS', name: 'Compensación de Juez / Staff', description: 'Remuneración de jueces L1/L2, árbitros y apoyo logístico en torneos', defaultAccountCode: '5103', defaultExpiryDays: 365, isEnabled: true },
+      { code: 'PROMOTIONAL_BONUS', name: 'Bono Promocional / Campaña', description: 'Crédito de bienvenida o promociones temporales (prioridad FEFO alta)', defaultAccountCode: '5104', defaultExpiryDays: 90, isEnabled: true },
+      { code: 'BULK_BUYBACK', name: 'Compra de Lotes / Bulk TCG', description: 'Recepción de cajas de cartas comunes, infrecuentes y bulk en mostrador', defaultAccountCode: '1105', defaultExpiryDays: 180, isEnabled: true },
+      { code: 'LEAGUE_ACHIEVEMENT', name: 'Logros y Temporada de Liga', description: 'Abonos por clasificación mensual de jugadores en liga de tienda', defaultAccountCode: '5102', defaultExpiryDays: 180, isEnabled: true },
+      { code: 'MANUAL_ADJUSTMENT', name: 'Ajuste Manual Contable Autorizado', description: 'Ajuste auditado con requerimiento de co-autorización 4-Ojos', defaultAccountCode: '5105', defaultExpiryDays: 180, isEnabled: true },
+    ];
+
+    function switchStoresTab(tab) {
+      const isCat = tab === 'CATEGORIES';
+      const isSource = tab === 'CREDIT_SOURCES';
+      const isStore = !isCat && !isSource;
+
+      const btnStores = document.getElementById('tabBtnStores');
+      const btnCats = document.getElementById('tabBtnCategories');
+      const btnSources = document.getElementById('tabBtnCreditSources');
+
+      if (btnStores) btnStores.className = isStore ? 'btn btn-gold' : 'btn btn-slate';
+      if (btnCats) btnCats.className = isCat ? 'btn btn-gold' : 'btn btn-slate';
+      if (btnSources) btnSources.className = isSource ? 'btn btn-emerald' : 'btn btn-slate';
+
+      const createSec = document.getElementById('createStoreSection');
+      const editSec = document.getElementById('editStoreSection');
+      const catSec = document.getElementById('categoriesStoreSection');
+      const srcSec = document.getElementById('creditSourcesStoreSection');
+
+      createSec.style.display = isStore ? 'block' : 'none';
+      editSec.style.display = 'none';
+      catSec.style.display = isCat ? 'block' : 'none';
+      srcSec.style.display = isSource ? 'block' : 'none';
+
+      if (isCat) {
+        populateCategoryStoreSelect();
+        const sel = document.getElementById('catStoreSelect');
+        const targetStoreId = sel?.value || KronaCore.getSelectedStoreId() || (localStores[0] && localStores[0].id);
+        if (targetStoreId) {
+          openCategoriesStore(targetStoreId, false);
+        }
+      } else if (isSource) {
+        populateCreditSourceStoreSelect();
+        const sel = document.getElementById('sourceStoreSelect');
+        const targetStoreId = sel?.value || KronaCore.getSelectedStoreId() || (localStores[0] && localStores[0].id);
+        if (targetStoreId) {
+          openCreditSourcesStore(targetStoreId, false);
+        }
+      }
+    }
+
+    function populateCategoryStoreSelect(selectedId) {
+      const sel = document.getElementById('catStoreSelect');
+      if (!sel || localStores.length === 0) return;
+      const targetId = selectedId || sel.value || KronaCore.getSelectedStoreId() || localStores[0].id;
+      sel.innerHTML = localStores.map((s) => `
+        <option value="${s.id}" ${s.id === targetId ? 'selected' : ''}>${s.name} (${s.code}) ${s.isActive ? '· Activa' : '· Pausada'}</option>
+      `).join('');
+      if (targetId) sel.value = targetId;
+    }
+
+    function populateCreditSourceStoreSelect(selectedId) {
+      const sel = document.getElementById('sourceStoreSelect');
+      if (!sel || localStores.length === 0) return;
+      const targetId = selectedId || sel.value || KronaCore.getSelectedStoreId() || localStores[0].id;
+      sel.innerHTML = localStores.map((s) => `
+        <option value="${s.id}" ${s.id === targetId ? 'selected' : ''}>${s.name} (${s.code}) ${s.isActive ? '· Activa' : '· Pausada'}</option>
+      `).join('');
+      if (targetId) sel.value = targetId;
+    }
+
+    function openCategoriesStore(storeId, doScroll = true) {
+      const effId = storeId || document.getElementById('catStoreSelect')?.value || KronaCore.getSelectedStoreId();
+      const store = localStores.find((s) => s.id === effId) || localStores[0];
+      if (!store) return;
+
+      populateCategoryStoreSelect(store.id);
+
+      const btnStores = document.getElementById('tabBtnStores');
+      const btnCats = document.getElementById('tabBtnCategories');
+      const btnSources = document.getElementById('tabBtnCreditSources');
+      if (btnStores) btnStores.className = 'btn btn-slate';
+      if (btnCats) btnCats.className = 'btn btn-gold';
+      if (btnSources) btnSources.className = 'btn btn-slate';
+
+      document.getElementById('catStoreId').value = store.id;
+      document.getElementById('catStoreHeaderTitle').textContent = `${store.name} (${store.code})`;
+
+      const defaultCats = [
+        { code: 'SEALED_PRODUCT', name: 'Producto Sellado (Sobres / Cajas / Bundles)', description: 'Boosters, Bundles, Commander Decks, Displays', isEnabled: true },
+        { code: 'SINGLES', name: 'Cartas Sueltas / Singles TCG', description: 'Cartas individuales, foils, showcase, graded', isEnabled: true },
+        { code: 'ACCESSORIES', name: 'Accesorios (Micas / Deckboxes / Playmats)', description: 'Protectores Dragon Shield, carpetas, dados, tapetes', isEnabled: true },
+        { code: 'TOURNAMENT_ENTRY', name: 'Inscripción a Torneo', description: 'Buy-in de eventos locales, ligas y preliminares', isEnabled: true },
+        { code: 'SNACKS_DRINKS', name: 'Snacks y Bebidas', description: 'Alimentos y refrigerios en mostrador', isEnabled: true },
+      ];
+
+      activeEditingCategories = (store.productCategories && store.productCategories.length > 0)
+        ? JSON.parse(JSON.stringify(store.productCategories))
+        : JSON.parse(JSON.stringify(defaultCats));
+
+      renderCategoryItems();
+
+      document.getElementById('categoriesStoreSection').style.display = 'block';
+      document.getElementById('creditSourcesStoreSection').style.display = 'none';
+      document.getElementById('editStoreSection').style.display = 'none';
+      document.getElementById('createStoreSection').style.display = 'none';
+      if (doScroll) {
+        document.getElementById('categoriesStoreSection').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function closeCategoriesStore() {
+      switchStoresTab('STORES');
+    }
+
+    function renderCategoryItems() {
+      const container = document.getElementById('catItemsContainer');
+      if (!container) return;
+
+      if (activeEditingCategories.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted);font-size:0.75rem;padding:0.5rem;">No hay categorías configuradas para esta sede. Agrega la primera abajo.</div>';
+        return;
+      }
+
+      container.innerHTML = activeEditingCategories.map((cat, idx) => {
+        const isEnabled = cat.isEnabled !== false;
+        return `
+          <div style="background:var(--bg-slate);border:1px solid ${isEnabled ? 'var(--border-default)' : 'var(--border-subtle)'};opacity:${isEnabled ? '1' : '0.65'};border-radius:var(--radius-sm);padding:0.65rem 0.85rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:0.65rem;flex:1;min-width:200px;">
+              <input type="checkbox" id="catChk_${idx}" ${isEnabled ? 'checked' : ''} onchange="toggleCategoryEnabled(${idx})" style="cursor:pointer;accent-color:var(--accent-gold);" />
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+                  <strong style="font-size:0.83rem;color:${isEnabled ? 'var(--text-primary)' : 'var(--text-muted)'};">${cat.name}</strong>
+                  <span class="mono" style="font-size:0.68rem;padding:1px 5px;background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:3px;color:var(--accent-gold-hover);">${cat.code}</span>
+                  ${isEnabled ? '<span class="badge badge-emerald" style="font-size:0.62rem;padding:1px 5px;">Habilitada POS</span>' : '<span class="badge badge-crimson" style="font-size:0.62rem;padding:1px 5px;">Deshabilitada</span>'}
+                </div>
+                ${cat.description ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.2rem;">${cat.description}</div>` : ''}
+              </div>
+            </div>
+            <button type="button" class="btn btn-slate" style="padding:0.2rem 0.5rem;font-size:0.7rem;color:var(--status-crimson);" onclick="removeCategoryItem(${idx})" title="Eliminar del catálogo">
+              ✕
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleCategoryEnabled(index) {
+      if (activeEditingCategories[index]) {
+        activeEditingCategories[index].isEnabled = !activeEditingCategories[index].isEnabled;
+        renderCategoryItems();
+      }
+    }
+
+    function removeCategoryItem(index) {
+      if (activeEditingCategories[index]) {
+        activeEditingCategories.splice(index, 1);
+        renderCategoryItems();
+      }
+    }
+
+    function addCategoryToLocalList() {
+      const codeInput = document.getElementById('newCatCode');
+      const nameInput = document.getElementById('newCatName');
+      const descInput = document.getElementById('newCatDesc');
+
+      let code = (codeInput?.value || '').trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+      const name = (nameInput?.value || '').trim();
+      const description = (descInput?.value || '').trim();
+
+      if (!name) {
+        KronaCore.toast('Ingresa el nombre comercial de la categoría', true);
+        return;
+      }
+      if (!code) {
+        code = name.toUpperCase().replace(/[^A-Z0-9]/g, '_').slice(0, 24);
+      }
+
+      if (activeEditingCategories.some((c) => c.code === code)) {
+        KronaCore.toast(`Ya existe una categoría con el código ${code}`, true);
+        return;
+      }
+
+      activeEditingCategories.push({
+        code,
+        name,
+        description,
+        isEnabled: true,
+      });
+
+      codeInput.value = '';
+      nameInput.value = '';
+      descInput.value = '';
+      renderCategoryItems();
+      KronaCore.toast(`Categoría "${name}" agregada a la lista local. Haz clic en Guardar para persistirla.`);
+    }
+
+    async function submitUpdateCategories() {
+      const storeId = document.getElementById('catStoreId').value;
+      if (!storeId) return;
+
+      try {
+        const res = await KronaCore.post('/api/stores/categories', {
+          storeId,
+          categories: activeEditingCategories,
+        });
+        KronaCore.toast(`Catálogo de categorías actualizado para ${res.store.name} (${activeEditingCategories.filter(c => c.isEnabled).length} activas)`);
+        closeCategoriesStore();
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    // ==========================================
+    // GESTIÓN DE ORÍGENES CONTABLES DE CRÉDITO
+    // ==========================================
+
+    function openCreditSourcesStore(storeId, doScroll = true) {
+      const effId = storeId || document.getElementById('sourceStoreSelect')?.value || KronaCore.getSelectedStoreId();
+      const store = localStores.find((s) => s.id === effId) || localStores[0];
+      if (!store) return;
+
+      populateCreditSourceStoreSelect(store.id);
+
+      const btnStores = document.getElementById('tabBtnStores');
+      const btnCats = document.getElementById('tabBtnCategories');
+      const btnSources = document.getElementById('tabBtnCreditSources');
+      if (btnStores) btnStores.className = 'btn btn-slate';
+      if (btnCats) btnCats.className = 'btn btn-slate';
+      if (btnSources) btnSources.className = 'btn btn-emerald';
+
+      document.getElementById('sourceStoreId').value = store.id;
+      document.getElementById('sourceStoreHeaderTitle').textContent = `${store.name} (${store.code})`;
+
+      activeEditingCreditSources = (store.creditSources && store.creditSources.length > 0)
+        ? JSON.parse(JSON.stringify(store.creditSources))
+        : JSON.parse(JSON.stringify(DEFAULT_SYSTEM_SOURCES));
+
+      renderCreditSourceItems();
+
+      document.getElementById('creditSourcesStoreSection').style.display = 'block';
+      document.getElementById('categoriesStoreSection').style.display = 'none';
+      document.getElementById('editStoreSection').style.display = 'none';
+      document.getElementById('createStoreSection').style.display = 'none';
+      if (doScroll) {
+        document.getElementById('creditSourcesStoreSection').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function closeCreditSourcesStore() {
+      switchStoresTab('STORES');
+    }
+
+    function renderCreditSourceItems() {
+      const container = document.getElementById('sourceItemsContainer');
+      if (!container) return;
+
+      if (activeEditingCreditSources.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted);font-size:0.75rem;padding:0.5rem;">No hay orígenes contables configurados para esta sede. Agrega el primero abajo.</div>';
+        return;
+      }
+
+      container.innerHTML = activeEditingCreditSources.map((src, idx) => {
+        const isEnabled = src.isEnabled !== false;
+        const acctLabel = src.defaultAccountCode ? `Cta ${src.defaultAccountCode}` : 'Cta 5101';
+        return `
+          <div style="background:var(--bg-slate);border:1px solid ${isEnabled ? 'var(--border-default)' : 'var(--border-subtle)'};opacity:${isEnabled ? '1' : '0.65'};border-radius:var(--radius-sm);padding:0.65rem 0.85rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:0.65rem;flex:1;min-width:240px;">
+              <input type="checkbox" id="srcChk_${idx}" ${isEnabled ? 'checked' : ''} onchange="toggleCreditSourceEnabled(${idx})" style="cursor:pointer;accent-color:var(--accent-emerald);" />
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+                  <strong style="font-size:0.83rem;color:${isEnabled ? 'var(--text-primary)' : 'var(--text-muted)'};">${src.name}</strong>
+                  <span class="mono" style="font-size:0.68rem;padding:1px 5px;background:var(--bg-abyss);border:1px solid var(--border-default);border-radius:3px;color:var(--accent-emerald-hover);">${src.code}</span>
+                  <span class="badge badge-gold" style="font-size:0.62rem;padding:1px 5px;">${acctLabel}</span>
+                  <span class="badge badge-slate" style="font-size:0.62rem;padding:1px 5px;">${src.defaultExpiryDays ?? 180}d vigencia</span>
+                  ${isEnabled ? '<span class="badge badge-emerald" style="font-size:0.62rem;padding:1px 5px;">Activo</span>' : '<span class="badge badge-crimson" style="font-size:0.62rem;padding:1px 5px;">Deshabilitado</span>'}
+                </div>
+                ${src.description ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.2rem;">${src.description}</div>` : ''}
+              </div>
+            </div>
+            <button type="button" class="btn btn-slate" style="padding:0.2rem 0.5rem;font-size:0.7rem;color:var(--status-crimson);" onclick="removeCreditSourceItem(${idx})" title="Eliminar origen del catálogo">
+              ✕
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleCreditSourceEnabled(index) {
+      if (activeEditingCreditSources[index]) {
+        activeEditingCreditSources[index].isEnabled = !activeEditingCreditSources[index].isEnabled;
+        renderCreditSourceItems();
+      }
+    }
+
+    function removeCreditSourceItem(index) {
+      if (activeEditingCreditSources[index]) {
+        activeEditingCreditSources.splice(index, 1);
+        renderCreditSourceItems();
+      }
+    }
+
+    function addCreditSourceToLocalList() {
+      const codeInput = document.getElementById('newSourceCode');
+      const nameInput = document.getElementById('newSourceName');
+      const descInput = document.getElementById('newSourceDesc');
+      const acctInput = document.getElementById('newSourceAccount');
+      const expInput = document.getElementById('newSourceExpiry');
+
+      let code = (codeInput?.value || '').trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+      const name = (nameInput?.value || '').trim();
+      const description = (descInput?.value || '').trim();
+      const defaultAccountCode = (acctInput?.value || '5102').trim();
+      const defaultExpiryDays = Number(expInput?.value || 180);
+
+      if (!name) {
+        KronaCore.toast('Ingresa el nombre comercial del origen', true);
+        return;
+      }
+      if (!code) {
+        code = name.toUpperCase().replace(/[^A-Z0-9]/g, '_').slice(0, 24);
+      }
+
+      if (activeEditingCreditSources.some((c) => c.code === code)) {
+        KronaCore.toast(`Ya existe un origen contable con el código ${code}`, true);
+        return;
+      }
+
+      activeEditingCreditSources.push({
+        code,
+        name,
+        description,
+        defaultAccountCode,
+        defaultExpiryDays,
+        isEnabled: true,
+      });
+
+      codeInput.value = '';
+      nameInput.value = '';
+      descInput.value = '';
+      renderCreditSourceItems();
+      KronaCore.toast(`Origen "${name}" (${acctLabelFor(defaultAccountCode)}) agregado a la lista local. Haz clic en Guardar para persistirlo.`);
+    }
+
+    function acctLabelFor(code) {
+      if (code === '1105') return 'Cta 1105 Inventario';
+      if (code === '5102') return 'Cta 5102 Promocional';
+      if (code === '5103') return 'Cta 5103 Honorarios';
+      if (code === '5104') return 'Cta 5104 Fidelización';
+      if (code === '5105') return 'Cta 5105 Ajustes';
+      return `Cta ${code}`;
+    }
+
+    async function submitUpdateCreditSources() {
+      const storeId = document.getElementById('sourceStoreId').value;
+      if (!storeId) return;
+
+      try {
+        const res = await KronaCore.post('/api/stores/credit-sources', {
+          storeId,
+          creditSources: activeEditingCreditSources,
+        });
+        KronaCore.toast(`Catálogo de orígenes contables actualizado para ${res.store.name} (${activeEditingCreditSources.filter(c => c.isEnabled).length} activos)`);
+        closeCreditSourcesStore();
+        await KronaCore.refreshState();
+      } catch (err) {
+        KronaCore.toast(err.message, true);
+      }
+    }
+
+    KronaCore.initPage('/stores', (data) => {
+      localStores = (data && data.stores) || [];
+      document.getElementById('storesCountBadge').textContent = `${localStores.length} Sede${localStores.length === 1 ? '' : 's'}`;
+
+      const listEl = document.getElementById('storesDirectoryList');
+      if (localStores.length === 0) {
+        listEl.innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem;">No hay sucursales registradas. Registra la primera sede usando el formulario.</div>';
+        return;
+      }
+
+      const isSuperAdmin = data.sessionUser && data.sessionUser.role === 'SUPER_ADMIN';
+
+      listEl.innerHTML = localStores.map((s) => {
+        const activeBadge = s.isActive
+          ? '<span class="badge badge-emerald">ACTIVA (OPERATIVA)</span>'
+          : '<span class="badge badge-crimson">INACTIVA (PAUSADA)</span>';
+
+        const activeCatCount = (s.productCategories && s.productCategories.length > 0)
+          ? s.productCategories.filter((c) => c.isEnabled !== false).length
+          : 5;
+
+        const activeSourcesCount = (s.creditSources && s.creditSources.length > 0)
+          ? s.creditSources.filter((c) => c.isEnabled !== false).length
+          : 7;
+
+        return `
+          <div style="background:var(--bg-slate);border:1px solid ${s.isActive ? 'var(--border-default)' : 'var(--border-subtle)'};opacity:${s.isActive ? '1' : '0.85'};border-radius:var(--radius-sm);padding:0.95rem;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;flex-wrap:wrap;">
+              <div>
+                <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                  <strong style="font-size:0.95rem;color:var(--text-primary);">${s.name}</strong>
+                  <span class="mono" style="font-size:0.75rem;color:var(--accent-gold-hover);background:var(--bg-abyss);padding:1px 6px;border-radius:4px;border:1px solid var(--border-gold);">${s.code}</span>
+                  ${activeBadge}
+                </div>
+                <div class="mono" style="font-size:0.74rem;color:var(--text-muted);margin-top:0.35rem;">
+                  ID: <code>${s.id}</code> · Prefijo Vouchers: <strong>${s.voucherPrefix}</strong> · RFC: <strong>${s.legalEntityTaxId || 'No asignado'}</strong>
+                </div>
+                <div style="font-size:0.76rem;color:var(--text-secondary);margin-top:0.25rem;">
+                  <span style="color:var(--text-muted);">Dirección:</span> ${s.address || 'Sin dirección física registrada'}
+                </div>
+              </div>
+
+              <div style="display:flex;gap:0.45rem;flex-wrap:wrap;align-items:center;">
+                <button type="button" class="btn btn-emerald" style="min-height:38px;padding:0.4rem 0.75rem;font-size:0.75rem;" onclick="openCreditSourcesStore('${s.id}')" title="Configurar catálogo de orígenes contables de crédito de esta sede">
+                  <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <span>Orígenes (${activeSourcesCount})</span>
+                </button>
+                <button type="button" class="btn btn-gold" style="min-height:38px;padding:0.4rem 0.75rem;font-size:0.75rem;" onclick="openCategoriesStore('${s.id}')" title="Configurar catálogo de categorías FEFO de esta sede">
+                  <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                  <span>Categorías (${activeCatCount})</span>
+                </button>
+                <button type="button" class="btn btn-slate" style="min-height:38px;padding:0.4rem 0.75rem;font-size:0.75rem;" onclick="openEditStore('${s.id}')">
+                  <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  <span>Editar</span>
+                </button>
+                ${
+                  isSuperAdmin
+                    ? `
+                  <button type="button" class="btn ${s.isActive ? 'btn-crimson' : 'btn-emerald'}" style="min-height:38px;padding:0.4rem 0.75rem;font-size:0.75rem;" onclick="toggleStoreActive('${s.id}', ${Boolean(s.isActive)})">
+                    <span>${s.isActive ? 'Pausar' : 'Reactivar'}</span>
+                  </button>
+                  <button type="button" class="btn btn-slate" style="min-height:38px;padding:0.4rem 0.75rem;font-size:0.75rem;color:var(--status-crimson);" title="Eliminar definitivamente (solo sin historial)" onclick="deleteStore('${s.id}', '${s.name.replace(/'/g, "\\'")}')">
+                    <svg class="krona-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    <span>Eliminar</span>
+                  </button>
+                `
+                    : ''
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      populateCategoryStoreSelect();
+      populateCreditSourceStoreSelect();
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('tab') === 'creditSources' || window.location.hash === '#creditSources') {
+        switchStoresTab('CREDIT_SOURCES');
+      } else if (urlParams.get('tab') === 'categories' || window.location.hash === '#categories') {
+        switchStoresTab('CATEGORIES');
+      }
+    });
+  </script>
+</body>
+</html>

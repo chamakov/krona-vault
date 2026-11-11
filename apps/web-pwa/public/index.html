@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#07090E" />
+  <meta name="color-scheme" content="dark" />
+  <title>KRONA Nexus™ — Centro de Mando Multi-Sede y Ecosistema TCG | KRONA VAULT™</title>
+  <meta name="description" content="Centro de comando unificado para tiendas TCG: control de créditos de torneos, Terminal POS, resguardo de cartas en bóveda y contabilidad de partida doble." />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://vault.kronatcg.com/" />
+
+  <!-- Favicons y Web App Manifest -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRONA VAULT" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Preconnect para fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:site_name" content="KRONA VAULT™" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vault.kronatcg.com/" />
+  <meta property="og:title" content="KRONA Nexus™ — Centro de Mando Multi-Sede y Ecosistema TCG | KRONA VAULT™" />
+  <meta property="og:description" content="Infraestructura fintech para tiendas de cartas coleccionables: control de torneos, terminal POS, resguardo de singles y contabilidad de partida doble." />
+  <meta property="og:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="KRONA VAULT™ — Ecosistema TCG Fintech" />
+  <meta property="og:locale" content="es_MX" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="KRONA Nexus™ — Centro de Mando Multi-Sede y Ecosistema TCG" />
+  <meta name="twitter:description" content="Control de créditos de torneos, Terminal POS, resguardo de cartas en bóveda y contabilidad de partida doble." />
+  <meta name="twitter:image" content="https://vault.kronatcg.com/web-app-manifest-512x512.png" />
+
+  <!-- Datos Estructurados Schema.org (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://vault.kronatcg.com/#software",
+        "name": "KRONA VAULT™",
+        "alternateName": "KRONA Nexus",
+        "operatingSystem": "Web, Android, iOS, Windows, macOS (PWA)",
+        "applicationCategory": "BusinessApplication, FinancialApplication",
+        "description": "Ecosistema Multi-Portal de Crédito de Torneos TCG, KRONA Pass PWA, Resguardo de Cartas en Bóveda, Terminal POS con Vouchers VaultSeal™ y Contabilidad de Partida Doble.",
+        "url": "https://vault.kronatcg.com/",
+        "image": "https://vault.kronatcg.com/web-app-manifest-512x512.png",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "publisher": {
+          "@id": "https://vault.kronatcg.com/#organization"
+        },
+        "featureList": [
+          "Contabilidad de partida doble con balance inmutable y suma cero garantizada",
+          "Bóveda móvil del jugador KRONA Pass con QR TOTP de 30s y Bunker Mode offline",
+          "Terminal POS de mostrador con emisión de vouchers térmicos VaultSeal de 80mm",
+          "Motor de pozos para torneos suizos y Top Cut Pokémon TOM/RK9 con auto-dispersión",
+          "KRONA Custody para custodia física de cartas de alto valor con verificación Four-Eyes",
+          "Valuación de singles y adquisición de bulk en mostrador desacoplado"
+        ]
+      },
+      {
+        "@type": "FinancialService",
+        "@id": "https://vault.kronatcg.com/#service",
+        "name": "KRONA VAULT™ Financial Engine",
+        "description": "Infraestructura contable y dispersión de créditos de torneos para tiendas especializadas de juegos de cartas coleccionables.",
+        "url": "https://vault.kronatcg.com/",
+        "provider": {
+          "@id": "https://vault.kronatcg.com/#organization"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://vault.kronatcg.com/#organization",
+        "name": "KRONA VAULT Technologies",
+        "url": "https://vault.kronatcg.com",
+        "logo": "https://vault.kronatcg.com/favicon.svg"
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/styles/brand.css" />
+</head>
+<body>
+  <div id="krona-header-root"></div>
+
+  <main class="krona-container">
+    <!-- HERO CORPORATIVO -->
+    <section class="page-hero-strip">
+      <div>
+        <div class="page-eyebrow">
+          <span>KRONA VAULT™ ECOSYSTEM</span>
+          <span>•</span>
+          <span>ARQUITECTURA DISTRIBUIDA EN 11 PORTALES CON IAM & RBAC</span>
+        </div>
+        <h1 class="page-title">KRONA Nexus — Centro de Comando y Enrutamiento por Rol</h1>
+        <p class="page-subtitle">
+          Liquidez competitiva para tus jugadores, control de acceso basado en 6 roles (RBAC), gestión de torneos y trazabilidad forense de quién hizo qué.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+        <a href="/login" class="btn btn-slate">Iniciar Sesión / Cambiar Rol</a>
+        <a href="/users" class="btn btn-slate">Alta de Usuarios y Roles (Alt+5)</a>
+        <a href="/pos" class="btn btn-gold">Abrir Mostrador POS (Alt+2)</a>
+      </div>
+    </section>
+
+    <!-- 4 KPIS EJECUTIVOS EN VIVO -->
+    <section class="kpi-grid-4" aria-label="Indicadores Financieros en Tiempo Real">
+      <div class="kpi-box">
+        <div class="kpi-label">Pasivo Total en Circulación (Cta 2101)</div>
+        <div id="kpiTotalLiability" class="kpi-value" style="color:var(--accent-gold-hover);">$0.00 MXN</div>
+        <div id="kpiOrgPolicy" class="kpi-meta">Cargando política multi-tienda...</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-label">Ecuación de Partida Doble</div>
+        <div id="kpiLedgerBalance" class="kpi-value" style="color:var(--accent-emerald-hover);">$0.00 = $0.00</div>
+        <div class="kpi-meta">Σ Débitos === Σ Créditos (Invariante Zero-Sum)</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-label">Vouchers Térmicos Emitidos (VaultSeal™)</div>
+        <div id="kpiVouchersCount" class="kpi-value">0</div>
+        <div id="kpiLastVoucher" class="kpi-meta">Sin folios recientes</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-label">Cadena Forense SHA-256 + HMAC</div>
+        <div id="kpiAuditCount" class="kpi-value">0 Bloques</div>
+        <div id="kpiHeadHash" class="kpi-meta mono">HASH: ---</div>
+      </div>
+    </section>
+
+    <!-- LANZADOR DE LOS PORTALES OPERATIVOS DEDICADOS -->
+    <section class="portal-bento-grid" aria-label="Portales Especializados por Rol">
+      <!-- PORTAL 1: KRONA PASS (/wallet) -->
+      <a href="/wallet" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">ROL: JUGADOR / CLIENTE TCG</span>
+            <span class="badge badge-emerald">PWA MÓVIL · Alt+1</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            1. KRONA Pass™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/wallet)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Bóveda móvil del jugador con código dinámico <strong>KRONA Pulse™</strong> (rotación cada 30s anti-captura de pantalla), contingencia sin señal <strong>Bunker Mode™</strong> (PIN TOTP 6 dígitos), tramos de vencimiento <strong>Smart-Burn Tranches™ (FEFO)</strong> y botón de bloqueo de emergencia.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span id="cardWalletMeta" class="mono" style="font-size:0.76rem;color:var(--accent-emerald-hover);">Jugador activo: ---</span>
+          <span class="btn btn-slate" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Abrir KRONA Pass →</span>
+        </div>
+      </a>
+
+      <!-- PORTAL 2: KRONA TERMINAL (/pos) -->
+      <a href="/pos" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">ROL: CAJERO / MOSTRADOR POS</span>
+            <span class="badge badge-gold">80MM THERMAL · Alt+2</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            2. KRONA Terminal™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/pos)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Estación táctica de cobro de alta velocidad: validación en 2 pasos del jugador, cobro mixto (Crédito + Efectivo/Tarjeta), concepto unificado de redención, devoluciones con regla <strong>Anti-Cash-Out</strong> e impresora de vouchers físicos de 80mm con sello <strong>VaultSeal™</strong>.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span id="cardPosMeta" class="mono" style="font-size:0.76rem;color:var(--accent-gold-hover);">Impresora térmica lista</span>
+          <span class="btn btn-gold" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Abrir Terminal POS →</span>
+        </div>
+      </a>
+
+      <!-- PORTAL 3: KRONA ARENA (/tournaments) -->
+      <a href="/tournaments" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">ROL: JUEZ / ORGANIZADOR (TO)</span>
+            <span class="badge badge-escrow">POZOS & LIQUIDACIÓN · Alt+3</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            3. KRONA Arena™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/tournaments)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Cálculo de pozo de premios por ocupación real: importador de clasificaciones <strong>Play! Pokémon (TOM / RK9)</strong> por categorías (Master, Senior, Junior), calculadora multi-juego (MTG, YGO, One Piece, Lorcana) con <strong>Pacto Zero-Sum Split</strong> y actas térmicas oficiales.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span class="mono" style="font-size:0.76rem;color:#A5B4FC;">Liquidación Zero-Sum activa</span>
+          <span class="btn btn-slate" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Abrir KRONA Arena →</span>
+        </div>
+      </a>
+
+      <!-- PORTAL 4: KRONA TRADE-IN (/trade-in) -->
+      <a href="/trade-in" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">ROL: COMPRADOR SINGLES / CAJERO / STAFF</span>
+            <span class="badge badge-emerald">TRADE-IN & BONOS · Alt+8</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            4. KRONA Trade-In™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/trade-in)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Módulo independiente para <strong>compra de cartas sueltas (Singles)</strong>, compra de bulk TCG, <strong>rifas y door prizes</strong> de torneos y compensaciones a jueces/staff con <strong>imputación contable automática por origen</strong> y ticket térmico con firma de conformidad.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span class="mono" style="font-size:0.76rem;color:var(--accent-emerald-hover);">Cta 1105 / 5102 / 5103</span>
+          <span class="btn btn-slate" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Abrir KRONA Trade-In →</span>
+        </div>
+      </a>
+
+      <!-- PORTAL 5: KRONA CITADEL (/audit) -->
+      <a href="/audit" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">ROL: GERENCIA / CONTABILIDAD / AUDITOR</span>
+            <span class="badge badge-crimson">¿QUIÉN HIZO QUÉ? · Alt+4</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            5. KRONA Citadel™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/audit)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Bóveda contable y buscador forense <strong>"¿Quién Hizo Qué?"</strong> (filtrable por actor, rol, acción y torneo/ticket), emisión de <strong>Cierre de Turno y Arqueo de Caja</strong>, verificador criptográfico de vouchers físicos, reversos <strong>Clawback</strong> y <strong>Libro Mayor de Partida Doble</strong>.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span id="cardAuditMeta" class="mono" style="font-size:0.76rem;color:var(--accent-emerald-hover);">Cadena SHA-256 íntegra</span>
+          <span class="btn btn-slate" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Abrir KRONA Citadel →</span>
+        </div>
+      </a>
+
+      <!-- PORTAL 6: KRONA STORES (/stores) -->
+      <a href="/stores" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">ROL: SUPER_ADMIN / STORE_ADMIN</span>
+            <span class="badge badge-gold">SEDES & CATÁLOGOS · Alt+7</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            6. KRONA Stores™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/stores)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Catálogo y configuración de sedes: alta de sucursales, prefijos de vouchers, domicilios fiscales, <strong>Catálogo de Categorías FEFO</strong> y <strong>Catálogo de Orígenes Contables de Crédito</strong>.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span id="cardStoresMeta" class="mono" style="font-size:0.76rem;color:var(--accent-gold-hover);">Sedes & Catálogos Personalizables</span>
+          <span class="btn btn-slate" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Configurar Sedes y Catálogos →</span>
+        </div>
+      </a>
+
+      <!-- PORTAL 7: KRONA IAM & USERS (/users) -->
+      <a href="/users" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">ROL: ADMIN / STAFF AUTORIZADO</span>
+            <span class="badge badge-gold">ALTA & RBAC · Alt+5</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            7. KRONA IAM & Users™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/users)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Alta de nuevos usuarios (Staff y Jugadores) con validación de jerarquía RBAC, matriz de los 6 roles del sistema, directorio filtrable, suspensión o reactivación de cuentas y fusión de cuentas duplicadas (<strong>Account Merge</strong>).
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span class="mono" style="font-size:0.76rem;color:var(--accent-gold-hover);">6 Roles RBAC configurados</span>
+          <span class="btn btn-slate" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Gestionar Usuarios →</span>
+        </div>
+      </a>
+
+      <!-- PORTAL 8: KRONA PROFILE & GATE (/profile y /login) -->
+      <a href="/profile" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">TODOS LOS ROLES AUTENTICADOS</span>
+            <span class="badge badge-emerald">PERFIL & 2FA · Alt+6 / Alt+9</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            8. KRONA Profile™ & Gate™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/profile · /login)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Configuración de perfil propio (nombre, alias, email, teléfono), cambio de contraseña y PIN de 6 dígitos (para firma <strong>Four-Eyes</strong> y <strong>Bunker Mode™</strong>), rotación de semilla 2FA y bitácora personal de acciones e inicios de sesión.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span class="mono" style="font-size:0.76rem;color:var(--accent-emerald-hover);">Tokens firmados KST1</span>
+          <span class="btn btn-slate" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Configurar Mi Perfil →</span>
+        </div>
+      </a>
+
+      <!-- PORTAL 9: KRONA CUSTODY (/custody) -->
+      <a href="/custody" class="portal-launch-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
+            <span class="portal-role-pill">ROL: CAJERO / JUEZ / ADMIN</span>
+            <span class="badge badge-gold">RESGUARDO & ESCROW · Alt+C</span>
+          </div>
+          <h2 class="font-display" style="font-size:1.35rem;margin-bottom:0.35rem;">
+            9. KRONA Custody™ <span class="mono" style="font-size:0.85rem;color:var(--text-muted);">(/custody)</span>
+          </h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            Resguardo físico en caja fuerte de cartas de alto valor: recepción para <strong>envío a calificar (PSA/BGS/CGC)</strong>, <strong>consignación / Escrow P2P</strong> entre jugadores y <strong>cuarentena de barajas (Deck Check)</strong> con <strong>Comprobante Térmico de 80mm</strong>, evidencia fotográfica de precinto inviolable y entrega con <strong>Four-Eyes</strong>.
+          </p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.85rem;border-top:1px solid var(--border-subtle);">
+          <span id="cardCustodyMeta" class="mono" style="font-size:0.76rem;color:var(--accent-gold-hover);">Bóveda de Seguridad Activa</span>
+          <span class="btn btn-gold" style="padding:0.4rem 0.75rem;font-size:0.76rem;">Abrir Resguardo en Bóveda →</span>
+        </div>
+      </a>
+    </section>
+
+    <!-- RESUMEN DE SUCURSALES Y JUGADORES ACTIVOS -->
+    <section class="citadel-grid-2">
+      <div class="vault-card">
+        <div class="card-header">
+          <div class="card-title">Estado de Sucursales y Pasivo por Jugador</div>
+          <span class="badge badge-gold">LIVE DIRECTORY</span>
+        </div>
+        <div class="table-scroll">
+          <table class="krona-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Jugador / Alias</th>
+                <th>Estado</th>
+                <th>Saldo Disponible</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="nexusPlayersTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="card-header">
+          <div class="card-title">Últimas Pólizas Contables (Partida Doble)</div>
+          <a href="/audit" class="badge badge-emerald" style="text-decoration:none;">Ver Libro Mayor Completo →</a>
+        </div>
+        <div class="table-scroll">
+          <table class="krona-table">
+            <thead>
+              <tr>
+                <th>Póliza</th>
+                <th>Operación</th>
+                <th>Descripción</th>
+                <th>Cuadre (Debe = Haber)</th>
+              </tr>
+            </thead>
+            <tbody id="nexusJournalTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/krona-core.js"></script>
+  <script>
+    KronaCore.initPage('/', (data) => {
+      const totalAvail = data.players.reduce((s, p) => s + p.availableBalanceCents, 0);
+
+      document.getElementById('kpiTotalLiability').textContent = KronaCore.fmt(totalAvail);
+      document.getElementById('kpiOrgPolicy').textContent =
+        `Modo: ${data.org.sharingPolicy} · P2P: ${data.org.p2pPolicy}`;
+
+      document.getElementById('kpiLedgerBalance').textContent =
+        `${KronaCore.fmt(data.integrity.totalDebitsCents)} = ${KronaCore.fmt(data.integrity.totalCreditsCents)}`;
+
+      document.getElementById('kpiVouchersCount').textContent = `${data.vouchers.length} Vouchers`;
+      document.getElementById('kpiLastVoucher').textContent =
+        data.vouchers[0]
+          ? `Último: ${data.vouchers[0].voucherFolio} (${KronaCore.fmt(data.vouchers[0].creditAppliedCents)})`
+          : 'Sin vouchers emitidos';
+
+      document.getElementById('kpiAuditCount').textContent = `${data.integrity.auditRowsCount} Eventos`;
+      document.getElementById('kpiHeadHash').textContent = `HEAD: ${data.integrity.headAuditHash.slice(0, 22)}...`;
+
+      const ap = data.activePlayer;
+      document.getElementById('cardWalletMeta').textContent =
+        `${ap.fullName}: ${KronaCore.fmt(ap.availableBalanceCents)} disponibles`;
+      document.getElementById('cardPosMeta').textContent =
+        `${data.vouchers.length} pólizas físicas en gaveta`;
+      document.getElementById('cardAuditMeta').textContent =
+        `${data.shiftClosures.length} Cortes Z generados · Hash OK`;
+      const storesMetaEl = document.getElementById('cardStoresMeta');
+      if (storesMetaEl && data.stores) {
+        const activeCount = data.stores.filter((s) => s.isActive).length;
+        storesMetaEl.textContent = `${data.stores.length} Sedes (${activeCount} Activas)`;
+      }
+
+      const players = data.players || [];
+      if (players.length === 0) {
+        document.getElementById('nexusPlayersTable').innerHTML =
+          '<tr><td colspan="5" style="text-align:center;padding:1.25rem;color:var(--text-muted);">No hay jugadores registrados en el sistema.</td></tr>';
+      } else {
+        document.getElementById('nexusPlayersTable').innerHTML = players
+          .map(
+            (p) => `
+            <tr>
+              <td class="mono" style="font-weight:700;color:var(--accent-gold-hover);">${p.memberCode}</td>
+              <td><strong>${p.fullName}</strong> <span style="color:var(--text-muted);">${p.alias}</span></td>
+              <td>
+                <span class="badge ${p.status === 'ACTIVE' ? 'badge-emerald' : 'badge-crimson'}">${p.status}</span>
+                ${p.debtBalanceCents > 0 ? `<div style="font-size:0.7rem;color:#FCA5A5;margin-top:0.2rem;">Deuda: ${KronaCore.fmt(p.debtBalanceCents)}</div>` : ''}
+              </td>
+              <td class="num-tabular" style="font-weight:700;color:var(--accent-emerald-hover);">${KronaCore.fmt(p.availableBalanceCents)}</td>
+              <td>
+                <button type="button" class="btn btn-slate" style="padding:0.25rem 0.55rem;font-size:0.72rem;" onclick="KronaCore.setSelectedPlayerId('${p.userId}'); window.location.href='/wallet';">
+                  Ver Pase
+                </button>
+              </td>
+            </tr>
+          `
+          )
+          .join('');
+      }
+
+      const journalEntries = data.journalEntries || [];
+      if (journalEntries.length === 0) {
+        document.getElementById('nexusJournalTable').innerHTML =
+          '<tr><td colspan="4" style="text-align:center;padding:1.25rem;color:var(--text-muted);">No hay pólizas registradas aún en el Libro Diario.</td></tr>';
+      } else {
+        document.getElementById('nexusJournalTable').innerHTML = journalEntries
+          .slice(0, 5)
+          .map((je) => {
+            const sumD = je.lines.reduce((s, l) => s + l.debitCents, 0);
+            return `
+              <tr>
+                <td class="mono" style="color:var(--text-muted);">${je.id}</td>
+                <td><span class="badge badge-gold">${je.operationType}</span></td>
+                <td>${je.description}</td>
+                <td class="num-tabular" style="color:var(--accent-emerald-hover);font-weight:700;">${KronaCore.fmt(sumD)}</td>
+              </tr>
+            `;
+          })
+          .join('');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
-# Arquitectura Técnica — Control Crédito
+# Arquitectura Técnica — KRONA VAULT™
 
-Este documento detalla los componentes de software, el diseño de seguridad criptográfica, las invariantes contables y los flujos operativos de **Control Crédito**.
+Este documento detalla los componentes de software, el diseño de seguridad criptográfica, las invariantes contables y los flujos operativos de **KRONA VAULT™**.
 
 ---
 
@@ -9,7 +9,7 @@ Este documento detalla los componentes de software, el diseño de seguridad crip
 ```mermaid
 flowchart TD
     subgraph Clientes ["📱 Clientes & Periféricos"]
-        PlayerApp["PWA Móvil Jugador<br/>(QR Dinámico / PIN Offline)"]
+        PlayerApp["PWA Móvil Jugador (KRONA Pass™)<br/>(QR Dinámico / PIN Offline)"]
         PosTerminal["Terminal POS Mostrador<br/>(Cajero)"]
         ThermalPrinter["Impresora Térmica<br/>(58mm / 80mm)"]
     end
@@ -20,7 +20,7 @@ flowchart TD
 
     subgraph Backend ["⚙️ Core Backend (Node.js 22 LTS)"]
         API["API REST Fastify / Node Server"]
-        CryptoEngine["@control-credito/crypto-totp<br/>(HMAC, TOTP, SHA-256 Chain)"]
+        CryptoEngine["@krona-vault/crypto-totp<br/>(HMAC, TOTP, SHA-256 Chain)"]
         LedgerEngine["Ledger Engine Contable<br/>(Partida Doble Inmutable)"]
         CustodyEngine["Módulo Vault Custody™<br/>(Resguardo Escrow de Cartas)"]
         TournamentEngine["Motor de Torneos & Pozos<br/>(Split Zero-Sum)"]

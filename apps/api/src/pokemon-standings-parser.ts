@@ -3,7 +3,7 @@ import type {
   ParsedPokeCategory,
   ParsedPokeEntry,
   TournamentPrizeStanding,
-} from '@control-credito/shared-types';
+} from '@krona-vault/shared-types';
 
 /**
  * Normaliza nombres de categoría de TOM / Play! Pokémon a formato canónico

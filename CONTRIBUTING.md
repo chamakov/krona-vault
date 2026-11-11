@@ -1,6 +1,6 @@
-# Guía de Contribución a Control Crédito
+# Guía de Contribución a KRONA VAULT™
 
-¡Gracias por tu interés en contribuir a **Control Crédito**! Este proyecto es de código abierto con el objetivo de ofrecer un sistema seguro, confiable y auto-hospedado para el control de crédito en tienda, punto de venta y contabilidad por partida doble.
+¡Gracias por tu interés en contribuir a **KRONA VAULT™**! Este proyecto es de código abierto con el objetivo de ofrecer un sistema seguro, confiable y auto-hospedado para el control de crédito en tienda, punto de venta y contabilidad por partida doble.
 
 ---
 
@@ -26,8 +26,8 @@
 
 1. **Clonar el repositorio**:
    ```bash
-   git clone https://github.com/chamakov/controlCredito.git
-   cd controlCredito
+   git clone https://github.com/chamakov/krona-vault.git
+   cd krona-vault
    ```
 
 2. **Instalar dependencias del monorepo**:
@@ -65,7 +65,7 @@
 ## 📁 Estructura del Monorepo
 
 ```
-controlCredito/
+krona-vault/
 ├── apps/
 │   ├── api/             # Servidor HTTP, motor contable, endpoints REST y Cloudflare Worker
 │   └── web-pwa/         # Interfaz PWA vanilla offline-first (11 portales)
@@ -114,5 +114,5 @@ controlCredito/
 
 ## 💬 Canales de Comunicación
 
-- **Preguntas o Ideas**: Abre un hilo en [GitHub Discussions](https://github.com/chamakov/controlCredito/discussions) o un [Issue](https://github.com/chamakov/controlCredito/issues).
+- **Preguntas o Ideas**: Abre un hilo en [GitHub Discussions](https://github.com/chamakov/krona-vault/discussions) o un [Issue](https://github.com/chamakov/krona-vault/issues).
 - **Vulnerabilidades de Seguridad**: Por favor revisa [`SECURITY.md`](./SECURITY.md) antes de reportar problemas de seguridad públicamente.

@@ -1,19 +1,20 @@
 {
-  "name": "control-credito",
+  "name": "krona-vault",
   "version": "1.0.0",
   "private": true,
-  "description": "Sistema Multi-Tienda y Multi-Usuario de Control Contable de Crédito de Torneos, POS con Voucher Físico, QR Dinámico 2FA y Auditoría Criptográfica",
+  "description": "KRONA VAULT™ — Ecosistema Multi-Tienda y Multi-Usuario de Control Contable de Crédito de Torneos, POS con Voucher Físico, QR Dinámico 2FA y Auditoría Criptográfica",
   "license": "MIT",
   "author": "chamakov",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chamakov/controlCredito.git"
+    "url": "https://github.com/chamakov/krona-vault.git"
   },
   "bugs": {
-    "url": "https://github.com/chamakov/controlCredito/issues"
+    "url": "https://github.com/chamakov/krona-vault/issues"
   },
-  "homepage": "https://github.com/chamakov/controlCredito#readme",
+  "homepage": "https://github.com/chamakov/krona-vault#readme",
   "keywords": [
+    "krona-vault",
     "pos",
     "store-credit",
     "ledger",
@@ -30,8 +31,8 @@
     "apps/*"
   ],
   "scripts": {
-    "start": "npm --workspace=@control-credito/api run start",
-    "dev": "npm --workspace=@control-credito/api run dev",
+    "start": "npm --workspace=@krona-vault/api run start",
+    "dev": "npm --workspace=@krona-vault/api run dev",
     "db:reset": "node --experimental-strip-types apps/api/src/reset-db.ts",
     "db:backup": "node --experimental-strip-types scripts/backup-db.ts",
     "cf:dev": "wrangler dev",
@@ -41,8 +42,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:all": "npm test && npm run test:e2e",
-    "dev:api": "npm --workspace=@control-credito/api run dev",
-    "dev:web": "npm --workspace=@control-credito/web-pwa run dev",
+    "dev:api": "npm --workspace=@krona-vault/api run dev",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "engines": {

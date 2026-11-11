@@ -1,6 +1,6 @@
-# Guía Completa de Despliegue en Entornos — Control Crédito
+# Guía Completa de Despliegue en Entornos — KRONA VAULT™
 
-Esta guía describe cómo desplegar **Control Crédito** en diferentes entornos, desde desarrollo local rápido hasta entornos productivos auto-hospedados de alta disponibilidad en **Proxmox VE**, **VPS Linux**, **Docker Compose** y **Cloudflare Workers**.
+Esta guía describe cómo desplegar **KRONA VAULT™** en diferentes entornos, desde desarrollo local rápido hasta entornos productivos auto-hospedados de alta disponibilidad en **Proxmox VE**, **VPS Linux**, **Docker Compose** y **Cloudflare Workers**.
 
 ---
 
@@ -46,8 +46,8 @@ El archivo [`docker-compose.yml`](../docker-compose.yml) orquesta la arquitectur
 
 1. **Clonar el repositorio en el servidor**:
    ```bash
-   git clone https://github.com/chamakov/controlCredito.git /opt/controlCredito
-   cd /opt/controlCredito
+   git clone https://github.com/chamakov/krona-vault.git /opt/krona-vault
+   cd /opt/krona-vault
    ```
 
 2. **Copiar y configurar variables de entorno**:
@@ -82,16 +82,16 @@ El archivo [`docker-compose.yml`](../docker-compose.yml) orquesta la arquitectur
 Docker Compose con `restart: unless-stopped` se encarga de iniciar automáticamente con el sistema. Para supervisión externa con systemd:
 
 ```ini
-# /etc/systemd/system/control-credito.service
+# /etc/systemd/system/krona-vault.service
 [Unit]
-Description=Control Credito Stack
+Description=KRONA VAULT™ Stack
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=/opt/controlCredito
+WorkingDirectory=/opt/krona-vault
 ExecStart=/usr/bin/docker compose up -d
 ExecStop=/usr/bin/docker compose down
 TimeoutStartSec=0
@@ -103,7 +103,7 @@ WantedBy=multi-user.target
 Habilitar el servicio:
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now control-credito.service
+sudo systemctl enable --now krona-vault.service
 ```
 
 ---
@@ -150,7 +150,7 @@ El stack incluye una imagen personalizada de Caddy (`ghcr.io/caddybuilds/caddy-c
 ## 6. Respaldo y Restauración de Base de Datos
 
 ### Respaldos Automáticos
-El contenedor `cc-db-backup` genera automáticamente respaldos en el volumen `pg_backups_local` cada 15 minutos con retención configurable:
+El contenedor `krona-db-backup` genera automáticamente respaldos en el volumen `pg_backups_local` cada 15 minutos con retención configurable:
 - Mantener minutos: 1440 min (24 hrs)
 - Mantener diarios: 30 días
 - Mantener semanales: 12 semanas
@@ -168,7 +168,7 @@ npm run db:backup
 ### Restauración de Base de Datos
 ```bash
 # Descomprimir y restaurar en PostgreSQL
-gunzip < /ruta/al/respaldo.sql.gz | docker compose exec -T postgres psql -U cc_admin -d control_credito
+gunzip < /ruta/al/respaldo.sql.gz | docker compose exec -T postgres psql -U kv_admin -d krona_vault
 ```
 
 ---
@@ -183,11 +183,11 @@ El proyecto está preparado para ejecutarse en el Edge utilizando **Cloudflare W
    ```
 2. Crear la base de datos D1:
    ```bash
-   npx wrangler d1 create control-credito-db
+   npx wrangler d1 create krona-vault-db
    ```
 3. Aplicar las migraciones SQL:
    ```bash
-   npx wrangler d1 execute control-credito-db --file=apps/api/migrations/0001_init_d1.sql
+   npx wrangler d1 execute krona-vault-db --file=apps/api/migrations/0001_init_d1.sql
    ```
 4. Desplegar el Worker:
    ```bash

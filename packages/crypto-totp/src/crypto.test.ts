@@ -20,7 +20,7 @@ import {
   verifyCredentialHash,
 } from './index.ts';
 
-describe('Suite 1: @control-credito/crypto-totp — Seguridad Criptográfica, QR 2FA, PIN Offline y Hash-Chain', () => {
+describe('Suite 1: @krona-vault/crypto-totp — Seguridad Criptográfica, QR 2FA, PIN Offline y Hash-Chain', () => {
   const secret = 'device_secret_test_key_998877';
   const memberCode = 'CC-8492';
   const fixedNow = 1760729240000;

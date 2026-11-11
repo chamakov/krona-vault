@@ -1,5 +1,5 @@
 {
-  "name": "@control-credito/shared-types",
+  "name": "@krona-vault/shared-types",
   "version": "1.0.0",
   "type": "module",
   "main": "./src/index.ts",

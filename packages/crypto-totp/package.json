@@ -1,5 +1,5 @@
 {
-  "name": "@control-credito/crypto-totp",
+  "name": "@krona-vault/crypto-totp",
   "version": "1.0.0",
   "type": "module",
   "main": "./src/index.ts",

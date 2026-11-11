@@ -1,7 +1,7 @@
 /**
- * KRONA VAULT™ (controlCredito) — Cloudflare Workers + Cloudflare D1 + Static Assets Entrypoint
+ * KRONA VAULT™ — Cloudflare Workers + Cloudflare D1 + Static Assets Entrypoint
  * Compatible con Cloudflare Workers Free Tier ($0 USD/mes):
- * - nodejs_compat habilitado para @control-credito/crypto-totp (node:crypto)
+ * - nodejs_compat habilitado para @krona-vault/crypto-totp (node:crypto)
  * - Persistencia transaccional automática en Cloudflare D1 (tabla vault_state)
  * - Archivos estáticos de los 11 portales servidos desde env.ASSETS
  */

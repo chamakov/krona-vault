@@ -1,4 +1,4 @@
-# Política de Seguridad — Control Crédito
+# Política de Seguridad — KRONA VAULT™
 
 La seguridad e integridad de los datos financieros, libros contables y mecanismos de autorización de dos factores son la máxima prioridad de este proyecto.
 

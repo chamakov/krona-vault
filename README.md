@@ -1,13 +1,13 @@
-# Control Crédito (KRONA VAULT™)
+# KRONA VAULT™
 
-[![CI](https://github.com/chamakov/controlCredito/actions/workflows/ci.yml/badge.svg)](https://github.com/chamakov/controlCredito/actions/workflows/ci.yml)
+[![CI](https://github.com/chamakov/krona-vault/actions/workflows/ci.yml/badge.svg)](https://github.com/chamakov/krona-vault/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-22.23.4%20LTS-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict%20v7.0-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Compose%20Ready-2496ED?logo=docker&logoColor=white)](./docker-compose.yml)
 [![Playwright](https://img.shields.io/badge/E2E-Playwright%20Tested-45ba4b?logo=playwright&logoColor=white)](./playwright.config.ts)
 
-**Control Crédito** es una plataforma auto-hospedada (*Self-Hosted*, lista para **Proxmox VE + Docker Compose** o **Edge Serverless**) para la gestión contable, operativa y criptográfica de **crédito en tienda (*Store Credit*)**, emisión de vouchers físicos de caja con sellos anti-falsificación, dispersión de premios de torneos, control de resguardos/escrow de artículos coleccionables y autenticación 2FA offline.
+**KRONA VAULT™** es un ecosistema auto-hospedado (*Self-Hosted*, listo para **Proxmox VE + Docker Compose** o **Edge Serverless**) de grado institucional para la gestión contable, operativa y criptográfica de **crédito en tienda (*Store Credit*)**, emisión de vouchers físicos de caja con sellos anti-falsificación, dispersión de premios de torneos, control de resguardos/escrow de artículos coleccionables y autenticación 2FA offline.
 
 ---
 
@@ -41,8 +41,8 @@
 - **Control Anti-Doble Uso**: La primera impresión sale marcada como `[ ORIGINAL - POLIZA DE CAJA ]`; cualquier reimpresión posterior incrementa `printCount`, queda auditada e imprime `*** COPIA REIMPRESA #N - NO VALIDA ARQUEO ***`.
 
 ### 3. 🔐 Autorización 2FA Transaccional & Principio de Cuatro Ojos
-- **QR Dinámico TOTP**: Rota cada 30 segundos con *nonce* único anti-captura de pantalla.
-- **PIN Offline de 6 Dígitos ("Modo Sótano")**: Permite al jugador autorizar cobros desde su celular incluso sin cobertura telefónica ni internet en el local.
+- **QR Dinámico TOTP (KRONA Pulse™)**: Rota cada 30 segundos con *nonce* único anti-captura de pantalla.
+- **PIN Offline de 6 Dígitos ("Modo Búnker / Modo Sótano")**: Permite al jugador autorizar cobros desde su celular incluso sin cobertura telefónica ni internet en el local.
 - **Four-Eyes / Maker-Checker**: Ajustes manuales mayores al umbral y entregas de resguardos exigen co-firma y PIN de un segundo supervisor, bloqueando la auto-aprobación (`actorUserId !== targetUserId`).
 
 ### 4. 🏆 Motor de Torneos y Dispersión de Premios
@@ -50,7 +50,7 @@
 - Soporte para splits de premios en Top Cut respetando integridad de suma cero y distribución justa de centavos residuales.
 - Importación directa de clasificaciones oficiales (e.g. Pokémon TOM / RK9).
 
-### 5. 📦 Bóveda de Resguardo (Vault Custody™ & Escrow)
+### 5. 📦 Bóveda de Resguardo (KRONA Custody™ & Escrow)
 - Registro seguro de cartas y artículos dejados a cuenta o en resguardo.
 - Asociación de evidencias fotográficas verificadas mediante hash `SHA-256`.
 - Soporte para resguardo a nombre de terceros (quién deja vs. quién recoge) con desprecinto y entrega segura validada por Four-Eyes.
@@ -66,7 +66,7 @@
 flowchart LR
     subgraph Frontend ["📱 Portales PWA (Offline-First)"]
         POS["Punto de Venta"]
-        Wallet["Cartera Jugador"]
+        Wallet["Cartera Jugador (KRONA Pass™)"]
         Admin["Administración & Auditoría"]
     end
 
@@ -123,8 +123,8 @@ Ideal para servidores de producción, VPS o pruebas completas con PostgreSQL y V
 
 1. **Clonar el repositorio**:
    ```bash
-   git clone https://github.com/chamakov/controlCredito.git
-   cd controlCredito
+   git clone https://github.com/chamakov/krona-vault.git
+   cd krona-vault
    ```
 
 2. **Crear archivo de configuración de entorno**:
@@ -168,7 +168,7 @@ Requisitos: **Node.js >= 22.23.4** y **npm >= 10.9.9**.
 ## 📦 Estructura del Monorepo
 
 ```
-controlCredito/
+krona-vault/
 ├── apps/
 │   ├── api/             # Servidor HTTP, motor contable y endpoints REST
 │   └── web-pwa/         # 11 portales PWA responsivos offline-first

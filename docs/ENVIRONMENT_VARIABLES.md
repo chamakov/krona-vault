@@ -1,6 +1,6 @@
-# Referencia de Variables de Entorno — Control Crédito
+# Referencia de Variables de Entorno — KRONA VAULT™
 
-Este documento describe todas las variables de entorno soportadas por **Control Crédito**, su propósito, valores predeterminados y recomendaciones para producción.
+Este documento describe todas las variables de entorno soportadas por **KRONA VAULT™**, su propósito, valores predeterminados y recomendaciones para producción.
 
 Copia `.env.example` hacia `.env` antes de iniciar la aplicación.
 
@@ -10,11 +10,11 @@ Copia `.env.example` hacia `.env` antes de iniciar la aplicación.
 
 | Variable | Tipo | Requerido en Prod | Valor por Defecto | Descripción |
 | :--- | :--- | :---: | :--- | :--- |
-| `APP_DOMAIN` | String | Sí | `credito.mitienda.com` | Nombre de dominio FQDN utilizado para emisión de certificados TLS y WebAuthn RP_ID. |
+| `APP_DOMAIN` | String | Sí | `vault.mitienda.com` | Nombre de dominio FQDN utilizado para emisión de certificados TLS y WebAuthn RP_ID. |
 | `TZ` | String | No | `America/Mexico_City` | Zona horaria del servidor para sellado de tiempo en vouchers y auditoría. |
-| `POSTGRES_USER` | String | Sí | `cc_admin` | Usuario administrador de la base de datos PostgreSQL. |
+| `POSTGRES_USER` | String | Sí | `kv_admin` | Usuario administrador de la base de datos PostgreSQL. |
 | `POSTGRES_PASSWORD`| String | Sí | *(cambiar en prod)* | Contraseña segura para el usuario de base de datos. |
-| `POSTGRES_DB` | String | Sí | `control_credito` | Nombre de la base de datos de producción. |
+| `POSTGRES_DB` | String | Sí | `krona_vault` | Nombre de la base de datos de producción. |
 | `VALKEY_PASSWORD` | String | Sí | *(cambiar en prod)* | Contraseña de autenticación para el servidor de caché Valkey/Redis. |
 | `JWT_SECRET` | Hex (32B) | Sí | *(generar con openssl)* | Clave simétrica para firmar y validar tokens de sesión JWT. |
 | `QR_HMAC_SECRET` | Hex (32B) | Sí | *(generar con openssl)* | Clave para calcular el HMAC SHA-256 de los códigos QR dinámicos y sellos de voucher. |

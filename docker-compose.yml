@@ -1,4 +1,4 @@
-name: control-credito-prod
+name: krona-vault-prod
 
 services:
   # =========================================================================
@@ -6,7 +6,7 @@ services:
   # =========================================================================
   caddy:
     image: ghcr.io/caddybuilds/caddy-cloudflare:2.8-alpine
-    container_name: cc-caddy
+    container_name: krona-caddy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -29,13 +29,13 @@ services:
       - no-new-privileges:true
 
   # =========================================================================
-  # 2. APLICACIÓN PRINCIPAL (PWA + API + Motor Ledger + Vouchers)
+  # 2. APLICACIÓN PRINCIPAL (KRONA VAULT™ PWA + API + Ledger + Vouchers)
   # =========================================================================
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: cc-app
+    container_name: krona-app
     restart: unless-stopped
     expose:
       - "3000"
@@ -47,8 +47,8 @@ services:
       - PORT=3000
       - PUBLIC_ORIGIN=https://${APP_DOMAIN:-credito.local}
       - WEBAUTHN_RP_ID=${APP_DOMAIN:-credito.local}
-      - WEBAUTHN_RP_NAME=Control Credito Tienda
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-cc_admin}:${POSTGRES_PASSWORD:-cc_secret}@postgres:5432/${POSTGRES_DB:-control_credito}
+      - WEBAUTHN_RP_NAME=KRONA VAULT™ Tienda
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-kv_admin}:${POSTGRES_PASSWORD:-kv_secret}@postgres:5432/${POSTGRES_DB:-krona_vault}
       - REDIS_URL=redis://:${VALKEY_PASSWORD:-valkey_secret}@valkey:6379/0
       - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_change_in_prod}
       - QR_HMAC_SECRET=${QR_HMAC_SECRET:-dev_qr_hmac_secret_change_in_prod}
@@ -76,7 +76,7 @@ services:
   # =========================================================================
   postgres:
     image: postgres:16-alpine
-    container_name: cc-postgres
+    container_name: krona-postgres
     restart: unless-stopped
     command: >
       postgres
@@ -91,9 +91,9 @@ services:
       -c archive_timeout=60
     environment:
       - TZ=${TZ:-America/Mexico_City}
-      - POSTGRES_USER=${POSTGRES_USER:-cc_admin}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cc_secret}
-      - POSTGRES_DB=${POSTGRES_DB:-control_credito}
+      - POSTGRES_USER=${POSTGRES_USER:-kv_admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-kv_secret}
+      - POSTGRES_DB=${POSTGRES_DB:-krona_vault}
       - POSTGRES_INITDB_ARGS=--data-checksums
     volumes:
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
@@ -102,7 +102,7 @@ services:
     networks:
       - backend_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cc_admin} -d ${POSTGRES_DB:-control_credito}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kv_admin} -d ${POSTGRES_DB:-krona_vault}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -116,7 +116,7 @@ services:
   # =========================================================================
   valkey:
     image: valkey/valkey:8.0-alpine
-    container_name: cc-valkey
+    container_name: krona-valkey
     restart: unless-stopped
     command: >
       valkey-server
@@ -142,14 +142,14 @@ services:
   # =========================================================================
   db-backup:
     image: prodrigestivill/postgres-backup-local:16-alpine
-    container_name: cc-db-backup
+    container_name: krona-db-backup
     restart: unless-stopped
     environment:
       - TZ=${TZ:-America/Mexico_City}
       - POSTGRES_HOST=postgres
-      - POSTGRES_DB=${POSTGRES_DB:-control_credito}
-      - POSTGRES_USER=${POSTGRES_USER:-cc_admin}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cc_secret}
+      - POSTGRES_DB=${POSTGRES_DB:-krona_vault}
+      - POSTGRES_USER=${POSTGRES_USER:-kv_admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-kv_secret}
       - POSTGRES_EXTRA_OPTS=-Z6 --schema=public --blobs
       - SCHEDULE=*/15 * * * *
       - BACKUP_KEEP_MINS=1440

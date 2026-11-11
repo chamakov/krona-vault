@@ -2,7 +2,7 @@
 
 ## Nuestro Compromiso
 
-Nos comprometemos a fomentar un entorno abierto, acogedor y respetuoso para todas las personas que colaboran y participan en el proyecto **Control Crédito**, sin distinción de edad, nivel de experiencia, identidad de género, orientación sexual, origen étnico, nacionalidad o religión.
+Nos comprometemos a fomentar un entorno abierto, acogedor y respetuoso para todas las personas que colaboran y participan en el proyecto **KRONA VAULT™**, sin distinción de edad, nivel de experiencia, identidad de género, orientación sexual, origen étnico, nacionalidad o religión.
 
 ## Estándares de Comportamiento Esperado
 
